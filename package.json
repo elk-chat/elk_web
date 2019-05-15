@@ -1,0 +1,48 @@
+{
+  "name": "litter-chat",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "yarn desktop:dev",
+    "desktop:dev": "PLATFORM=desktop PORT=6678 ukectl start",
+    "mobile:dev": "PLATFORM=mobile PORT=6677 ukectl start",
+    "build": "ukectl build",
+    "init": "git init; npm i; npm run setAppVersion",
+    "setAppVersion": "ukectl setVersion",
+    "autoZip": "npm run setAppVersion; npm run build; npm run zipBuild;",
+    "update": "yarn add uke-request ukelli-ui -W",
+    "zipBuild": "mkdir -p ./zip-build; zip -r ./zip-build/build.zip ./build/*",
+    "test": "ukectl test"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/node": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "uke-scripts": "^0.4.22"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "basic-helper": "^2.0.0",
+    "object-assign": "4.1.1",
+    "promise": "8.0.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-hot-loader": "^4.8.4",
+    "react-transition-group": "^4.0.1",
+    "uke-request": "^0.13.6",
+    "ukelli-ui": "^2.15.58",
+    "unistore": "^3.4.1"
+  },
+  "author": "Alex",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SANGET/little-chat.git"
+  }
+}

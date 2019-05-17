@@ -1,8 +1,6 @@
 import React from "react";
-// import { hot } from "react-hot-loader";
 
 import "./style.scss";
-import "./mobile.scss";
 
 class App extends React.Component {
   render() {
@@ -11,7 +9,7 @@ class App extends React.Component {
         style={{
           fontFamily: 'Arial, "Microsoft YaHei"',
         }}>
-        <h2>Mobile 的 React 工程脚手架</h2>
+        <h2>Mobile 的 React 工程脚手架 !</h2>
         <ul>
           <li>支持 SCSS</li>
           <li>支持 hot loader</li>
@@ -22,5 +20,5 @@ class App extends React.Component {
     );
   }
 }
-// export default hot(module)(App);
+
 export default App;

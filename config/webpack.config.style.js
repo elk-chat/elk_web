@@ -30,8 +30,8 @@ module.exports = {
   bail: true,
   devtool: shouldUseSourceMap ? "source-map" : false,
   entry: {
-    "main.style": [path.resolve(__dirname, "../src/style.scss")],
-    "mobile.style": [path.resolve(__dirname, "../src/style/mobile.scss")],
+    "main.style": [path.resolve(__dirname, "../client/style.scss")],
+    "mobile.style": [path.resolve(__dirname, "../client/style/mobile.scss")],
   },
   output: {
     path: paths.appBuild,

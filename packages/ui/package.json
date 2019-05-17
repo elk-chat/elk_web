@@ -1,5 +1,5 @@
 {
-  "name": "@litter-chat/ui",
+  "name": "@little-chat/ui",
   "version": "0.1.0",
   "scripts": {
     "start": "yarn desktop:dev",

@@ -1,5 +1,5 @@
 {
-  "name": "@litter-chat/core",
+  "name": "@little-chat/core",
   "version": "0.1.0",
   "scripts": {
     "test": "ukectl test"

@@ -1,0 +1,161 @@
+
+syntax = "proto3";
+
+package kproto;
+
+message Error {
+  string Code = 1;
+  string Message = 2;
+}
+
+message Success {}
+
+message StateAck {
+  int64 ChatID = 1;
+  uint64 MessageID = 2;
+  uint64 State = 3;
+}
+
+// todo : 改为数组形式批量更新, 减少消息数量, 提高效率
+message StateUpdate {
+  int64 ChatID = 1;
+  uint64 MessageID = 2;
+  uint64 State = 3;
+  string MessageDigest = 4;
+}
+
+
+message AuthKeyReq {
+}
+
+message AuthKeyResp {
+}
+
+message HeartbeatReq {
+}
+
+message HeartbeatResp {
+}
+
+message InitConnectionReq {
+}
+
+message InitConnectionResp {
+}
+
+message RequestVerificationCodeReq {
+}
+
+message RequestVerificationCodeResp {
+}
+
+message CheckAppUpdateReq {
+}
+
+message CheckAppUpdateResp {
+}
+
+message UserRegisterReq {
+  string UserName = 1;
+  string Password = 2;
+}
+
+message UserRegisterResp {
+}
+
+message UserLoginReq {
+  string UserName = 1;
+  string Password = 2;
+}
+
+message UserLoginResp {
+  uint64 SessionID = 1;
+}
+
+message UserLogoutReq {
+}
+
+message UserLogoutResp {
+}
+
+message ContactAddReq {
+}
+
+message ContactAddResp {
+}
+
+message ContactUpdateReq {
+}
+
+message ContactUpdateResp {
+}
+
+message ContactDeleteReq {
+}
+
+message ContactDeleteResp {
+}
+
+// 用户只能创建普通群
+// 其他类型的群由系统自动创建
+message ChatCreateReq {
+  string Title = 1;
+  // int32 ChatType = 2;
+  // int64 PeerID = 3;
+}
+
+message ChatCreateResp {
+}
+
+// chat struct
+// 协议结构里, 时间类型统一使用时间戳 int64
+message Chat {
+  int64 ID = 1;
+  int64 CreateAt = 2;
+  int64 UpdatedAt = 3;
+  int32 ChatType = 4;
+  string Title = 5;
+  int32 Disabled = 6;
+}
+
+message ChatGetChatsReq {
+}
+
+message ChatGetChatsResp {
+  repeated Chat Chats = 1;
+}
+
+message ChatAddMemberReq {
+  int64 ChatID = 1;
+  repeated int64 UserIDs = 2;
+}
+
+message ChatAddMemberResp {
+}
+
+message ChatSendMessageReq {
+  int64 ChatID = 1;
+  int32 MessageType = 2;
+  string Message = 3;
+}
+
+message ChatSendMessageResp {
+}
+
+message ChatSendMediaReq {
+  int64 ChatID = 1;
+  int32 MessageType = 2;
+  bytes Data = 3;
+}
+
+message ChatSendMediaResp {
+}
+
+
+// sync 类消息
+
+message SyncAck {
+}
+
+message SyncChatSendMessage {
+}

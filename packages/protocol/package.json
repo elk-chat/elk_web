@@ -1,5 +1,5 @@
 {
-  "name": "@litter-chat/protocal",
+  "name": "@little-chat/protocal",
   "version": "0.1.0",
   "scripts": {
     "test": "ukectl test"

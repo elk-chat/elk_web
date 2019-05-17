@@ -13,6 +13,8 @@
     "autoZip": "npm run setAppVersion; npm run build; npm run zipBuild;",
     "zipBuild": "mkdir -p ./zip-build; zip -r ./zip-build/build.zip ./build/*",
     "prettier": "prettier -c --write '**/*'",
+    "complieProto": "pbjs ./packages/protocol/lib/koi.proto -t static-module > ./packages/protocol/lib/koi.js; npm run pbts",
+    "pbts": "pbts -o ./packages/protocol/lib/koi.d.ts ./packages/protocol/lib/koi.js",
     "test": "ukectl test"
   },
   "devDependencies": {
@@ -50,6 +52,7 @@
     "jest-environment-jsdom-fourteen": "0.1.0",
     "jest-resolve": "24.7.1",
     "jest-watch-typeahead": "0.3.0",
+    "lerna": "^3.14.1",
     "mini-css-extract-plugin": "0.5.0",
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "5.0.1",
@@ -59,6 +62,7 @@
     "postcss-normalize": "7.0.1",
     "postcss-preset-env": "6.6.0",
     "postcss-safe-parser": "4.0.1",
+    "protobufjs": "^6.8.8",
     "react-app-polyfill": "^1.0.1",
     "react-dev-utils": "^9.0.1",
     "resolve": "1.10.0",

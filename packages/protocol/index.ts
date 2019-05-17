@@ -1,4 +1,8 @@
 import Msg from './lib/koi';
+
+const testUrl = 'ws://10.30.0.28:9999/gate';
+const socket = new WebSocket(testUrl);
+
 const { UserRegisterReq } = Msg.kproto;
 
 const msg = UserRegisterReq.create({
@@ -13,6 +17,15 @@ console.log(decodeBuffer)
 
 const Pro = {
 
+}
+
+socket.onopen = () => {
+  socket.send(encodeBuffer);
+}
+
+socket.onmessage = (event) => {
+  // socket.send(encodeBuffer);
+  console.log(UserRegisterReq.decode(event.data));
 }
 
 export default Pro

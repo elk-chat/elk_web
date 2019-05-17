@@ -2,19 +2,26 @@ import React from "react";
 
 import "./style.scss";
 
-class App extends React.Component {
+interface AppProps {
+  color?: string
+}
+
+class App extends React.Component<AppProps> {
+  static defaultProps: AppProps = {
+    color: 'red'
+  };
   render() {
+    console.log(this.props)
     return (
       <div
         style={{
           fontFamily: 'Arial, "Microsoft YaHei"',
         }}>
-        <h2>Mobile 的 React 工程脚手架 !</h2>
+        <h2>Little chat</h2>
         <ul>
-          <li>支持 SCSS</li>
-          <li>支持 hot loader</li>
-          <li>babel 7</li>
-          <li>webpack 4</li>
+          <li>使用 protobuf 通讯</li>
+          <li>分层架构</li>
+          <li>使用 typescript 开发</li>
         </ul>
       </div>
     );

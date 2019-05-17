@@ -1,25 +1,21 @@
 {
-  "env": {
-    "test": {
-      "presets": ["@babel/preset-env"]
-    },
-    "development": {
-      "presets": ["@babel/env", "@babel/preset-react"],
-      "plugins": [
-        [
-          "react-hot-loader/babel"
-        ],
-        ["@babel/plugin-proposal-class-properties"]
-      ]
-    },
-    "production": {
-      "presets": [
-        "@babel/preset-env",
-        "@babel/preset-react"
-      ],
-      "plugins": [
-        "@babel/plugin-proposal-class-properties"
-      ]
-    }
-  }
+  // "env": {
+  //   "test": {
+  //     "presets": ["@babel/preset-env"]
+  //   },
+  //   "development": {
+  //     "presets": ["@babel/preset-react"],
+  //     "plugins": [
+  //       ["react-hot-loader/babel"],
+  //       ["@babel/plugin-proposal-class-properties"]
+  //     ]
+  //   },
+  //   "production": {
+  //     "presets": ["@babel/preset-env", "@babel/preset-react"],
+  //     "plugins": ["@babel/plugin-proposal-class-properties"]
+  //   }
+  // }
+  "presets": [
+    "react-app"
+  ]
 }

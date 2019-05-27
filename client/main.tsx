@@ -11,7 +11,7 @@ class App extends React.Component<AppProps> {
     color: 'red'
   };
   render() {
-    console.log(this.props)
+    console.log(this.props);
     return (
       <div
         style={{

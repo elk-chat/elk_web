@@ -71,6 +71,7 @@
     "style-loader": "0.23.1",
     "terser-webpack-plugin": "1.2.3",
     "ts-pnp": "1.1.2",
+    "tslint": "^5.16.0",
     "typescript": "3.4.5",
     "url-loader": "1.1.2",
     "webpack": "4.29.6",

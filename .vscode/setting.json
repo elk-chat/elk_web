@@ -1,4 +1,10 @@
 {
+  // "eslint.validate": [
+  //   "javascript",
+  //   "javascriptreact",
+  //   "typescript",
+  //   "typescriptreact"
+  // ],
   "files.watcherExclude": {
       "**/build": true,
       "**/dist": true,

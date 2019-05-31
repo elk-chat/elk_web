@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import createChatStore from '@little-chat/core/store';
 import "@little-chat/protocal";
 
-import App from "./main";
+import App from "./connect";
 
 const chatStore = createChatStore({});
 

@@ -1,7 +1,6 @@
-export interface ChatActions {
-  type: string;
-  chatID: string;
-}
+import {
+  ChatActions
+} from '../types';
 
 export const SELECT_CHAT = "SELECT_CHAT";
 export function selectChat(chatID: string): ChatActions {
@@ -12,6 +11,6 @@ export function selectChat(chatID: string): ChatActions {
 }
 
 export const FETCH_CHATS = "FETCH_CHATS";
-export function fetch_chats() {
+export function fetchChats() {
 
 }

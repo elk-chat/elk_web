@@ -1,8 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import '@little-chat/protocal';
+import { Provider } from 'react-redux';
+import createChatStore from '@little-chat/core/store';
+import "@little-chat/protocal";
 
 import App from "./main";
 
-ReactDOM.render(<App />, document.getElementById("Main"));
+const chatStore = createChatStore({});
+
+const AppWithRedux = () => (
+  <Provider store={chatStore}>
+    <App />
+  </Provider>
+)
+
+ReactDOM.render(
+  <AppWithRedux />, 
+  document.getElementById("Main")
+);

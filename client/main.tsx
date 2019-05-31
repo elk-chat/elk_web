@@ -1,17 +1,21 @@
 import React from "react";
 
+import * as ChatActions from '@little-chat/core/actions';
+import { connect } from 'react-redux';
+
 import "./style.scss";
 
+
 interface AppProps {
-  color?: string
+  color?: string;
 }
 
 class App extends React.Component<AppProps> {
-  static defaultProps: AppProps = {
-    color: 'red'
+  public static defaultProps: AppProps = {
+    color: "red"
   };
-  render() {
-    console.log(this.props);
+  public render() {
+    console.log(this.props)
     return (
       <div
         style={{
@@ -28,4 +32,8 @@ class App extends React.Component<AppProps> {
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return state;
+}
+
+export default connect(mapStateToProps, ChatActions)(App);

@@ -1,18 +1,6 @@
 {
   "name": "@little-chat/ui",
   "version": "0.1.0",
-  "scripts": {
-    "start": "yarn desktop:dev",
-    "desktop:dev": "PLATFORM=desktop PORT=6678 ukectl start",
-    "mobile:dev": "PLATFORM=mobile PORT=6677 ukectl start",
-    "build": "ukectl build",
-    "init": "git init; npm i; npm run setAppVersion",
-    "setAppVersion": "ukectl setVersion",
-    "autoZip": "npm run setAppVersion; npm run build; npm run zipBuild;",
-    "update": "yarn add ukelli-ui -W",
-    "zipBuild": "mkdir -p ./zip-build; zip -r ./zip-build/build.zip ./build/*",
-    "test": "ukectl test"
-  },
   "devDependencies": {},
   "dependencies": {
     "@types/react": "^16.8.17",

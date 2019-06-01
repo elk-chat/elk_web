@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import './style/style.scss';
+import "./style/style.scss";
 
 export interface ChatLayoutProps {
 
@@ -13,6 +13,6 @@ export default class ChatLayout extends Component<ChatLayoutProps> {
         <div>laft</div>
         <div>right</div>
       </div>
-    )
+    );
   }
 }

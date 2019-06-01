@@ -12,20 +12,20 @@ const msg = UserRegisterReq.create({
 const encodeBuffer = UserRegisterReq.encode(msg).finish();
 const decodeBuffer = UserRegisterReq.decode(encodeBuffer);
 
-console.log(encodeBuffer)
-console.log(decodeBuffer)
+console.log(encodeBuffer);
+console.log(decodeBuffer);
 
 const Pro = {
 
-}
+};
 
 socket.onopen = () => {
   socket.send(encodeBuffer);
-}
+};
 
 socket.onmessage = (event) => {
   // socket.send(encodeBuffer);
   console.log(UserRegisterReq.decode(event.data));
-}
+};
 
-export default Pro
+export default Pro;

@@ -1,5 +1,5 @@
 {
-  "name": "@little-chat/protocal",
+  "name": "@little-chat/sdk",
   "version": "0.1.0",
   "devDependencies": {},
   "dependencies": {

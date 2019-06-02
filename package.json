@@ -8,14 +8,12 @@
   "scripts": {
     "start": "PORT=3445 node ./scripts/start",
     "build": "node ./scripts/build",
-    "init": "git init; npm i; npm run setAppVersion",
-    "setAppVersion": "ukectl setVersion",
-    "autoZip": "npm run setAppVersion; npm run build; npm run zipBuild;",
+    "autoZip": "npm run build; npm run zipBuild;",
     "zipBuild": "mkdir -p ./zip-build; zip -r ./zip-build/build.zip ./build/*",
     "prettier": "prettier -c --write '**/*'",
     "complieProto": "pbjs ./packages/protocol/lib/koi.proto -t static-module > ./packages/protocol/lib/koi.js; npm run pbts",
     "pbts": "pbts -o ./packages/protocol/lib/koi.d.ts ./packages/protocol/lib/koi.js",
-    "test": "ukectl test"
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/core": "7.4.3",

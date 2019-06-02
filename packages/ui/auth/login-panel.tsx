@@ -42,7 +42,7 @@ export default class LoginPanel extends Component<LoginPanelProps> {
   static defaultProps = {
     logging: false,
     autoLoging: false,
-    btnColor: 'theme',
+    btnGColor: 'red',
     fixed: true,
     logo: () => <h3 className="title">Little chat</h3>
   };

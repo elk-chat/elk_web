@@ -16,20 +16,18 @@ export default class ChatLayout extends Component<ChatLayoutProps> {
     // console.log(this.props);
     const { authState, applyLogin } = this.props;
     return (
-      <div className="layout">
-        <AutoSelector
-          applyLogin={applyLogin}
-          {...authState}>
-          {
-            () => (
-              <div>
-                <div>laft</div>
-                <div>right</div>
-              </div>
-            )
-          }
-        </AutoSelector>
-      </div>
+      <AutoSelector
+        applyLogin={applyLogin}
+        {...authState}>
+        {
+          () => (
+            <div>
+              <div>laft</div>
+              <div>right</div>
+            </div>
+          )
+        }
+      </AutoSelector>
     );
   }
 }

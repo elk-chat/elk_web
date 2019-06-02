@@ -13,7 +13,6 @@ export interface LoginSelectorProps {
 
 const LoginSelector: React.SFC<LoginSelectorProps & LoginPanelProps> = (props) => {
   const { children, isLogin } = props;
-  console.log(props.logging)
 
   let container;
   switch (true) {

@@ -2,7 +2,7 @@ export default [
   {
     ref: 'UserName',
     type: 'input',
-    // defaultValue: window.defaultUserInfo.AdminName,
+    defaultValue: 'alex',
     title: '账号',
     iconName: 'account',
     required: true
@@ -10,7 +10,7 @@ export default [
   {
     ref: 'Password',
     type: 'password',
-    // defaultValue: window.defaultUserInfo.Password,
+    defaultValue: '123',
     title: '密码',
     iconName: 'lock',
     required: true

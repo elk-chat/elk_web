@@ -4,4 +4,4 @@ import LoginPanel from './login-panel';
 export default AuthSelector;
 export {
   LoginPanel
-}
+};

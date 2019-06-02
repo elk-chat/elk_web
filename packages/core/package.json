@@ -2,6 +2,7 @@
   "name": "@little-chat/core",
   "version": "0.1.0",
   "devDependencies": {
+    "@types/redux-logger": "^3.0.7",
     "redux-devtools": "^3.5.0",
     "redux-logger": "^3.0.6"
   },

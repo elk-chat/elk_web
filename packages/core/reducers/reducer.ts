@@ -6,6 +6,9 @@ import {
 import {
   ChatActions
 } from '../types';
+import {
+  authState, userInfo
+} from './auth-state';
 
 export function chats(
   state = {},
@@ -22,6 +25,8 @@ export function chats(
 
 const chatReducers = combineReducers({
   chats,
+  authState,
+  userInfo,
 });
 
 export default chatReducers;

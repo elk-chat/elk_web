@@ -1,10 +1,20 @@
-const socket = new WebSocket(testUrl);
+interface SocketParams {
+  url: string;
+  onOpen: () => void;
+  onMessage: (event: MessageEvent) => void;
+}
 
-socket.onopen = () => {
-  socket.send(encodeBuffer);
-};
+export function connectSocket(params: SocketParams): WebSocket {
+  const { url, onOpen, onMessage } = params;
+  const socket = new WebSocket(url);
 
-socket.onmessage = (event) => {
-  // socket.send(encodeBuffer);
-  console.log(UserRegisterReq.decode(event.data));
-};
+  socket.onopen = () => {
+    onOpen();
+  };
+  socket.onmessage = (event) => {
+    onMessage(event);
+    // socket.send(encodeBuffer);
+  };
+
+  return socket;
+}

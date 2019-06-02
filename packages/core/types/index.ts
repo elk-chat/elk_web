@@ -1,4 +1,2 @@
-export interface ChatActions {
-  type: string;
-  chatID: string;
-}
+export * from './actions';
+export * from './state';

@@ -1,0 +1,104 @@
+$tabHeight: 50px;
+/* 手机底部图标 */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 101;
+  transform: translate(0, 0);
+  transition: all 0.3s linear;
+  background-color: $bg;
+  box-shadow: $shadow;
+  border-top: 1px solid $border;
+
+  .inner {
+    display: flex;
+    color: $color_2;
+  }
+  &.down {
+    transform: translate(0, 105%);
+  }
+
+  .tab-label {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: $tabHeight;
+    padding-top: 4px;
+    text-align: center;
+    color: inherit;
+    text-decoration: none;
+    &.new-tip {
+      .icon-wrap {
+        &:after {
+          content: " ";
+          display: block;
+          width: 8px;
+          height: 8px;
+          position: absolute;
+          top: 0;
+          right: 0;
+          border-radius: 50%;
+          background-color: $color_red;
+        }
+      }
+    }
+
+    .icon-wrap {
+      position: relative;
+      width: 40px;
+      height: 20px;
+      margin: 0 auto;
+    }
+    .icon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: auto 20px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .icon {
+      transition: all 0.3s ease;
+    }
+
+    .icon.active {
+      opacity: 0;
+      transform: scale(1.2);
+    }
+
+    .text {
+      font-size: $fontsize_4;
+      color: $color_2;
+    }
+
+    &.active {
+      .icon.default {
+        opacity: 0;
+        transform: scale(1.2);
+      }
+      .icon.active {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .text {
+        color: $themeColor_1;
+      }
+    }
+  }
+}
+
+.ios.iphone-x {
+  .mobile-tab-bar {
+    .tab-label {
+      padding-bottom: 20px;
+      height: 70px;
+    }
+  }
+}

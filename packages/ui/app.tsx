@@ -63,37 +63,38 @@ class ChatApp extends Component<ChatAppProps> {
         document.body.classList.add("inNative");
       }
     };
+    setTimeout(() => this.clickLoginBtn(), 100);
+  }
+
+  clickLoginBtn = () => {
+    document.querySelector('.login-btn').click();
   }
 
   render() {
     // console.log(this.props);
-    const { authState, applyLogin } = this.props;
-    // return (
-    //   <AutoSelector
-    //     applyLogin={applyLogin}
-    //     {...authState}>
-    //     {
-    //       () => (
-    //         <div>
-    //           <div>laft</div>
-    //           <div>right</div>
-    //         </div>
-    //       )
-    //     }
-    //   </AutoSelector>
-    // );
+    const { authState, applyLogin, ...other } = this.props;
     return (
-      <div>
-        <div className="main-container">
-          <RouterRender routeConfig={pageRoutersConfig} />
-        </div>
-        <Route exact path="/" render={() => <Redirect to="/Chat" />} />
-        <TabBar
-          RNW={this.RNW}
-          routes={getTabRouteConfig({
-            unreadCount: 0
-          })}/>
-      </div>
+      <React.Fragment>
+        <AutoSelector
+          applyLogin={applyLogin}
+          {...authState}>
+          {
+            () => (
+              <div>
+                <div className="main-container">
+                  <RouterRender routeConfig={pageRoutersConfig} {...other} />
+                </div>
+                <Route exact path="/" render={() => <Redirect to="/Chat" />} />
+                <TabBar
+                  RNW={this.RNW}
+                  routes={getTabRouteConfig({
+                    unreadCount: 0
+                  })}/>
+              </div>
+            )
+          }
+        </AutoSelector>
+      </React.Fragment>
     );
   }
 }

@@ -1,7 +1,10 @@
 import { RouteEntity } from '../types';
 import { CHAT, CONTACT, DISCOVER, ACCOUNT } from './path-mapper';
 
-import ChatList from '../pages/chat';
+import ChatList from '../pages/chat-list';
+import Contact from '../pages/contact';
+import Discover from '../pages/discover';
+import Account from '../pages/account';
 import {
   Navigator
 } from '../components';
@@ -23,17 +26,17 @@ const routersConfig = addModalPath([
   {
     path: CONTACT,
     exact: true,
-    component: ChatList
+    component: Contact
   },
   {
     path: DISCOVER,
     exact: true,
-    component: ChatList
+    component: Discover
   },
   {
     path: ACCOUNT,
     exact: true,
-    component: ChatList
+    component: Account
   },
   {
     path: "/n/:component/:p1?/:p2?",

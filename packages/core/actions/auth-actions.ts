@@ -18,9 +18,9 @@ export function* login(action) {
   yield put({ type: LOGGING });
   try {
     const userInfo = yield call(ApplyLogin, action.form);
-    yield delay(1000);
+    yield delay(200);
     yield put({ type: LOGIN_SUCCESS, userInfo });
-  } catch(event) {
+  } catch (event) {
     console.log(event);
   }
 }

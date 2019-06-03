@@ -35,16 +35,20 @@ const TabBar: React.SFC<TabBarProps> = ({ routes, RNW }) => (
             obj = { onClick };
           }
           // 添加提示小点
-          const cls = route.path == "/Account" && route.hasNew ? " new-tip" : "";
+          const cls = route.path === "/Account" && route.hasNew ? " new-tip" : "";
           return (
             <Com {...obj} key={path} className={`tab-label${cls}`}>
               <div className="icon-wrap">
                 <div
                   className="icon default"
-                  style={{ backgroundImage: `url(${icon[0]})` }}/>
+                  style={{ backgroundImage: `url(${icon[0]})` }}>
+                  {React.isValidElement(icon[0]) && icon[0]}
+                </div>
                 <div
                   className="icon active"
-                  style={{ backgroundImage: `url(${icon[1]})` }}/>
+                  style={{ backgroundImage: `url(${icon[1]})` }}>
+                  {React.isValidElement(icon[1]) && icon[1]}
+                </div>
               </div>
               <span className="text">{text}</span>
             </Com>

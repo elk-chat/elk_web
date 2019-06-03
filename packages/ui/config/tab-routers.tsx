@@ -4,6 +4,9 @@
  * text: Tab 显示的文字
  * icon: 显示的 icon
  */
+import React from 'react';
+import { PureIcon } from 'ukelli-ui/core/icon';
+
 import { RouteEntity } from '../types';
 import { CHAT, CONTACT, DISCOVER, ACCOUNT } from './path-mapper';
 
@@ -18,22 +21,22 @@ const getTabRouteConfig = (params: RouteParams): RouteEntity[] => {
       path: CHAT,
       text: "聊天",
       unreadCount,
-      icon: []
+      icon: [<PureIcon n="far fa-comments" />, <PureIcon n="fas fa-comments" />]
     },
     {
       path: CONTACT,
       text: "联系人",
-      icon: []
+      icon: [<PureIcon n="far fa-address-book" />, <PureIcon n="fas fa-address-book" />]
     },
     {
       path: DISCOVER,
       text: "发现",
-      icon: []
+      icon: [<PureIcon n="far fa-compass" />, <PureIcon n="fas fa-compass" />]
     },
     {
       path: ACCOUNT,
       text: "我的",
-      icon: []
+      icon: [<PureIcon n="far fa-user-circle" />, <PureIcon n="fas fa-user-circle" />]
     }
   ]
 };

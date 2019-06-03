@@ -4,7 +4,7 @@ export interface RouteEntity {
   /** 内容 */
   text?: string;
   /** icon, [0] 为普通状态, [1] 为激活状态 */
-  icon?: string[];
+  icon?: string[] | object[];
   /** 未读数 */
   unreadCount?: number;
   /** 路由是否必须吻合 */

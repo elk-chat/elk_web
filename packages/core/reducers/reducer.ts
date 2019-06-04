@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+import * as ChatSDK from '@little-chat/sdk/lib';
 
 import {
   SELECT_CHAT,
@@ -10,21 +11,26 @@ import {
   authState, userInfo
 } from './auth-state';
 
-export function chats(
-  state = {},
+import { FakeChatList } from './fake-data';
+
+interface ChatEntity extends ChatSDK.kproto.IChat {
+
+}
+
+export function chatListData(
+  state: ChatEntity[] = FakeChatList,
   action: ChatActions,
 ) {
   switch (action.type) {
     case SELECT_CHAT:
-
-      break;
+      return state;
     default:
       return state;
   }
 }
 
 const chatReducers = combineReducers({
-  chats,
+  chatListData,
   authState,
   userInfo,
 });

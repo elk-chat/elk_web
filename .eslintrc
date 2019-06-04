@@ -5,7 +5,9 @@
     "react-app"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["react", "@typescript-eslint"],
+  "plugins": [
+    "react", "@typescript-eslint"
+  ],
   "rules": {
     "@typescript-eslint/indent": ["error", 2],
     "@typescript-eslint/explicit-function-return-type": 0,
@@ -38,8 +40,23 @@
     "react/jsx-filename-extension": [
       1,
       {
-        "extensions": [".js", ".jsx", "tsx"]
+        "extensions": [".js", ".jsx", "tsx", "ts"]
       }
-    ]
+    ],
+    "import/no-extraneous-dependencies": ["error", {
+      "devDependencies": true, "packageDir": [
+        "./",
+        "./packages/ui",
+        "./packages/core",
+        "./packages/sdk"
+      ]
+    }]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
   }
 }

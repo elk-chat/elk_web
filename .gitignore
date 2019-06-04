@@ -34,3 +34,6 @@ version.json
 
 _uke-data.js
 version.js
+
+packages/sdk/lib/sdk.d.ts
+packages/sdk/lib/sdk.js

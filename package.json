@@ -8,11 +8,13 @@
   "scripts": {
     "start": "PORT=3445 node ./scripts/start",
     "build": "node ./scripts/build",
+    "postinstall": "npm run init",
+    "init": "npm run complieProto",
     "autoZip": "npm run build; npm run zipBuild;",
     "zipBuild": "mkdir -p ./zip-build; zip -r ./zip-build/build.zip ./build/*",
     "prettier": "prettier -c --write '**/*'",
-    "complieProto": "pbjs ./packages/protocol/lib/koi.proto -t static-module > ./packages/protocol/lib/koi.js; npm run pbts",
-    "pbts": "pbts -o ./packages/protocol/lib/koi.d.ts ./packages/protocol/lib/koi.js",
+    "complieProto": "pbjs ./packages/sdk/lib/sdk.proto -t static-module > ./packages/sdk/lib/sdk.js; npm run pbts",
+    "pbts": "pbts -o ./packages/sdk/lib/sdk.d.ts ./packages/sdk/lib/sdk.js",
     "test": "jest"
   },
   "devDependencies": {

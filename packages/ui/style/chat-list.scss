@@ -1,0 +1,10 @@
+.chat-list {
+  .chat-item {
+    padding: 10px;
+    border-bottom: 1px solid #EEE;
+    background-color: #fefefe;
+    &:hover {
+      background-color: #fafafa;
+    }
+  }
+}

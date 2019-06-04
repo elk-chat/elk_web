@@ -28,9 +28,8 @@ const TabBar: React.SFC<TabBarProps> = ({ routes, RNW }) => (
         routes.map((route) => {
           const { path, text, icon, exact, onClick } = route;
           let Com: string | typeof NavLink = NavLink;
-          let obj = { to: path, activeClassName: "active" };
-          if (exact) obj.exact = true;
-          if (route.onClick) {
+          let obj = { to: path, activeClassName: "active", exact };
+          if (onClick) {
             Com = "a";
             obj = { onClick };
           }

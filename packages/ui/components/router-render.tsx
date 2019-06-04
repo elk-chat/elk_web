@@ -12,40 +12,31 @@ interface RouterRenderProps {
   activeRoute: string;
 }
 
-const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender) => {
+const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterRenderProps) => {
   const { routeConfig, activeRoute, ...other } = propsOfRouterRender;
-  return routeConfig.map((route) => {
-    const {
-      path, props, component
-    } = route;
-    const isActive = activeRoute === path;
-    const C = component;
-    return isActive && (
-      <C
-        {...props}
-        {...other}
-        key={path} />
-    );
-    // return (
-    //   <Route
-    //     key={path}
-    //     {...obj}
-    //     render={(_props) => {
-    //       const initConfig = _props.history.location.state || {};
-    //       const { key } = _props.location;
-    //       return (
-    //         <div className={route.noPadding ? "" : "pb60"}>
-    //           <route.component
-    //             {..._props}
-    //             {...props}
-    //             {...other}
-    //             key={key}
-    //             initConfig={initConfig}/>
-    //         </div>
-    //       );
-    //     }}/>
-    // );
-  });
+  console.log(propsOfRouterRender);
+  return (
+    <div className="main-container">
+      {
+        routeConfig.map((route) => {
+          const {
+            path, props, component
+          } = route;
+          const isActive = activeRoute === path;
+          const C = component;
+          return (
+            <div
+              key={path}
+              className={`route-item ${isActive ? 'active' : ''}`}>
+              <C
+                {...props}
+                {...other} />
+            </div>
+          );
+        })
+      }
+    </div>
+  );
 };
 
 export default RouterRender;

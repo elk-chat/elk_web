@@ -49,6 +49,8 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
 
   unlisten: Function | null = null;
 
+  defaultPath: string | null = null;
+
   constructor(props: RouterHelperProps<P>) {
     super(props);
 
@@ -128,7 +130,7 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
     return nextState;
   }
 
-  selectTab = (activeRoute: string, nextRouterState?: RouterState): void | null => {
+  selectTab = (activeRoute: string, nextRouterState?: RouterState<{}>): void | null => {
     if (nextRouterState) return this.setState(nextRouterState);
     if (!activeRoute) return null;
 
@@ -165,8 +167,16 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
 
   initRoute = () => {
     // let initRoute = resolvePath(location.hash)[0];
+    const { defaultPath } = this;
     const initRoute = getUrlParams()[getRouteKey()];
-    initRoute && this.selectTab(initRoute);
+    if (!initRoute && defaultPath) {
+      onNavigate({
+        type: 'PUSH',
+        route: defaultPath
+      });
+    } else {
+      this.selectTab(initRoute);
+    }
   }
 }
 

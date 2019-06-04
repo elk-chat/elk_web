@@ -3,9 +3,9 @@ import { wrapReqHashUrl } from 'uke-request/url-resolve';
 
 interface NavigateConfig {
   from?: Location;
+  params?: {};
   type: string;
   route: string;
-  params: {};
 }
 
 const history = createBrowserHistory();

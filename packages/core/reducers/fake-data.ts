@@ -1,31 +1,26 @@
 import * as ChatSDK from '@little-chat/sdk/lib';
 
-const FakeChatList: ChatSDK.kproto.IChat[] = [
-  {
-    ID: 1,
-    CreateAt: 1559618145623,
-    UpdatedAt: 1559618545623,
-    ChatType: 1,
-    Title: 'Alex',
-    Disabled: 0,
-  },
-  {
-    ID: 2,
-    CreateAt: 1559618145623,
-    UpdatedAt: 1559618545623,
-    ChatType: 2,
-    Title: 'Blex',
-    Disabled: 0,
-  },
-  {
-    ID: 3,
-    CreateAt: 1559618145623,
-    UpdatedAt: 1559618545623,
-    ChatType: 2,
-    Title: 'Clex',
-    Disabled: 0,
-  },
-];
+interface IChat extends ChatSDK.kproto.IChat {
+  Avatar?: string;
+}
+
+const genFakeData = (count: number = 20): IChat[] => {
+  const res: IChat[] = [];
+  // console.log([...Array(count)].forEach);
+  for (let i = 0; i < count; i++) {
+    res.push({
+      ID: i,
+      CreateAt: 1559618145623,
+      UpdatedAt: 1559618545623,
+      ChatType: 1,
+      Title: `Chat_${i}`,
+      Disabled: 0,
+    });
+  }
+  return res;
+};
+
+const FakeChatList: IChat[] = genFakeData();
 
 export {
   FakeChatList

@@ -7,14 +7,16 @@ import { Link } from 'react-multiple-router';
 
 import { RouteEntity } from '../types';
 
-interface RouteExpand {
+interface RouteExpand extends RouteEntity {
   onClick?: Function;
   hasNew?: boolean;
+  /** icon, [0] 为普通状态, [1] 为激活状态 */
+  icon: string[] | object[];
 }
 
 interface TabBarProps {
   /** routeConfig */
-  routes: (RouteEntity & RouteExpand)[];
+  routes: RouteExpand[];
   /** Native 的函数 */
   RNW: object | null;
 }
@@ -26,7 +28,9 @@ const TabBar: React.SFC<TabBarProps> = ({ routes, RNW }) => (
     <div className="inner">
       {
         routes.map((route) => {
-          const { path, text, icon, exact, onClick } = route;
+          const {
+            path, text, icon, exact, onClick
+          } = route;
           let Com: string | typeof Link = Link;
           let obj = { to: path, activeClassName: "active", exact };
           if (onClick) {

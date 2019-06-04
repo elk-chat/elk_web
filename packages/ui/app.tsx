@@ -11,10 +11,9 @@ import AutoSelector from './auth';
 import pageRoutersConfig from './config/page-routers';
 import getTabRouteConfig from './config/tab-routers';
 import { TabBar, RouterRender } from './components';
+import { CHAT } from './config/path-mapper';
 
 import "./style/style.scss";
-
-const mapStateToProps = state => state;
 
 export interface ChatAppProps {
   authState: AuthState;
@@ -22,10 +21,18 @@ export interface ChatAppProps {
   isMobile: boolean;
 }
 
+declare global {
+  interface Window { INIT_NATIVE_FUNC: Function }
+}
+
+const mapStateToProps = state => state;
+
 class ChatApp extends RouterMultiple<ChatAppProps, {}> {
   static defaultProps = {
-    isMobile: true
+    isMobile: true,
   }
+
+  defaultPath = CHAT;
 
   isNative = false;
 
@@ -52,7 +59,7 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
   render() {
     // console.log(this.props);
     const { authState, applyLogin, ...other } = this.props;
-    const { activeRoute } = this.state;
+    const { activeRoute, routerInfo, routers } = this.state;
     return (
       <React.Fragment>
         <AutoSelector
@@ -61,17 +68,15 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
           {
             () => (
               <div>
-                <div className="main-container">
-                  <RouterRender
-                    activeRoute={activeRoute}
-                    routeConfig={pageRoutersConfig}
-                    {...other} />
-                </div>
+                <RouterRender
+                  activeRoute={activeRoute}
+                  routeConfig={pageRoutersConfig}
+                  {...other} />
                 <TabBar
                   RNW={this.RNW}
                   routes={getTabRouteConfig({
                     unreadCount: 0
-                  })}/>
+                  })} />
               </div>
             )
           }

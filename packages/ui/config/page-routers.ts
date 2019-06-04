@@ -30,11 +30,11 @@ const routersConfig = [
     exact: true,
     component: Account
   },
-  {
-    path: "/n/:component/:p1?/:p2?",
-    noPadding: true,
-    component: Navigator
-  },
+  // {
+  //   path: "/n/:component/:p1?/:p2?",
+  //   noPadding: true,
+  //   component: Navigator
+  // },
 ];
 
 export default routersConfig;

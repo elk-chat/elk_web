@@ -3,7 +3,7 @@
  */
 
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link } from 'react-multiple-router';
 
 import { RouteEntity } from '../types';
 
@@ -27,7 +27,7 @@ const TabBar: React.SFC<TabBarProps> = ({ routes, RNW }) => (
       {
         routes.map((route) => {
           const { path, text, icon, exact, onClick } = route;
-          let Com: string | typeof NavLink = NavLink;
+          let Com: string | typeof Link = Link;
           let obj = { to: path, activeClassName: "active", exact };
           if (onClick) {
             Com = "a";

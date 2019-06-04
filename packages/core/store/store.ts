@@ -10,7 +10,10 @@ export default function createChatStore(preloadedState) {
   const store = createStore(
     chatReducers,
     preloadedState,
-    applyMiddleware(createLogger(), sagaMiddleware)
+    applyMiddleware(
+      // createLogger(),
+      sagaMiddleware
+    )
   );
 
   sagaMiddleware.run(sagas);

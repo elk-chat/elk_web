@@ -3,8 +3,8 @@ import React, { Component } from "react";
 import { AuthState } from '@little-chat/core/types';
 import * as ChatActions from '@little-chat/core/actions';
 import {
-  RouterMultiple
-} from 'react-multiple-router';
+  withRouter, HashRouter, Route, Redirect
+} from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import AutoSelector from './auth';
@@ -22,7 +22,7 @@ export interface ChatAppProps {
   isMobile: boolean;
 }
 
-class ChatApp extends RouterMultiple<ChatAppProps, {}> {
+class ChatApp extends Component<ChatAppProps> {
   static defaultProps = {
     isMobile: true
   }
@@ -40,8 +40,6 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
       }
     };
     setTimeout(() => this.clickLoginBtn(), 100);
-
-    this.initRoute();
   }
 
   clickLoginBtn = () => {
@@ -52,7 +50,6 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
   render() {
     // console.log(this.props);
     const { authState, applyLogin, ...other } = this.props;
-    const { activeRoute } = this.state;
     return (
       <React.Fragment>
         <AutoSelector
@@ -62,11 +59,9 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
             () => (
               <div>
                 <div className="main-container">
-                  <RouterRender
-                    activeRoute={activeRoute}
-                    routeConfig={pageRoutersConfig}
-                    {...other} />
+                  <RouterRender routeConfig={pageRoutersConfig} {...other} />
                 </div>
+                <Route exact path="/" render={() => <Redirect to="/Chat" />} />
                 <TabBar
                   RNW={this.RNW}
                   routes={getTabRouteConfig({
@@ -81,4 +76,12 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
   }
 }
 
-export default connect(mapStateToProps, ChatActions)(ChatApp);
+const MainApp = withRouter(connect(mapStateToProps, ChatActions)(ChatApp));
+
+const RouterWrapper = () => (
+  <HashRouter>
+    <MainApp />
+  </HashRouter>
+);
+
+export default RouterWrapper;

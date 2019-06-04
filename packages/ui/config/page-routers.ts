@@ -9,15 +9,7 @@ import {
   Navigator
 } from '../components';
 
-function addModalPath(arr: RouteEntity[]) {
-  return arr.map((item) => {
-    const newItem = Object.assign({}, item);
-    newItem.path += "/:modal?/:modal2?/:modal3?";
-    return newItem;
-  });
-}
-
-const routersConfig = addModalPath([
+const routersConfig = [
   {
     path: CHAT,
     exact: true,
@@ -43,6 +35,6 @@ const routersConfig = addModalPath([
     noPadding: true,
     component: Navigator
   },
-]);
+];
 
 export default routersConfig;

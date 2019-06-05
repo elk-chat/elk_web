@@ -24,50 +24,38 @@ const replaceHistory = (url: string, params?) => {
   history.replace(url.replace(/\/\//g, '/'), params);
 };
 
-const wrapPushUrl = (pushConfig) => {
+const wrapPushUrl = (pushConfig: NavigateConfig) => {
   const { href, hash } = window.location;
   const targetHash = hash.replace('#/', '').split('?')[0];
-  const { component, route, params } = pushConfig;
-  const paramsObj = typeof params == 'string' ? { id: params } : { ...params };
-  // let paramsStr = '';
-  // let otherParams = {...paramsObj};
-  // for (const key in otherParams) {
-  //   const val = otherParams[key];
-  //   paramsStr += `${key}=${val}&&`;
-  // }
+  const { route, params } = pushConfig;
   let result = wrapReqHashUrl({
     params: {
-      [ROUTE_KEY]: route || component,
-      ...paramsObj
+      ...params,
+      [ROUTE_KEY]: route,
     },
     toBase64: false
   });
-  // let result = `${ROUTE_KEY}=${route || component}/${id}${paramsStr ? ('?' + paramsStr) : ''}`;
-  // let result = `/${route}/${id}${paramsStr ? ('?' + paramsStr) : ''}`;
   result = `${targetHash}${result.replace(/&&$/g, '')}`;
   return result;
 };
 
 /**
- *
+ * 导航者
  * @param {object} config { type: 'PUSH | GO_BACK | LINK', component: route, params: {} }
  */
 const onNavigate = (config: NavigateConfig): void => {
   if (!config) return console.log('Not config');
   const { location } = history;
-  config.from = location;
-  switch (config.type) {
+  const nextConfig = {
+    ...config,
+    from: location
+  };
+  switch (nextConfig.type) {
     case "PUSH":
-      pushToHistory(`#/${wrapPushUrl(config)}`, config);
+      pushToHistory(`#/${wrapPushUrl(nextConfig)}`, nextConfig);
       break;
     case "LINK":
       break;
-    // case "MODAL":
-    //   ShowModal({
-    //     ...config,
-    //     showFuncBtn: false
-    //   })
-    //   break;
     case "GO_BACK":
       history.goBack();
       break;

@@ -7,11 +7,11 @@ import { Link } from 'react-multiple-router';
 
 import { RouteEntity } from '../types';
 
+type IconType = string[] | React.ElementType[];
+
 interface RouteExpand extends RouteEntity {
   onClick?: Function;
   hasNew?: boolean;
-  /** icon, [0] 为普通状态, [1] 为激活状态 */
-  icon: string[] | React.ElementType[];
 }
 
 interface TabBarProps {
@@ -19,12 +19,35 @@ interface TabBarProps {
   routes: RouteExpand[];
   /** Native 的函数 */
   RNW: object | null;
+  /** icon */
+  icon: IconType;
 }
+
+const iconClassName = ['default', 'active'];
+
+const RenderIcon = ({ icons }) => icons.map((i, idx): React.ElementType => {
+  let res;
+  const key = idx;
+  const className = iconClassName[idx];
+  if (React.isValidElement(i)) {
+    res = React.cloneElement(i, {
+      key,
+      classNames: [className]
+    });
+  } else {
+    res = (
+      <div
+        key={key}
+        className={`icon ${className}`}
+        style={{ backgroundImage: `url(${i})` }} />
+    );
+  }
+  return res;
+});
 
 const TabBar: React.SFC<TabBarProps> = ({ routes, RNW }) => (
   <div
-    className="tab-bar"
-    style={{ paddingBottom: RNW && RNW.isIphoneX ? 16 : 0 }}>
+    className="tab-bar">
     <div className="inner">
       {
         routes.map((route) => {
@@ -37,21 +60,10 @@ const TabBar: React.SFC<TabBarProps> = ({ routes, RNW }) => (
             Com = "a";
             obj = { onClick };
           }
-          // 添加提示小点
-          const cls = route.path === "/Account" && route.hasNew ? " new-tip" : "";
           return (
-            <Com {...obj} key={path} className={`tab-label${cls}`}>
+            <Com {...obj} key={path} className="tab-label">
               <div className="icon-wrap">
-                <div
-                  className="icon default"
-                  style={{ backgroundImage: `url(${icon[0]})` }}>
-                  {React.isValidElement(icon[0]) && icon[0]}
-                </div>
-                <div
-                  className="icon active"
-                  style={{ backgroundImage: `url(${icon[1]})` }}>
-                  {React.isValidElement(icon[1]) && icon[1]}
-                </div>
+                <RenderIcon icons={icon} />
               </div>
               <span className="text">{text}</span>
             </Com>

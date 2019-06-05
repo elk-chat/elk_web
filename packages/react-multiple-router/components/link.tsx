@@ -22,7 +22,8 @@ interface LinkProps {
  * @TODO: 完善是否激活的判定
  */
 const Link: React.SFC<LinkProps> = ({
-  to, className = 'link-btn', children, onClick, params
+  to, className = 'link-btn',
+  children, onClick, params
 }) => {
   const activeRoute = getUrlParams()[getRouteKey()];
   const isActive = activeRoute === to;

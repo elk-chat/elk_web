@@ -6,7 +6,6 @@ $tabHeight: 50px;
   left: 0;
   width: 100%;
   z-index: 101;
-  transform: translate(0, 0);
   transition: all 0.3s linear;
   background-color: $bg;
   box-shadow: $shadow;
@@ -17,7 +16,7 @@ $tabHeight: 50px;
     color: $color_2;
   }
   &.down {
-    transform: translate(0, 105%);
+    transform: translateY($tabHeight);
   }
 
   .tab-label {
@@ -31,19 +30,19 @@ $tabHeight: 50px;
     text-align: center;
     color: inherit;
     text-decoration: none;
-    &.new-tip {
-      .icon-wrap {
-        &:after {
-          content: " ";
-          display: block;
-          width: 8px;
-          height: 8px;
-          position: absolute;
-          top: 0;
-          right: 0;
-          border-radius: 50%;
-          background-color: $color_red;
-        }
+    color: $color_2;
+
+    &.active {
+      .icon.default {
+        opacity: 0;
+        // transform: translateY(100%);
+      }
+      .icon.active {
+        opacity: 1;
+        // transform: translateY(0);
+      }
+      .text, .icon {
+        color: $themeColor;
       }
     }
 
@@ -66,31 +65,16 @@ $tabHeight: 50px;
     }
 
     .icon {
-      transition: all 0.3s ease;
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
     .icon.active {
       opacity: 0;
-      transform: scale(1.2);
+      // transform: translateY(100%);
     }
 
     .text {
       font-size: $fontsize_4;
-      color: $color_2;
-    }
-
-    &.active {
-      .icon.default {
-        opacity: 0;
-        transform: scale(1.2);
-      }
-      .icon.active {
-        opacity: 1;
-        transform: scale(1);
-      }
-      .text, .icon {
-        color: $themeColor_1;
-      }
     }
   }
 }

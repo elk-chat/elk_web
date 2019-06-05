@@ -182,16 +182,17 @@ $headerH: 40px;
     justify-content: space-between;
     align-items: center;
     border-radius: 0 0 5px 0;
-    .fa {
+    .icon {
       width: 20px;
       text-align: center;
     }
-    input {
+    .typing-area {
       border: 1px solid #DDD;
       height: $textInputHeight;
       line-height: $textInputHeight;
       border-radius: 3px;
-      width: 90%;
+      // width: 90%;
+      flex: 1;
       padding: 0 10px;
       &[disabled] {
         background-color: #f3f3f3;

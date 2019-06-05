@@ -351,7 +351,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
     const textPanel = (
       <div className="editor-panel">
-        <input type="text" ref={e => this.textContent = e}
+        <input className="typing-area" type="text" ref={e => this.textContent = e}
           onPaste={e => this.onPasteInput(e)}
           contentEditable
           onKeyPress={(e) => {

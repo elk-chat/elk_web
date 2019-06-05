@@ -13,7 +13,7 @@ export interface UserInfo {
 // Chat
 
 export interface ChatItemEntity extends ChatSDK.kproto.IChat {
-
+  ID: number;
 }
 
 export interface ChatContentState {

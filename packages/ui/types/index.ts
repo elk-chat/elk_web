@@ -7,6 +7,7 @@ export interface RouteEntity {
   unreadCount?: number;
   /** 路由是否必须吻合 */
   exact?: boolean;
+  /** icon */
   icon?: string[] | {}[];
   /** 是否不需要 padding */
   noPadding?: boolean;

@@ -7,7 +7,7 @@ export class GenerateThumbs {
 
   fileList = {};
 
-  onLoad = () => {};
+  onLoad = (base64Data: string, fileID: string) => {};
 
   addFileList(fileList) {
     if (!fileList && fileList.length === 0) return;

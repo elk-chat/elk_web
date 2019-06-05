@@ -9,16 +9,19 @@ const pageRoutersConfig = [
   {
     path: CHAT,
     exact: true,
+    title: 'Chat',
     component: ChatList
   },
   {
     path: CONTACT,
     exact: true,
+    title: '联系人',
     component: Contact
   },
   {
     path: DISCOVER,
     exact: true,
+    title: '发现',
     component: Discover
   },
   {

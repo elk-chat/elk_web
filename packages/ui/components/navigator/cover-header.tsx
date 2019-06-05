@@ -8,12 +8,12 @@ export default class MobdileHeadBar extends Component {
       back,
       RightBtns,
       getRedirectCount,
-      transparent, 
+      transparent,
     } = this.props;
     return (
       <div
         key={1}
-        className={"mobile-cover-head" + (transparent ? "" : " wavebg")}>
+        className={`mobile-cover-head${transparent ? "" : " wavebg"}`}>
         {back && (
           <span
             className="back icon"
@@ -23,8 +23,7 @@ export default class MobdileHeadBar extends Component {
               } else {
                 history.push("/");
               }
-            }}
-          />
+            }}/>
         )}
         <span className="title">{title}</span>
         {RightBtns && <RightBtns {...this.props} />}

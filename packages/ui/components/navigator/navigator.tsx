@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Icon } from 'ukelli-ui/core/icon';
 
-import MobileHeadBar from "./mobile-head-bar";
+import NavHeader from "./nav-header";
 import MobileCoverHead from "./mobile-cover-head";
 
 import { RouteEntity } from '../../types';
@@ -39,12 +39,10 @@ export default class Navigator extends Component<NavigatorProps, {}> {
     const C = navRoutersConfig[Com].component;
     return (
       <div className="navigator-page">
-        <div className="navigator-header">
-          <Icon n="chevron-left"
-            classNames={['back-btn']}
-            onClick={e => onNavigate({ type: 'GO_BACK' })} />
-          {Name}
-        </div>
+        <NavHeader
+          {...this.props}
+          back
+          title={Name} />
         <div className="navigator-content">
           <C {...this.props} />
         </div>

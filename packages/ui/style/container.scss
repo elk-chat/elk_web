@@ -1,9 +1,9 @@
 $tabHeight: 50px;
+$headHeight: 50px;
 
 .main-container {
   .route-item {
     @include fill;
-    padding-bottom: $tabHeight;
     visibility: hidden;
     height: calc(100vh - #{$tabHeight});
     overflow: auto;
@@ -12,5 +12,19 @@ $tabHeight: 50px;
     &.active {
       visibility: visible;
     }
+  }
+}
+.route-header {
+  height: $headHeight;
+  box-shadow: 0 2px 4px rgba(#000, 0.06);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .back-btn {
+    position: absolute;
+    left: 0;
+    padding: 20px;
   }
 }

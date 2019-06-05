@@ -1,10 +1,12 @@
 import React from "react";
 // import { Route } from 'react-router-dom';
+import NavHeader from "./navigator/nav-header";
 
 import { RouteEntity } from '../types';
 
 interface RouteEntityEx extends RouteEntity {
   props?: object;
+  title?: string;
 }
 
 interface RouterRenderProps {
@@ -12,6 +14,8 @@ interface RouterRenderProps {
   activeRoute: string;
   /** 导航器的标志 */
   navRouterMark: string;
+  /** onNavigate */
+  onNavigate: Function;
 }
 
 const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterRenderProps) => {
@@ -21,7 +25,7 @@ const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterR
       {
         routeConfig.map((route) => {
           const {
-            path, props, component
+            path, props, component, title
           } = route;
           const isActive = activeRoute === path;
           const C = component;
@@ -29,6 +33,9 @@ const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterR
             <div
               key={path}
               className={`route-item ${isActive ? 'active' : ''}`}>
+              <NavHeader
+                onNavigate={propsOfRouterRender.onNavigate}
+                title={title} />
               <C
                 {...props}
                 {...other} />

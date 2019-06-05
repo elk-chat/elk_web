@@ -10,7 +10,8 @@ import { connect } from 'react-redux';
 import AutoSelector from './auth';
 import pageRoutersConfig from './config/page-routers';
 import getTabRouteConfig from './config/tab-routers';
-import { TabBar, RouterRender } from './components';
+import navRoutersConfig from './config/navigator-routers';
+import { TabBar, RouterRender, Navigator } from './components';
 import { CHAT } from './config/path-mapper';
 
 import "./style/style.scss";
@@ -26,6 +27,7 @@ declare global {
 }
 
 const mapStateToProps = state => state;
+const NavRouterMark = "N";
 
 class ChatApp extends RouterMultiple<ChatAppProps, {}> {
   static defaultProps = {
@@ -56,10 +58,16 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
     document.querySelector('.login-btn').click();
   }
 
+  getProps = () => ({
+    ...this.props,
+    onNavigate: this.onNavigate,
+  })
+
   render() {
     // console.log(this.props);
     const { authState, applyLogin, ...other } = this.props;
-    const { activeRoute, routerInfo, routers } = this.state;
+    const { activeRoute, routerInfo } = this.state;
+    const RouterConfigForNavigator = (activeRoute === NavRouterMark) && routerInfo[NavRouterMark];
     return (
       <React.Fragment>
         <AutoSelector
@@ -69,14 +77,23 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
             () => (
               <div>
                 <RouterRender
+                  {...this.getProps()}
                   activeRoute={activeRoute}
                   routeConfig={pageRoutersConfig}
-                  {...other} />
+                  navRouterMark={NavRouterMark} />
                 <TabBar
                   RNW={this.RNW}
                   routes={getTabRouteConfig({
                     unreadCount: 0
                   })} />
+                {
+                  RouterConfigForNavigator && (
+                    <Navigator
+                      {...this.getProps()}
+                      navRoutersConfig={navRoutersConfig}
+                      currRouterConfig={RouterConfigForNavigator} />
+                  )
+                }
               </div>
             )
           }

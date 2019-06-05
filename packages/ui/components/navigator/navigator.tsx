@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Icon } from 'ukelli-ui/core/icon';
 
 import MobileHeadBar from "./mobile-head-bar";
 import MobileCoverHead from "./mobile-cover-head";
@@ -10,42 +11,43 @@ interface NavigatorConfigEntity {
   title?: string;
   noHead?: boolean;
   coverHead?: boolean;
+  component: () => React.ElementType;
 }
 
 interface NavigatorProps {
-  navigatorConfig: (NavigatorConfigEntity & RouteEntity)[];
-  getRedirectCount: Function;
+  /** 导航配置，对应的 currRouterConfig 中的配置 */
+  navRoutersConfig: {
+    [pathName: string]: NavigatorConfigEntity;
+  };
+  onNavigate: Function;
+  /** 当前激活的路由配置 */
+  currRouterConfig: {
+    params: {
+      /** 对应 navRoutersConfig 中的 path 的 component */
+      Com: string;
+      /** 该页面的名字 */
+      Name: string;
+    };
+  };
 }
 
-export default class Navigator extends Component<NavigatorProps> {
+export default class Navigator extends Component<NavigatorProps, {}> {
   render() {
-    const { getRedirectCount, navigatorConfig } = this.props;
-    // const routes = navigatorConfig.map(route => (
-    //   <Route
-    //     key={route.path}
-    //     path={route.path}
-    //     render={() => <route.component {...this.props} {...route} />}/>
-    // ));
-    // const routesNav = navigatorConfig.map(route => (
-    //   <Route
-    //     key={route.path}
-    //     path={route.path}
-    //     render={() => {
-    //       if (route.noHead) return null;
-    //       const Com = route.coverHead ? MobileCoverHead : MobileHeadBar;
-    //       return (
-    //         <Com
-    //           {...this.props}
-    //           title={route.title}
-    //           getRedirectCount={getRedirectCount}
-    //           RightBtns={route.rightBtns}
-    //           NavTabs={route.NavTabs}
-    //           back={1}/>
-    //       );
-    //     }}/>
-    // ));
+    const { currRouterConfig, navRoutersConfig, onNavigate } = this.props;
+    if (!currRouterConfig) return <span />;
+    const { Com, Name } = currRouterConfig.params;
+    const C = navRoutersConfig[Com].component;
     return (
-      <div>
+      <div className="navigator-page">
+        <div className="navigator-header">
+          <Icon n="chevron-left"
+            classNames={['back-btn']}
+            onClick={e => onNavigate({ type: 'GO_BACK' })} />
+          {Name}
+        </div>
+        <div className="navigator-content">
+          <C {...this.props} />
+        </div>
         {/* {routesNav}
         {routes} */}
       </div>

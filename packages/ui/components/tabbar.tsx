@@ -11,7 +11,7 @@ interface RouteExpand extends RouteEntity {
   onClick?: Function;
   hasNew?: boolean;
   /** icon, [0] 为普通状态, [1] 为激活状态 */
-  icon: string[] | object[];
+  icon: string[] | React.ElementType[];
 }
 
 interface TabBarProps {

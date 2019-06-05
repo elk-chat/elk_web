@@ -5,7 +5,7 @@ $tabHeight: 50px;
     @include fill;
     padding-bottom: $tabHeight;
     visibility: hidden;
-    height: calc(100vh - $tabHeight);
+    height: calc(100vh - #{$tabHeight});
     overflow: auto;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;

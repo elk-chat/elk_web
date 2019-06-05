@@ -19,6 +19,10 @@ interface RouterEntity {
   [propName: string]: {
     params: {
       _R: string;
+      /** 对应 navRoutersConfig 中的 path 的 component */
+      Com: string;
+      /** 该页面的名字 */
+      Name: string;
     };
   };
 }
@@ -168,15 +172,19 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
   initRoute = () => {
     // let initRoute = resolvePath(location.hash)[0];
     const { defaultPath } = this;
-    const initRoute = getUrlParams()[getRouteKey()];
-    if (!initRoute && defaultPath) {
-      onNavigate({
-        type: 'PUSH',
-        route: defaultPath
-      });
-    } else {
-      this.selectTab(initRoute);
-    }
+    // const initRoute = getUrlParams()[getRouteKey()];
+    defaultPath && onNavigate({
+      type: 'PUSH',
+      route: defaultPath
+    });
+    // if (!initRoute && defaultPath) {
+    //   onNavigate({
+    //     type: 'PUSH',
+    //     route: defaultPath
+    //   });
+    // } else {
+    //   this.selectTab(initRoute);
+    // }
   }
 }
 

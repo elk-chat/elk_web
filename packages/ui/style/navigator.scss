@@ -1,0 +1,26 @@
+$navHeadHeight: 50px;
+
+.navigator-page {
+  @include fill;
+  height: 100vh;
+  overflow: auto;
+  background-color: #FFF;
+  z-index: 999;
+  .navigator-content {
+    height: calc(100vh - #{$navHeadHeight});
+  }
+  .navigator-header {
+    height: $navHeadHeight;
+    box-shadow: 0 2px 4px rgba(#000, 0.06);
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .back-btn {
+      position: absolute;
+      left: 0;
+      padding: 20px;
+    }
+  }
+}

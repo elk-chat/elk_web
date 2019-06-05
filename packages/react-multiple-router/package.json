@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "devDependencies": {},
   "peerDependencies": {
-    "uke-request": "^0.13.6",
     "basic-helper": "^2.0.0",
     "react": "^16.8.6"
   },

@@ -1,7 +1,8 @@
-@import './var.scss';
-@import './black_var.scss';
-@import 'ukelli-ui/style/index.scss';
+@import './index.scss';
 
-@import './tabbar.scss';
-@import './chat-list.scss';
-@import './container.scss';
+.vertical-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

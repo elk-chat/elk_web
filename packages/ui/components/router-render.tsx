@@ -10,11 +10,12 @@ interface RouteEntityEx extends RouteEntity {
 interface RouterRenderProps {
   routeConfig: RouteEntityEx[];
   activeRoute: string;
+  /** 导航器的标志 */
+  navRouterMark: string;
 }
 
 const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterRenderProps) => {
   const { routeConfig, activeRoute, ...other } = propsOfRouterRender;
-  console.log(propsOfRouterRender);
   return (
     <div className="main-container">
       {

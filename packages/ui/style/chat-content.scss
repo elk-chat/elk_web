@@ -107,28 +107,29 @@ $headerH: 40px;
       }
     }
     .msg-bubble {
+      margin-bottom: 10px;
       .fail-msg {
         color: #cb7078;
         margin-right: 10px;
         cursor: pointer;
       }
-      .msg-c {
+      .msg-item.text {
         display: flex;
-        margin: 5px 30px;
+        margin: 5px;
         word-break: break-all;
       }
       .msg {
         display: inline-block;
         padding: 3px 10px;
         border-radius: 3px;
-        color: #FFF;
-        background-color: $colorBlue;
+        background-color: #e6e6e6;
+        color: #444;
         -webkit-user-select: text;
         -ms-user-select: text;
         -moz-user-select: text;
         user-select: text;
       }
-      .msg-img {
+      .msg-item.img {
         height: auto;
         margin: 5px 0 5px;
         border-radius: 4px;
@@ -136,20 +137,24 @@ $headerH: 40px;
           max-width: 60%;
         }
       }
+      .unit {
+        margin: 0 10px;
+      }
       .user-mark {
         padding: 10px 0 0;
         display: flex;
         align-items: center;
-        .username {
-          margin: 0 10px;
-          color: $colorCyan;
-        }
+      }
+      .username {
+        color: #AAA;
       }
       &.me {
-        .msg-c {
+        .msg-item {
           flex-direction: row-reverse;
         }
-        .msg-img {
+        .msg-item.text {
+        }
+        .msg-item.img {
           &:after {
             content: ".";
             display: block;
@@ -169,8 +174,8 @@ $headerH: 40px;
           }
         }
         .msg {
-          background-color: #e6e6e6;
-          color: #444;
+          color: #FFF;
+          background-color: $colorBlue;
         }
       }
     }

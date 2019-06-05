@@ -1,7 +1,7 @@
 import { CHAT, CONTACT, DISCOVER, ACCOUNT } from './path-mapper';
 
 import ChatList from '../pages/chat-list';
-import Contact from '../pages/contact';
+import ContactList from '../pages/contact-list';
 import Discover from '../pages/discover';
 import Account from '../pages/account';
 
@@ -16,7 +16,7 @@ const pageRoutersConfig = [
     path: CONTACT,
     exact: true,
     title: '联系人',
-    component: Contact
+    component: ContactList
   },
   {
     path: DISCOVER,

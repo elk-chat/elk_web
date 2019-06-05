@@ -1,15 +1,7 @@
 import React from 'react';
 import { HasValue, DateFormat } from 'basic-helper';
-
 import { Avatar, Icon } from 'ukelli-ui';
-
 import { ChatItemEntity, ChatContentState } from '@little-chat/core/types';
-
-import { GenerateThumbs } from '../utils/thumb-img-generator';
-
-const generateThumb = new GenerateThumbs();
-
-const timeDisplayDelay = 5 * 60 * 1000;
 
 interface ChatContentProps {
   onQueryHistory: Function;
@@ -18,6 +10,9 @@ interface ChatContentProps {
   chatContentData: ChatContentState;
   userInfo: {};
 }
+
+const timeDisplayDelay = 5 * 60 * 1000;
+const msgTypeMapper = ['text', 'img'];
 
 export default class ChatContent extends React.PureComponent<ChatContentProps, {}> {
   isAddDrapListener: boolean = false;
@@ -36,79 +31,30 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
   msgPanelHeight!: number;
 
-  bindDragEnevt: boolean = false;
-
   constructor(props: {}) {
     super(props);
     this.page = 0;
     this.state = {
       page: 0,
-      limit: 12
+      limit: 12,
+      showDragArea: false
     };
   }
 
+  toggleDragArea = (isShow: boolean) => {
+    this.setState({
+      showDragArea: !!isShow
+    });
+  }
+
   addFile() {
-    this.addClassToDrapElem(this.scrollContent);
+    this.toggleDragArea(true);
   }
 
   addFileFromInput = (e) => {
     // console.log(e.target.files);
     if (e.target.files.length === 0) return;
     this.chooseFile(e.target.files);
-  }
-
-  addClassToDrapElem = (elem: HTMLElement | null) => {
-    elem && elem.classList.add('drapping');
-  }
-
-  removeClassToDrapElem = (elem: HTMLElement | null) => {
-    elem && elem.classList.remove('drapping');
-  }
-
-  componentWillUnmount() {
-    this.removeDropEvent();
-  }
-
-  addDropEvent = (elem: HTMLElement) => {
-    if (!elem || this.bindDragEnevt) return;
-    elem.addEventListener('dragenter', this.dragenterEvent, false);
-    elem.addEventListener('dragleave', this.dragleaveEvent, false);
-    elem.addEventListener('dragover', this.dragoverEvent, false);
-    elem.addEventListener('drop', this.drogEvent, false);
-    this.drapPanel = elem;
-    this.bindDragEnevt = true;
-  }
-
-  removeDropEvent = () => {
-    const elem = this.drapPanel;
-    if (!elem || !this.bindDragEnevt) return;
-    elem.removeEventListener('dragenter', this.dragenterEvent, false);
-    elem.removeEventListener('dragleave', this.dragleaveEvent, false);
-    elem.removeEventListener('dragover', this.dragoverEvent, false);
-    elem.removeEventListener('drop', this.drogEvent, false);
-    this.bindDragEnevt = false;
-  }
-
-  dragenterEvent = (e) => {
-    e.preventDefault();
-    this.addClassToDrapElem(this.scrollContent);
-  }
-
-  dragleaveEvent = (e) => {
-    e.preventDefault();
-    this.removeClassToDrapElem(this.scrollContent);
-  }
-
-  dragoverEvent = (e) => {
-    e.preventDefault();
-  }
-
-  drogEvent = (e) => {
-    e.preventDefault();
-
-    const fileList = e.dataTransfer.files;
-
-    this.chooseFile(fileList);
   }
 
   onPasteInput = (event) => {
@@ -122,7 +68,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
           const base64Data: string = event.target.result;
           const img = this.convertBase64ToImg(base64Data);
           this.addImgToPanel(img);
-          this.addClassToDrapElem(this.scrollContent);
+          this.toggleDragArea(true);
           this.planningImgList.push(base64Data);
           // console.log(event.target.result)
         }; // data url!
@@ -142,19 +88,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   addImgToPanel(img) {
     if (!img) return;
     const { previewGroup } = this;
-    previewGroup.appendChild(img);
-  }
-
-  chooseFile(fileList) {
-    if (!fileList && fileList[0].type.indexOf('image') === -1) return;
-
-    generateThumb.onLoad = (base64Data, fileId) => {
-      this.planningImgList.push(base64Data);
-      const img = this.convertBase64ToImg(base64Data);
-      this.addImgToPanel(img);
-    };
-    generateThumb.addFileList(fileList);
-    generateThumb.generates();
+    previewGroup && previewGroup.appendChild(img);
   }
 
   queryHistory(nextProps, skip, scrollToBtn = true) {
@@ -190,19 +124,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
         e.classList.add('ready');
       });
     }
-  }
-
-  onCancelPic = () => {
-    const { scrollContent, drapPanel } = this;
-    this.removeClassToDrapElem(scrollContent);
-    this.onClearAllPic();
-  }
-
-  onClearAllPic = () => {
-    const { previewGroup } = this;
-    previewGroup.innerHTML = '';
-    this.planningImgList = [];
-    generateThumb.clearFileList();
   }
 
   reSendMsg(reSendMsgData) {
@@ -246,8 +167,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     return chatContentData[activeChat.ID] || [];
   }
 
-  getAllChatItems() {
-    const { chatContentData, userInfo } = this.props;
+  renderChatMsgs() {
+    const { chatContentData, userInfo, activeChat } = this.props;
+    const isGroupChat = activeChat.ChatType === 1;
     const myName = userInfo.UserName;
     let prevTime = 0;
     let prevUsername = '';
@@ -284,14 +206,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
         );
       }
 
-      const userAvatarElem = timeout || !isSameUserMsg && (
-        <div className="user-mark">
-          <Avatar size={30}>
-            {displayName[0]}
-          </Avatar>
-          <span className="username">{(displayName).replace('cs_', '')}</span>
-        </div>
-      );
+      // const userAvatarElem = (timeout || !isSameUserMsg) && (
+      //   <div className="user-mark">
+      //     <Avatar size={30}>
+      //       {displayName[0]}
+      //     </Avatar>
+      //   </div>
+      // );
 
       switch (true) {
         case FAIL_MSG_QUEUE[msgID]:
@@ -304,16 +225,12 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
       switch (MsgType) {
         case 0:
           msgUnit = (
-            <div className="msg-c">
-              <span className="msg">{statusDOM}{Message}</span>
-            </div>
+            <span className="msg">{statusDOM}{Message}</span>
           );
           break;
         case 1:
           msgUnit = (
-            <div className="msg-img">
-              <img src={Message} alt="" />
-            </div>
+            <img src={Message} alt="" />
           );
           break;
         default:
@@ -328,8 +245,22 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
         <div
           className={bubbleClass} key={idx}>
           {timeElem}
-          {userAvatarElem}
-          {msgUnit}
+          {/* {userAvatarElem} */}
+          <div className={`msg-item ${msgTypeMapper[MsgType]}`}>
+            <span onClick={(e) => {
+              console.log(e);
+            }}>
+              <Avatar size={30}>
+                {displayName[0]}
+              </Avatar>
+            </span>
+            <div className="unit">
+              {
+                !isMe && isGroupChat && <div className="username">{displayName}</div>
+              }
+              {msgUnit}
+            </div>
+          </div>
         </div>
       );
 
@@ -344,7 +275,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
         if (e) this.msgPanelHeight = e.offsetHeight;
       }}>
         <div className="msg-panel">
-          {this.getAllChatItems()}
+          {this.renderChatMsgs()}
         </div>
       </div>
     );
@@ -357,35 +288,14 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
           onKeyPress={(e) => {
             if (e.charCode === 13) this.sendMsg(e.target.value);
           }}/>
-        <span className="file-btn item" onClick={e => this.addFile()}>
+        {/* <span className="file-btn item" onClick={e => this.addFile()}>
           <Icon n="file"/>
-        </span>
-      </div>
-    );
-
-    const drapArea = (
-      <div className="drap-panel">
-        <div className="drap-area" ref={this.addDropEvent} />>
-        <span className="tip">将图片拖到此区域</span>
-        <div id="previewGroup" ref={e => this.previewGroup = e} />
-        <div className="action">
-          <button className="btn hola primary" onClick={this._onSendImage}
-            disabled={!activeChat.ID}>
-            发送
-          </button>
-          <span className="btn hola default" onClick={this.onCancelPic}>取消</span>
-          <span className="btn hola default" onClick={this.onClearAllPic}>清空</span>
-          <span className="image-button btn hola default">
-            选择文件
-            <input className="btn hola default" type="file" onChange={this.addFileFromInput}/>
-          </span>
-        </div>
+        </span> */}
       </div>
     );
 
     return (
       <section className="chat-panel-container" ref={e => this.scrollContent = e}>
-        {drapArea}
         <div className="scroll-content" ref={this.setScrollContent}>
           {chatPanelContainer}
         </div>

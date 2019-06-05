@@ -1,6 +1,8 @@
+import { ChatItemEntity } from './state';
+
 export interface ChatActions {
   type: string;
-  chatID: string;
+  chatEntity: ChatItemEntity;
 }
 
 export interface ActionType {

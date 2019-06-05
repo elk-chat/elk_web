@@ -3,13 +3,13 @@ import {
 } from "@little-chat/sdk";
 
 import {
-  ChatActions
+  ChatActions, ChatItemEntity
 } from '../types';
 
 export const SELECT_CHAT = "SELECT_CHAT";
-export function selectChat(chatID: string): ChatActions {
+export function selectChat(chatEntity: ChatItemEntity): ChatActions {
   return {
-    chatID,
+    chatEntity,
     type: SELECT_CHAT,
   };
 }

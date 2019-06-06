@@ -13,11 +13,11 @@ interface ContactDetailProps extends UserInfo {
 export default class ContactDetail extends React.Component<ContactDetailProps, {}> {
   render() {
     const { contact } = this.props;
-    const { UserName, Avatar } = contact;
+    // const { UserName, Avatar } = contact;
 
     return (
       <div className="contact-detail">
-        {UserName}
+        {'UserName'}
       </div>
     );
   }

@@ -2,6 +2,8 @@ import { Random } from 'basic-helper';
 
 import * as ChatSDK from '@little-chat/sdk/lib';
 
+import FakeChatMsgDatas from './fake-chat-msg-data';
+
 interface IChat extends ChatSDK.kproto.IChat {
   Avatar?: string;
 }
@@ -32,8 +34,8 @@ const getFakeChatContent = (count: number = 50) => {
       SendTime: 1559618145623,
       UpdatedAt: 1559618545623,
       MsgType: 0,
-      FromUser: randomUserColl[Random([0, 3])],
-      Message: `Chat_Content_${i}`,
+      FromUser: randomUserColl[Random([0, randomUserColl.length])],
+      Message: FakeChatMsgDatas[Random([0, FakeChatMsgDatas.length])],
     };
   }
   return res;

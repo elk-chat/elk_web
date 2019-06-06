@@ -1,16 +1,29 @@
 $tabHeight: 50px;
 $headHeight: 50px;
 
+body {
+  overflow: hidden;
+}
+
 .main-container {
-  .route-item {
+  @include fill;
+  overflow: hidden;
+  .page-item {
     @include fill;
     visibility: hidden;
     height: calc(100vh - #{$tabHeight});
-    overflow: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
+    .page-content {
+      height: 100%;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
     &.active {
       visibility: visible;
+    }
+    &.has-header {
+      .page-content {
+        height: calc(100vh - #{$tabHeight + $headHeight});
+      }
     }
   }
 }

@@ -29,16 +29,19 @@ const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterR
           } = route;
           const isActive = activeRoute === path;
           const C = component;
+          const hasNavHeader = !!title;
           return (
             <div
               key={path}
-              className={`route-item ${isActive ? 'active' : ''}`}>
+              className={`page-item ${isActive ? 'active' : ''} ${hasNavHeader ? 'has-header' : ''}`}>
               <NavHeader
                 onNavigate={propsOfRouterRender.onNavigate}
                 title={title} />
-              <C
-                {...props}
-                {...other} />
+              <div className="page-content">
+                <C
+                  {...props}
+                  {...other} />
+              </div>
             </div>
           );
         })

@@ -2,12 +2,18 @@ $navHeadHeight: 50px;
 
 .navigator-page {
   @include fill;
-  height: 100vh;
+  // height: 100vh;
   overflow: auto;
   background-color: #FFF;
   z-index: 999;
+  opacity: 0;
+  visibility: hidden;
   .navigator-content {
     height: calc(100vh - #{$navHeadHeight});
+  }
+  &.active {
+    opacity: 1;
+    visibility: visible;
   }
 }
 

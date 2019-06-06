@@ -60,6 +60,8 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
 
   getProps = () => ({
     ...this.props,
+    ...this.state,
+    NavRouterMark,
     onNavigate: this.onNavigate,
   })
 
@@ -67,7 +69,6 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
     // console.log(this.props);
     const { authState, applyLogin, ...other } = this.props;
     const { activeRoute, routerInfo } = this.state;
-    const RouterConfigForNavigator = (activeRoute === NavRouterMark) && routerInfo[NavRouterMark];
     return (
       <React.Fragment>
         <AutoSelector
@@ -86,14 +87,11 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
                   routes={getTabRouteConfig({
                     unreadCount: 0
                   })} />
-                {
-                  RouterConfigForNavigator && (
-                    <Navigator
-                      {...this.getProps()}
-                      navRoutersConfig={navRoutersConfig}
-                      currRouterConfig={RouterConfigForNavigator} />
-                  )
-                }
+                <Navigator
+                  {...this.getProps()}
+                  activeRoute={activeRoute}
+                  navRoutersConfig={navRoutersConfig}
+                  currRouterConfig={routerInfo[NavRouterMark]} />
               </div>
             )
           }

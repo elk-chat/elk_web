@@ -1,14 +1,16 @@
 import React from 'react';
 import { HasValue, DateFormat } from 'basic-helper';
 import { Avatar, Icon } from 'ukelli-ui';
-import { ChatItemEntity, ChatContentState } from '@little-chat/core/types';
+import { ChatItemEntity, ChatContentState, UserInfo } from '@little-chat/core/types';
+import { Link } from 'react-multiple-router';
 
 interface ChatContentProps {
   onQueryHistory: Function;
   onSendMsg: Function;
   activeChat: ChatItemEntity;
   chatContentData: ChatContentState;
-  userInfo: {};
+  NavRouterMark: string;
+  userInfo: UserInfo;
 }
 
 const timeDisplayDelay = 5 * 60 * 1000;
@@ -31,7 +33,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
   msgPanelHeight!: number;
 
-  constructor(props: {}) {
+  constructor(props: ChatContentProps) {
     super(props);
     this.page = 0;
     this.state = {
@@ -45,16 +47,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     this.setState({
       showDragArea: !!isShow
     });
-  }
-
-  addFile() {
-    this.toggleDragArea(true);
-  }
-
-  addFileFromInput = (e) => {
-    // console.log(e.target.files);
-    if (e.target.files.length === 0) return;
-    this.chooseFile(e.target.files);
   }
 
   onPasteInput = (event) => {
@@ -117,7 +109,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     ++this.page;
   }
 
-  setScrollContent = (e: HTMLElement) => {
+  scrollToBottom = (e: HTMLDivElement | null): void => {
+    this.scrollContent = e;
     if (e) {
       setTimeout(() => {
         e.scrollTop = this.msgPanelHeight;
@@ -158,8 +151,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     if (!activeChat.ID || this.planningImgList.length === 0) return;
 
     this.planningImgList.forEach(imgData => this.sendMsg(imgData, 1));
-    this.onClearAllPic();
-    this.onCancelPic();
+    // this.onClearAllPic();
+    // this.onCancelPic();
   }
 
   getActiveChatContent() {
@@ -172,7 +165,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     const isGroupChat = activeChat.ChatType === 1;
     const myName = userInfo.UserName;
     let prevTime = 0;
-    let prevUsername = '';
+    // let prevUsername = '';
     const activeChatContent = this.getActiveChatContent();
     // let _activeChatContent = [...activeChatContent].reverse();
 
@@ -188,14 +181,14 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
       const isMe = FromUser === myName;
       const displayName = isMe ? myName : FromUser;
 
-      const isSameUserMsg = prevUsername === FromUser;
+      // const isSameUserMsg = prevUsername === FromUser;
       const timeout = SendTime - prevTime > timeDisplayDelay;
 
       let timeElem;
       let statusDOM;
       let msgUnit;
 
-      if (!isSameUserMsg) prevUsername = FromUser;
+      // if (!isSameUserMsg) prevUsername = FromUser;
       if (timeout) {
         prevTime = SendTime;
         timeElem = (
@@ -247,13 +240,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
           {timeElem}
           {/* {userAvatarElem} */}
           <div className={`msg-item ${msgTypeMapper[MsgType]}`}>
-            <span onClick={(e) => {
-              console.log(e);
+            <Link to={this.props.NavRouterMark} params={{
+              Com: 'ContactDetail',
             }}>
               <Avatar size={30}>
                 {displayName[0]}
               </Avatar>
-            </span>
+            </Link>
             <div className="unit">
               {
                 !isMe && isGroupChat && <div className="username">{displayName}</div>
@@ -269,7 +262,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   }
 
   render() {
-    const { activeChat } = this.props;
+    // const { activeChat } = this.props;
     const chatPanelContainer = (
       <div className="msg-panel-container" ref={(e) => {
         if (e) this.msgPanelHeight = e.offsetHeight;
@@ -281,8 +274,12 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     );
 
     const textPanel = (
-      <div className="editor-panel">
-        <input className="typing-area" type="text" ref={e => this.textContent = e}
+      <div className="editor-panel" ref={(e) => {
+        if (!e || !this.scrollContent) return;
+        /** 响应此区域的高度变化，设置 this.scrollContent 的padding-bottom */
+        this.scrollContent.style.paddingBottom = `${e.offsetHeight  }px`;
+      }}>
+        <input className="typing-area" type="text" ref={(e) => { this.textContent = e; }}
           onPaste={e => this.onPasteInput(e)}
           contentEditable
           onKeyPress={(e) => {
@@ -295,8 +292,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     );
 
     return (
-      <section className="chat-panel-container" ref={e => this.scrollContent = e}>
-        <div className="scroll-content" ref={this.setScrollContent}>
+      <section className="chat-panel-container" ref={(e) => { this.scrollContent = e; }}>
+        <div className="scroll-content" ref={this.scrollToBottom}>
           {chatPanelContainer}
         </div>
         {textPanel}

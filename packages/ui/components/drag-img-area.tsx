@@ -43,6 +43,16 @@ export default class DragImgArea extends Component {
     generateThumb.clearFileList();
   }
 
+  addFileFromInput = (e) => {
+    // console.log(e.target.files);
+    if (e.target.files.length === 0) return;
+    this.chooseFile(e.target.files);
+  }
+
+  addFile() {
+    this.toggleDragArea(true);
+  }
+
   chooseFile(fileList) {
     if (!fileList && fileList[0].type.indexOf('image') === -1) return;
 

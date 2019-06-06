@@ -8,14 +8,14 @@ import {
   getRouteKey, onNavigate
 } from '../utils';
 
-interface RouterHelperProps<P> {
+export interface RouterHelperProps<P> {
   /** 是否缓存 state */
   cacheState?: boolean;
   /** 最大共存路由 */
   maxRouters: number;
 }
 
-interface RouterEntity {
+export interface RouterEntity {
   [propName: string]: {
     params: {
       _R: string;
@@ -27,7 +27,7 @@ interface RouterEntity {
   };
 }
 
-interface RouterState<S> {
+export interface RouterState<S> {
   routers: string[];
   routerInfo: RouterEntity;
   activeRouteIdx: number;

@@ -1,0 +1,17 @@
+.contact-list {
+  .c-item {
+    padding: 10px;
+    border-bottom: 1px solid #EEE;
+    &:focus,&:hover {
+      background-color: #f7f7f7;
+    }
+    .uke-avatar .avatar {
+      border-radius: 3px;
+      margin-right: 10px;
+    }
+  }
+}
+
+.contact-detail {
+
+}

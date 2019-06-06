@@ -11,8 +11,6 @@ export function chatListData(
   action: ChatActions,
 ) {
   switch (action.type) {
-    case SELECT_CHAT:
-      return state;
     default:
       return state;
   }
@@ -24,16 +22,17 @@ export function chatContentData(
 ) {
   switch (action.type) {
     case SELECT_CHAT:
+      const { ID } = action.chatEntity;
       return {
         ...state,
-        [action.chatEntity.ID]: FakeChatContent
+        [ID]: FakeChatContent
       };
     default:
       return state;
   }
 }
 
-export function activeChat(
+export function selectedChat(
   state: ChatItemEntity = {},
   action: ChatActions,
 ) {

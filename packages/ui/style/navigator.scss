@@ -1,4 +1,5 @@
 $navHeadHeight: 50px;
+$blurLV: 3px;
 
 .navigator-page {
   @include fill;
@@ -9,7 +10,9 @@ $navHeadHeight: 50px;
   opacity: 0;
   visibility: hidden;
   .navigator-content {
-    height: calc(100vh - #{$navHeadHeight});
+    // height: calc(100vh - #{$navHeadHeight});
+    height: 100%;
+    padding-top: $navHeadHeight;
   }
   &.active {
     opacity: 1;
@@ -19,12 +22,28 @@ $navHeadHeight: 50px;
 
 .navigator-header {
   height: $navHeadHeight;
-  box-shadow: 0 2px 4px rgba(#000, 0.06);
-  position: relative;
+  // box-shadow: 0 2px 4px rgba(#000, 0.06);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  .bg {
+    @include fill;
+    // position: absolute;
+    // top: - $blurLV;
+    // bottom: - $blurLV;
+    // left: - $blurLV;
+    // right: - $blurLV;
+    // opacity: 0.8;
+    z-index: -1;
+    background-color: rgba(#f9f9f9, 0.95);
+    // filter: blur($blurLV);
+  }
   .back-btn {
     position: absolute;
     left: 0;

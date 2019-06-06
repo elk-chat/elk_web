@@ -22,7 +22,8 @@ body {
     }
     &.has-header {
       .page-content {
-        height: calc(100vh - #{$tabHeight + $headHeight});
+        padding-top: $headHeight;
+        // height: calc(100vh - #{$tabHeight + $headHeight});
       }
     }
   }

@@ -7,6 +7,7 @@ import { RouteEntity } from '../types';
 interface RouteEntityEx extends RouteEntity {
   props?: object;
   title?: string;
+  header?: boolean;
 }
 
 interface RouterRenderProps {
@@ -25,18 +26,22 @@ const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterR
       {
         routeConfig.map((route) => {
           const {
-            path, props, component, title
+            path, props, component, title, header = true
           } = route;
           const isActive = activeRoute === path;
           const C = component;
-          const hasNavHeader = !!title;
+          const hasNavHeader = !!header;
           return (
             <div
               key={path}
               className={`page-item ${isActive ? 'active' : ''} ${hasNavHeader ? 'has-header' : ''}`}>
-              <NavHeader
-                onNavigate={propsOfRouterRender.onNavigate}
-                title={title} />
+              {
+                hasNavHeader && (
+                  <NavHeader
+                    onNavigate={propsOfRouterRender.onNavigate}
+                    title={title} />
+                )
+              }
               <div className="page-content">
                 <C
                   {...props}

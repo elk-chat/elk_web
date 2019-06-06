@@ -54,12 +54,8 @@ const TabBar: React.SFC<TabBarProps> = ({ routes, RNW }) => (
           const {
             path, text, icon, exact, onClick
           } = route;
-          let Com: string | typeof Link = Link;
-          let obj = { to: path, activeClassName: "active", exact };
-          if (onClick) {
-            Com = "a";
-            obj = { onClick };
-          }
+          const Com: string | typeof Link = Link;
+          const obj = { to: path, exact, onClick };
           return (
             <Com {...obj} key={path} className="tab-label">
               <div className="icon-wrap">

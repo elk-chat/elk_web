@@ -22,7 +22,7 @@ export interface RouterEntity {
       /** 对应 navRoutersConfig 中的 path 的 component */
       Com: string;
       /** 该页面的名字 */
-      Name: string;
+      Title: string;
     };
   };
 }

@@ -7,7 +7,7 @@ import { Link } from 'react-multiple-router';
 interface ChatContentProps {
   onQueryHistory: Function;
   onSendMsg: Function;
-  activeChat: ChatItemEntity;
+  selectedChat: ChatItemEntity;
   chatContentData: ChatContentState;
   NavRouterMark: string;
   userInfo: UserInfo;
@@ -85,16 +85,16 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
   queryHistory(nextProps, skip, scrollToBtn = true) {
     const { limit } = this.state;
-    const { activeChat, onQueryHistory } = nextProps;
+    const { selectedChat, onQueryHistory } = nextProps;
 
     const currChart = this.getActiveChatContent();
     const lastId = currChart.length > 0 ? currChart[0].Id : 0;
 
     const queryData = {
-      ToUserType: activeChat.ToUserType,
-      ToUserName: activeChat.ToUserName,
+      ToUserType: selectedChat.ToUserType,
+      ToUserName: selectedChat.ToUserName,
       FromUserType: 'user',
-      chatId: activeChat.ID,
+      chatId: selectedChat.ID,
       lastId,
       limit,
       skip: HasValue(skip) ? skip : this.page * limit
@@ -126,17 +126,17 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   sendMsg = (msg, msgType = 0) => {
     const _msg = msg.trim();
     if (_msg === '') return;
-    const { activeChat, onSendMsg } = this.props;
+    const { selectedChat, onSendMsg } = this.props;
 
     const msgID = Date.now();
 
     const sendMsgData = {
       FromUserType: 'user',
-      ToUserName: activeChat.ToUserName,
-      ToUserType: activeChat.ToUserType,
+      ToUserName: selectedChat.ToUserName,
+      ToUserType: selectedChat.ToUserType,
       MsgType: msgType,
       Message: _msg,
-      chatId: activeChat.ID || '',
+      chatId: selectedChat.ID || '',
       SendTime: msgID,
       msgID,
     };
@@ -146,9 +146,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   }
 
   _onSendImage = () => {
-    const { activeChat } = this.props;
+    const { selectedChat } = this.props;
 
-    if (!activeChat.ID || this.planningImgList.length === 0) return;
+    if (!selectedChat.ID || this.planningImgList.length === 0) return;
 
     this.planningImgList.forEach(imgData => this.sendMsg(imgData, 1));
     // this.onClearAllPic();
@@ -156,24 +156,24 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   }
 
   getActiveChatContent() {
-    const { chatContentData, activeChat } = this.props;
-    return chatContentData[activeChat.ID] || [];
+    const { chatContentData, selectedChat } = this.props;
+    return chatContentData[selectedChat.ID] || [];
   }
 
   renderChatMsgs() {
-    const { chatContentData, userInfo, activeChat } = this.props;
-    const isGroupChat = activeChat.ChatType === 1;
+    const { chatContentData, userInfo, selectedChat } = this.props;
+    const isGroupChat = selectedChat.ChatType === 1;
     const myName = userInfo.UserName;
     let prevTime = 0;
     // let prevUsername = '';
-    const activeChatContent = this.getActiveChatContent();
-    // let _activeChatContent = [...activeChatContent].reverse();
+    const selectedChatContent = this.getActiveChatContent();
+    // let _selectedChatContent = [...selectedChatContent].reverse();
 
     const msgBubbleClass = 'msg-bubble';
     const { FAIL_MSG_QUEUE = {} } = chatContentData;
 
-    return Object.keys(activeChatContent).map((msgID, idx) => {
-      const currMsg = activeChatContent[msgID];
+    return Object.keys(selectedChatContent).map((msgID, idx) => {
+      const currMsg = selectedChatContent[msgID];
       const {
         FromUser, MsgType, UpdatedAt, SendTime, Message
       } = currMsg;
@@ -240,9 +240,12 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
           {timeElem}
           {/* {userAvatarElem} */}
           <div className={`msg-item ${msgTypeMapper[MsgType]}`}>
-            <Link to={this.props.NavRouterMark} params={{
-              Com: 'ContactDetail',
-            }}>
+            <Link
+              className=""
+              to={this.props.NavRouterMark} params={{
+                Com: 'ContactDetail',
+                Title: displayName
+              }}>
               <Avatar size={30}>
                 {displayName[0]}
               </Avatar>
@@ -262,7 +265,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   }
 
   render() {
-    // const { activeChat } = this.props;
+    // const { selectedChat } = this.props;
     const chatPanelContainer = (
       <div className="msg-panel-container" ref={(e) => {
         if (e) this.msgPanelHeight = e.offsetHeight;
@@ -277,7 +280,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
       <div className="editor-panel" ref={(e) => {
         if (!e || !this.scrollContent) return;
         /** 响应此区域的高度变化，设置 this.scrollContent 的padding-bottom */
-        this.scrollContent.style.paddingBottom = `${e.offsetHeight  }px`;
+        this.scrollContent.style.paddingBottom = `${e.offsetHeight}px`;
       }}>
         <input className="typing-area" type="text" ref={(e) => { this.textContent = e; }}
           onPaste={e => this.onPasteInput(e)}

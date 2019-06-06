@@ -12,14 +12,14 @@ import pageRoutersConfig from './config/page-routers';
 import getTabRouteConfig from './config/tab-routers';
 import navRoutersConfig from './config/navigator-routers';
 import { TabBar, RouterRender, Navigator } from './components';
-import { CHAT } from './config/path-mapper';
+import { CHAT, CONTACT } from './config/path-mapper';
 
 import "./style/style.scss";
 
 export interface ChatAppProps {
   authState: AuthState;
   applyLogin: Function;
-  isMobile: boolean;
+  isMobile?: boolean;
 }
 
 declare global {
@@ -34,7 +34,8 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
     isMobile: true,
   }
 
-  defaultPath = CHAT;
+  /** 默认跳转的路由 */
+  defaultPath = CONTACT;
 
   isNative = false;
 

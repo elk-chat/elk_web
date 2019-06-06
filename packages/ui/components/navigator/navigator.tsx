@@ -19,7 +19,7 @@ interface Params {
   /** 对应 navRoutersConfig 中的 path 的 component */
   Com: string;
   /** 该页面的名字 */
-  Name: string;
+  Title: string;
 }
 
 interface NavigatorProps {
@@ -30,7 +30,11 @@ interface NavigatorProps {
   onNavigate: Function;
   /** 当前激活的路由配置 */
   routerInfo: RouterEntity;
+  currRouterConfig: {
+    params: Params;
+  };
   NavRouterMark: string;
+  activeRoute: string;
 }
 
 interface RouteCacheEntity {
@@ -64,7 +68,7 @@ const Navigator: React.SFC<NavigatorProps> = (props) => {
 
   return Object.keys(RouteCache).map((comName) => {
     const currCacheRouterConfig = RouteCache[comName];
-    const { Com, Name } = currCacheRouterConfig.params;
+    const { Com, Title } = currCacheRouterConfig.params;
     /** 保证每个页面都正确渲染 */
     const key = JSON.stringify(currCacheRouterConfig.params);
     const currConfig = navRoutersConfig[Com] || {};
@@ -78,7 +82,7 @@ const Navigator: React.SFC<NavigatorProps> = (props) => {
         <NavHeader
           {...props}
           back
-          title={Name} />
+          title={Title} />
         <div className="navigator-content">
           <C {...props} />
         </div>

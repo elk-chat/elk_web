@@ -1,15 +1,20 @@
-import { ChatItemEntity } from './state';
+import { ChatItemEntity, ContactEntity } from './state';
 
-export interface ChatActions {
+export interface LoginAction {
   type: string;
-  chatEntity: ChatItemEntity;
+  userInfo: object;
 }
 
 export interface ActionType {
   type: string;
 }
 
-export interface LoginAction {
+export interface ChatActions {
   type: string;
-  userInfo: object;
+  chatEntity: ChatItemEntity;
+}
+
+export interface ContactActions {
+  type: string;
+  conctactEntity: ContactEntity;
 }

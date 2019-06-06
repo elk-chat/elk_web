@@ -26,6 +26,7 @@ const pageRoutersConfig = [
   },
   {
     path: ACCOUNT,
+    header: false,
     exact: true,
     component: Account
   },

@@ -1,10 +1,9 @@
 import React from 'react';
 import { Avatar } from 'ukelli-ui/core/avatar';
-import { UserInfo } from '@little-chat/core/types';
-import * as ChatSDK from '@little-chat/sdk/lib';
+import { UserInfo, ChatItemEntity } from '@little-chat/core/types';
 import { Link } from 'react-multiple-router';
 
-interface ChatEntity extends ChatSDK.kproto.IChat {
+interface ChatEntity extends ChatItemEntity {
   Title: string;
   ID: string;
 }
@@ -30,14 +29,14 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
                 to={navRouterMark}
                 params={{
                   ChatID: ID,
-                  Name: Title,
+                  Title,
                   Com: 'ChatContent'
                 }}
                 onClick={(e) => {
                   selectChat(item);
                 }}
                 className="chat-item layout" key={ID}>
-                <Avatar text={Title[0]} />
+                <Avatar text={Title[0]} size={30} />
                 <div className="content">
                   {Title}
                 </div>

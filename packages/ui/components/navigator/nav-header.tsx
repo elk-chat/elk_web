@@ -19,29 +19,28 @@ const NavHeader: React.SFC<HeadBarProps> = (props) => {
     RightBtns,
     onNavigate,
   } = props;
-  return title ? (
-    <React.Fragment>
-      <div className="navigator-header">
-        {
-          back && (
-            <Icon n="chevron-left"
-              classNames={['back-btn']}
-              onClick={e => onNavigate({ type: 'GO_BACK' })} />
-          )
-        }
-        {
-          <span className="title">{title}</span>
-        }
-        {
-          RightBtns && (
-            <span className="right-btns">
-              {RightBtns(this.props)}
-            </span>
-          )
-        }
-      </div>
-    </React.Fragment>
-  ) : null;
+  return (
+    <div className="navigator-header">
+      {
+        back && (
+          <Icon n="chevron-left"
+            classNames={['back-btn']}
+            onClick={e => onNavigate({ type: 'GO_BACK' })} />
+        )
+      }
+      {
+        <span className="title">{title}</span>
+      }
+      {
+        RightBtns && (
+          <span className="right-btns">
+            {RightBtns(props)}
+          </span>
+        )
+      }
+      <div className="bg"></div>
+    </div>
+  );
 };
 
 export default NavHeader;

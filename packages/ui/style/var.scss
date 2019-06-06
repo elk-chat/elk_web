@@ -26,6 +26,8 @@ $lightThemeScrollThumb: rgba(#777, 0.5);
 $lightThemeScrollThumbHover: #666;
 $lightThemeScrollThumbActive: #444;
 
+$navHeaderBg: rgba(#EEE, 0.8);
+
 @mixin mainContainer($m: 0) {
   width: $mainContainerWidth;
   margin: $m auto;

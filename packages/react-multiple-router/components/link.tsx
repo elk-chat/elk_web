@@ -7,13 +7,19 @@ import {
   getRouteKey, onNavigate
 } from '../utils';
 
+export interface LinkParams {
+  /** 标题 */
+  Title?: string;
+  Com: string;
+}
+
 interface LinkProps {
   /** 将要导航到的路由 */
   to: string;
   className?: string;
   onClick?: Function;
   /** 作为 query string 的导航参数，例如 { ID: 123, name: alex } -> ID=123&name=alex */
-  params?: {};
+  params?: LinkParams;
 }
 
 /**
@@ -22,7 +28,7 @@ interface LinkProps {
  * @TODO: 完善是否激活的判定
  */
 const Link: React.SFC<LinkProps> = ({
-  to, className = 'link-btn',
+  to, className,
   children, onClick, params
 }) => {
   const activeRoute = getUrlParams()[getRouteKey()];
@@ -46,7 +52,6 @@ const Link: React.SFC<LinkProps> = ({
 };
 Link.defaultProps = {
   className: 'link-btn',
-  params: {}
 };
 
 export default Link;

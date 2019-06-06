@@ -1,8 +1,4 @@
 import {
-
-} from "@little-chat/sdk";
-
-import {
   ChatActions, ChatItemEntity
 } from '../types';
 

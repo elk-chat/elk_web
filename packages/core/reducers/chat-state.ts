@@ -2,12 +2,12 @@ import {
   SELECT_CHAT,
 } from "../actions";
 import {
-  ChatActions, ChatContentState, ChatItemEntity
+  ChatActions, ChatContentState, ChatItemEntity, ChatListEntity
 } from '../types';
 import { FakeChatList, FakeChatContent } from './fake-data';
 
 export function chatListData(
-  state: ChatItemEntity[] = FakeChatList,
+  state: ChatListEntity = FakeChatList,
   action: ChatActions,
 ) {
   switch (action.type) {

@@ -3,24 +3,21 @@ import { Random } from 'basic-helper';
 import * as ChatSDK from '@little-chat/sdk/lib';
 
 import FakeChatMsgDatas from './fake-chat-msg-data';
-import { ContactEntity } from '../types';
+import { ContactEntity, ChatListEntity } from '../types';
 
-interface IChat extends ChatSDK.kproto.IChat {
-  Avatar?: string;
-}
-
-const genFakeChatListData = (count: number = 50): IChat[] => {
-  const res: IChat[] = [];
+const genFakeChatListData = (count: number = 50): ChatListEntity => {
+  const res: ChatListEntity = {};
   // console.log([...Array(count)].forEach);
   for (let i = 0; i < count; i++) {
-    res.push({
-      ID: i,
+    const ChatID = i;
+    res[ChatID] = {
+      ID: ChatID,
       CreateAt: 1559618145623,
       UpdatedAt: 1559618545623,
       ChatType: 1,
       Title: `Chat_${i}`,
       Disabled: 0,
-    });
+    };
   }
   return res;
 };
@@ -56,7 +53,7 @@ const getFakeContact = (count: number = 50) => {
   return res;
 };
 
-const FakeChatList: IChat[] = genFakeChatListData();
+const FakeChatList = genFakeChatListData();
 const FakeChatContent = getFakeChatContent();
 const FakeContactData = getFakeContact();
 

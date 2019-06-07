@@ -1,15 +1,15 @@
 import React from 'react';
 import { Avatar } from 'ukelli-ui/core/avatar';
-import { UserInfo, ChatItemEntity } from '@little-chat/core/types';
+import { UserInfo, ChatItemEntity, ChatListEntity } from '@little-chat/core/types';
 import { Link } from 'react-multiple-router';
 
-interface ChatEntity extends ChatItemEntity {
-  Title: string;
-  ID: string;
-}
+// interface ChatEntity extends ChatItemEntity {
+//   Title: string;
+//   ID: string;
+// }
 
 interface ChatListProps extends UserInfo {
-  chatListData: ChatEntity[];
+  chatListData: ChatListEntity;
   selectChat: Function;
   navRouterMark: string;
 }
@@ -17,12 +17,14 @@ interface ChatListProps extends UserInfo {
 export default class ChatList extends React.Component<ChatListProps, {}> {
   render() {
     const { chatListData, selectChat, navRouterMark } = this.props;
-    const hasChat = chatListData && chatListData.length > 0;
+    const chatIDs = Object.keys(chatListData);
+    const hasChat = chatIDs.length > 0;
 
     return hasChat ? (
       <div className="chat-list">
         {
-          chatListData.map((item) => {
+          Object.keys(chatListData).map((chatID) => {
+            const item = chatListData[chatID];
             const { Title, ID } = item;
             return (
               <Link
@@ -32,7 +34,7 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
                   Title,
                   Com: 'ChatContent'
                 }}
-                onClick={(e) => {
+                onClick={() => {
                   selectChat(item);
                 }}
                 className="chat-item layout" key={ID}>

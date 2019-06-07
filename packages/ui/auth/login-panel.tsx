@@ -54,7 +54,7 @@ export default class LoginPanel extends Component<LoginPanelProps> {
   }
 
   saveForm = (e: React.ReactElement) => {
-    if(e && e.formHelper) this.formHelper = e.formHelper;
+    if (e && e.formHelper) this.formHelper = e.formHelper;
   }
 
   render() {

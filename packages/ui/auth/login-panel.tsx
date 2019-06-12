@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { FormLayout } from 'ukelli-ui';
 import { Call } from 'basic-helper/call';
-import { tuple } from '../utils/type';
+import { tuple } from 'basic-helper/utils/type';
 import formOptions from './form-options';
 
 const gradientColorMapper: object = {

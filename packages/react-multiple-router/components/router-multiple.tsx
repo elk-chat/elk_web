@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-import { getUrlParams } from 'uke-request/url-resolve';
-import { RemoveArrayItem } from 'basic-helper';
+import { getUrlParams, UrlParamsRes } from 'uke-request/url-resolve';
+import { RemoveArrayItem, IsObj } from 'basic-helper';
 
 import {
   history, wrapPushUrl, pushToHistory, replaceHistory,
@@ -40,6 +40,16 @@ const defaultState: RouterState<{}> = {
   activeRoute: '',
 };
 let cachedState = Object.assign({}, defaultState);
+
+const getAllUrlParams = (): RouteParams => {
+  const res = getUrlParams(undefined, undefined, true);
+  const nextRes: RouteParams = typeof res === 'string' ? {
+    _R: res
+  } : {
+    ...res
+  };
+  return nextRes;
+};
 
 class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, RouterState<S>> {
   history = history;
@@ -80,7 +90,7 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
   handleHistory = (location, action) => {
     const { hash, state = {} } = location;
     // const activeRoute = resolvePath(hash)[0];
-    const activeRoute = getUrlParams(undefined, undefined, true)[getRouteKey()];
+    const activeRoute = getAllUrlParams()[getRouteKey()];
     const nextRouterState = state.nextRouters;
     this.selectTab(activeRoute, nextRouterState);
   };
@@ -97,7 +107,7 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
     const { routers, routerInfo, activeRouteIdx } = this.state;
 
     const targetRoute = routers[idx];
-    const nextRouters = RemoveArrayItem(routers, targetRoute);
+    const nextRouters = [...routers].remove(targetRoute);
     const nextRouterInfo = { ...routerInfo };
     delete nextRouterInfo[targetRoute];
     const nextRoutersLen = nextRouters.length - 1;
@@ -142,9 +152,10 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
       const currComIdx = routers.indexOf(activeRoute);
       let nextRouters = [...routers];
       const nextRouterInfo = { ...routerInfo };
+      const currParams = getAllUrlParams();
       nextRouterInfo[activeRoute] = {
         ...(nextRouterInfo[activeRoute] || {}),
-        params: getUrlParams(undefined, undefined, true)
+        params: currParams
       };
       let activeIdx = currComIdx;
       if (currComIdx === -1) {

@@ -1,5 +1,6 @@
-import { delay } from 'redux-saga';
-import { put, takeEvery, all } from 'redux-saga/effects';
+import {
+  put, takeEvery, all, delay
+} from 'redux-saga/effects';
 
 import {
   watchApplyLogin

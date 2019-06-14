@@ -22,10 +22,10 @@ export function chatContentData(
 ) {
   switch (action.type) {
     case SELECT_CHAT:
-      const { ID } = action.chatEntity;
+      const { ID = '' } = action.chatEntity;
       return {
         ...state,
-        [ID]: FakeChatContent
+        [ID.toString()]: FakeChatContent
       };
     default:
       return state;

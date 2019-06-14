@@ -3,15 +3,17 @@ import { Random } from 'basic-helper';
 import * as ChatSDK from '@little-chat/sdk/lib';
 
 import FakeChatMsgDatas from './fake-chat-msg-data';
-import { ContactEntity, ChatListEntity } from '../types';
+import { ContactList, ChatListEntity } from '../types';
 
 const genFakeChatListData = (count: number = 50): ChatListEntity => {
   const res: ChatListEntity = {};
   // console.log([...Array(count)].forEach);
   for (let i = 0; i < count; i++) {
     const ChatID = i;
+    const ContactID = i;
     res[ChatID] = {
       ID: ChatID,
+      ContactID,
       CreateAt: 1559618145623,
       UpdatedAt: 1559618545623,
       ChatType: 1,
@@ -40,15 +42,16 @@ const getFakeChatContent = (count: number = 50) => {
 };
 
 const getFakeContact = (count: number = 50) => {
-  const res: ContactEntity[] = [];
+  const res: ContactList = {};
   // console.log([...Array(count)].forEach);
   for (let i = 0; i < count; i++) {
-    res.push({
+    const ContactID = i;
+    res[ContactID] = {
       ID: i,
       ChatID: i,
-      UserName: `${randomUserColl[Random([0, randomUserColl.length])]}_${i}`,
+      UserName: `${randomUserColl[+Random([0, randomUserColl.length])]}_${i}`,
       Avatar: ''
-    });
+    };
   }
   return res;
 };

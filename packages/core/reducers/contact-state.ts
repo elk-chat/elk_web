@@ -2,13 +2,14 @@ import {
   SELECT_CONTACT,
 } from "../actions";
 import {
-  ContactEntity, ContactActions, ActionType
+  ContactEntity, ContactList,
+  ContactActions, ActionType
 } from '../types';
 
 import { FakeContactData } from './fake-data';
 
 export const contactData = (
-  state: ContactEntity[] = FakeContactData,
+  state: ContactList = FakeContactData,
   action: ActionType
 ) => {
   switch (action.type) {

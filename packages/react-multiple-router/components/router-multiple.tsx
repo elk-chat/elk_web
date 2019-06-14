@@ -15,15 +15,14 @@ export interface RouterHelperProps<P> {
   maxRouters: number;
 }
 
+export interface RouteParams {
+  _R: string;
+  [RouteName: string]: any;
+}
+
 export interface RouterEntity {
   [propName: string]: {
-    params: {
-      _R: string;
-      /** 对应 navRoutersConfig 中的 path 的 component */
-      Com: string;
-      /** 该页面的名字 */
-      Title: string;
-    };
+    params: RouteParams;
   };
 }
 
@@ -81,7 +80,7 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
   handleHistory = (location, action) => {
     const { hash, state = {} } = location;
     // const activeRoute = resolvePath(hash)[0];
-    const activeRoute = getUrlParams()[getRouteKey()];
+    const activeRoute = getUrlParams(undefined, undefined, true)[getRouteKey()];
     const nextRouterState = state.nextRouters;
     this.selectTab(activeRoute, nextRouterState);
   };
@@ -145,7 +144,7 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
       const nextRouterInfo = { ...routerInfo };
       nextRouterInfo[activeRoute] = {
         ...(nextRouterInfo[activeRoute] || {}),
-        params: getUrlParams()
+        params: getUrlParams(undefined, undefined, true)
       };
       let activeIdx = currComIdx;
       if (currComIdx === -1) {

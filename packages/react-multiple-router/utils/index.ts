@@ -1,5 +1,5 @@
 import { createBrowserHistory, Location } from "history";
-import { wrapReqHashUrl } from 'uke-request/url-resolve';
+import { urlParamsToQuery } from 'uke-request/url-resolve';
 
 interface NavigateConfig {
   from?: Location;
@@ -28,12 +28,12 @@ const wrapPushUrl = (pushConfig: NavigateConfig) => {
   const { href, hash } = window.location;
   const targetHash = hash.replace('#/', '').split('?')[0];
   const { route, params } = pushConfig;
-  let result = wrapReqHashUrl({
+  let result = urlParamsToQuery({
     params: {
       ...params,
       [ROUTE_KEY]: route,
     },
-    toBase64: false
+    toBase64: true
   });
   result = `${targetHash}${result.replace(/&&$/g, '')}`;
   return result;
@@ -43,7 +43,7 @@ const wrapPushUrl = (pushConfig: NavigateConfig) => {
  * 导航者
  * @param {object} config { type: 'PUSH | GO_BACK | LINK', component: route, params: {} }
  */
-const onNavigate = (config: NavigateConfig): void => {
+const onNavigate = (config: NavigateConfig) => {
   if (!config) return console.log('Not config');
   const { location } = history;
   const nextConfig = {

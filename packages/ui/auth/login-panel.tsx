@@ -47,13 +47,15 @@ export default class LoginPanel extends Component<LoginPanelProps> {
     logo: () => <h3 className="title">Little chat</h3>
   };
 
-  formHelper = null
+  formHelper!: {
+    value: any;
+  }
 
   componentDidMount() {
     Call(this.props.didMount);
   }
 
-  saveForm = (e: React.ReactElement) => {
+  saveForm = (e: any) => {
     if (e && e.formHelper) this.formHelper = e.formHelper;
   }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Call, IsFunc } from 'basic-helper';
+import { CallFunc, IsFunc } from 'basic-helper';
 
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
@@ -8,7 +8,7 @@ import LoginPanel, { LoginPanelProps } from './login-panel';
 export interface LoginSelectorProps {
   isLogin?: boolean;
   didMount?: () => void;
-  children?: React.ReactElement | Function;
+  children: React.ReactElement | Function;
 }
 
 const LoginSelector: React.SFC<LoginSelectorProps & LoginPanelProps> = (props) => {
@@ -17,7 +17,7 @@ const LoginSelector: React.SFC<LoginSelectorProps & LoginPanelProps> = (props) =
   let container;
   switch (true) {
     case isLogin:
-      container = IsFunc(children) ? children(props) : children;
+      container = IsFunc(children) ? CallFunc(children)(props) : children;
       break;
       // case autoLoging:
       //   container = (

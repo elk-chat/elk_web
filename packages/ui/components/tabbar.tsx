@@ -17,10 +17,8 @@ interface RouteExpand extends RouteEntity {
 interface TabBarProps {
   /** routeConfig */
   routes: RouteExpand[];
-  /** Native 的函数 */
-  RNW: object | null;
   /** icon */
-  icon: IconType;
+  icon?: IconType;
 }
 
 const iconClassName = ['default', 'active'];
@@ -45,7 +43,7 @@ const RenderIcon = ({ icons }) => icons.map((i, idx): React.ElementType => {
   return res;
 });
 
-const TabBar: React.SFC<TabBarProps> = ({ routes, RNW }) => (
+const TabBar: React.SFC<TabBarProps> = ({ routes }) => (
   <div
     className="tab-bar">
     <div className="inner">

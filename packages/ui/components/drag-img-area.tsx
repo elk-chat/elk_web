@@ -7,6 +7,12 @@ const generateThumb = new GenerateThumbs();
 export default class DragImgArea extends Component {
   bindDragEnevt: boolean = false;
 
+  drapPanel!: HTMLElement;
+
+  previewGroup!: HTMLElement | null;
+
+  planningImgList: string[] = [];
+
   componentWillUnmount() {
     this.removeDropEvent();
   }
@@ -31,6 +37,12 @@ export default class DragImgArea extends Component {
     this.chooseFile(fileList);
   }
 
+  toggleDragArea = (isShow: boolean) => {
+    this.setState({
+      showDragArea: !!isShow
+    });
+  }
+
   onCancelPic = () => {
     this.toggleDragArea(false);
     this.onClearAllPic();
@@ -38,7 +50,7 @@ export default class DragImgArea extends Component {
 
   onClearAllPic = () => {
     const { previewGroup } = this;
-    previewGroup.innerHTML = '';
+    if (previewGroup) previewGroup.innerHTML = '';
     this.planningImgList = [];
     generateThumb.clearFileList();
   }
@@ -51,6 +63,20 @@ export default class DragImgArea extends Component {
 
   addFile() {
     this.toggleDragArea(true);
+  }
+
+  convertBase64ToImg = (base64Data: string) => {
+    const img = document.createElement('img');
+    img.src = base64Data;
+    img.classList.add('preview');
+
+    return img;
+  }
+
+  addImgToPanel(img) {
+    if (!img) return;
+    const { previewGroup } = this;
+    previewGroup && previewGroup.appendChild(img);
   }
 
   chooseFile(fileList) {
@@ -90,9 +116,9 @@ export default class DragImgArea extends Component {
       <div className="drap-panel">
         <div className="drap-area" ref={this.addDropEvent} />>
         <span className="tip">将图片拖到此区域</span>
-        <div id="previewGroup" ref={e => this.previewGroup = e} />
+        <div id="previewGroup" ref={(e) => { this.previewGroup = e; }} />
         <div className="action">
-          <button className="btn hola primary" onClick={this._onSendImage}>
+          <button className="btn hola primary">
             发送
           </button>
           <span className="btn hola default" onClick={this.onCancelPic}>取消</span>

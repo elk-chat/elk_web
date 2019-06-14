@@ -8,7 +8,6 @@ interface NavLinkProps extends LinkProps {
   Com: string;
   /** 该页面的名字 */
   Title: string;
-  to?: string;
 }
 
 /**

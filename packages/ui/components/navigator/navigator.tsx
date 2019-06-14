@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Icon } from 'ukelli-ui/core/icon';
-import { RouterEntity } from 'react-multiple-router';
+import { RouterEntity, RouteParams } from 'react-multiple-router';
 
 import NavHeader from "./nav-header";
 // import MobileCoverHead from "./mobile-cover-head";
@@ -15,11 +15,11 @@ interface NavigatorConfigEntity {
   component: React.ElementType;
 }
 
-interface Params {
+export interface NavParams extends RouteParams {
   /** 对应 navRoutersConfig 中的 path 的 component */
   Com: string;
   /** 该页面的名字 */
-  Title: string;
+  Title?: string;
 }
 
 interface NavigatorProps {
@@ -31,7 +31,7 @@ interface NavigatorProps {
   /** 当前激活的路由配置 */
   routerInfo: RouterEntity;
   currRouterConfig: {
-    params: Params;
+    params: NavParams;
   };
   NavRouterMark: string;
   activeRoute: string;
@@ -39,7 +39,7 @@ interface NavigatorProps {
 
 interface RouteCacheEntity {
   [componentName: string]: {
-    params: Params;
+    params: NavParams;
   };
 }
 
@@ -66,31 +66,37 @@ const Navigator: React.SFC<NavigatorProps> = (props) => {
   /** 将 currRouterConfig 缓存到 RouteCache */
   RouteCache[activeComponentName] = currRouterConfig;
 
-  return Object.keys(RouteCache).map((comName) => {
-    const currCacheRouterConfig = RouteCache[comName];
-    const { Com, Title } = currCacheRouterConfig.params;
-    /** 保证每个页面都正确渲染 */
-    const key = JSON.stringify(currCacheRouterConfig.params);
-    const currConfig = navRoutersConfig[Com] || {};
-    const { component } = currConfig;
-    const C = component;
-    const isActive = activeComponentName === Com;
-    return C && (
-      <div
-        key={key}
-        className={`navigator-page${isActive ? ' active' : ''}`}>
-        <NavHeader
-          {...props}
-          back
-          title={Title} />
-        <div className="navigator-content">
-          <C {...props} {...currRouterConfig.params} />
-        </div>
-        {/* {routesNav}
-          {routes} */}
-      </div>
-    );
-  });
+  return (
+    <React.Fragment>
+      {
+        Object.keys(RouteCache).map((comName) => {
+          const currCacheRouterConfig = RouteCache[comName];
+          const { Com, Title } = currCacheRouterConfig.params;
+          /** 保证每个页面都正确渲染 */
+          const key = JSON.stringify(currCacheRouterConfig.params);
+          const currConfig = navRoutersConfig[Com] || {};
+          const { component } = currConfig;
+          const C = component;
+          const isActive = activeComponentName === Com;
+          return C && (
+            <div
+              key={key}
+              className={`navigator-page${isActive ? ' active' : ''}`}>
+              <NavHeader
+                {...props}
+                back
+                title={Title} />
+              <div className="navigator-content">
+                <C {...props} {...currRouterConfig.params} />
+              </div>
+              {/* {routesNav}
+                {routes} */}
+            </div>
+          );
+        })
+      }
+    </React.Fragment>
+  );
 };
 
 export default Navigator;

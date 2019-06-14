@@ -8,7 +8,7 @@ import {
   getRouteKey, onNavigate
 } from '../utils';
 
-export interface RouterHelperProps<P> {
+export interface RouterHelperProps {
   /** 是否缓存 state */
   cacheState?: boolean;
   /** 最大共存路由 */
@@ -16,7 +16,7 @@ export interface RouterHelperProps<P> {
 }
 
 export interface RouteParams {
-  _R: string;
+  _R?: string;
   [RouteName: string]: any;
 }
 
@@ -26,14 +26,14 @@ export interface RouterEntity {
   };
 }
 
-export interface RouterState<S> {
+export interface RouterState {
   routers: string[];
   routerInfo: RouterEntity;
   activeRouteIdx: number;
   activeRoute: string;
 }
 
-const defaultState: RouterState<{}> = {
+const defaultState: RouterState = {
   routers: [],
   routerInfo: {},
   activeRouteIdx: -1,
@@ -41,9 +41,9 @@ const defaultState: RouterState<{}> = {
 };
 let cachedState = Object.assign({}, defaultState);
 
-const getAllUrlParams = (): RouteParams => {
+const getAllUrlParams = () => {
   const res = getUrlParams(undefined, undefined, true);
-  const nextRes: RouteParams = typeof res === 'string' ? {
+  const nextRes: {} = typeof res === 'string' ? {
     _R: res
   } : {
     ...res
@@ -51,7 +51,7 @@ const getAllUrlParams = (): RouteParams => {
   return nextRes;
 };
 
-class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, RouterState<S>> {
+class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends Component<P, S> {
   history = history;
 
   wrapPushUrl: Function = wrapPushUrl;
@@ -64,7 +64,7 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
 
   defaultPath: string | null = null;
 
-  constructor(props: RouterHelperProps<P>) {
+  constructor(props) {
     super(props);
 
     const { cacheState } = props;
@@ -143,7 +143,7 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
     return nextState;
   }
 
-  selectTab = (activeRoute: string, nextRouterState?: RouterState<{}>): void | null => {
+  selectTab = (activeRoute: string, nextRouterState?: RouterState): void | null => {
     if (nextRouterState) return this.setState(nextRouterState);
     if (!activeRoute) return null;
 
@@ -153,10 +153,9 @@ class RouterHelper<P = {}, S = {}> extends Component<RouterHelperProps<P>, Route
       let nextRouters = [...routers];
       const nextRouterInfo = { ...routerInfo };
       const currParams = getAllUrlParams();
-      nextRouterInfo[activeRoute] = {
-        ...(nextRouterInfo[activeRoute] || {}),
+      Object.assign(nextRouterInfo[activeRoute], {
         params: currParams
-      };
+      });
       let activeIdx = currComIdx;
       if (currComIdx === -1) {
         nextRouters = [...routers, activeRoute];

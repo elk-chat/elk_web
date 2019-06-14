@@ -3,7 +3,8 @@ import React, { Component } from "react";
 import { AuthState } from '@little-chat/core/types';
 import * as ChatActions from '@little-chat/core/actions';
 import {
-  RouterMultiple
+  RouterMultiple, RouterHelperProps, RouterState,
+  RouterEntity
 } from 'react-multiple-router';
 import { connect } from 'react-redux';
 
@@ -15,12 +16,22 @@ import { TabBar, RouterRender, Navigator } from './components';
 import { CHAT, CONTACT } from './config/path-mapper';
 import { NavRouterMark } from './config/app-config';
 
+import { NavParams } from './components/navigator/navigator';
+
 import "./style/style.scss";
 
-export interface ChatAppProps {
+export interface ChatAppProps extends RouterHelperProps {
   authState: AuthState;
   applyLogin: Function;
   isMobile?: boolean;
+}
+
+export interface ChatState extends RouterState {
+  routerInfo: {
+    [propName: string]: {
+      params: NavParams;
+    };
+  };
 }
 
 declare global {
@@ -29,7 +40,7 @@ declare global {
 
 const mapStateToProps = state => state;
 
-class ChatApp extends RouterMultiple<ChatAppProps, {}> {
+class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
   static defaultProps = {
     isMobile: true,
   }
@@ -39,16 +50,14 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
 
   isNative = false;
 
-  RNW: object | null = {};
-
   componentDidMount() {
-    window.INIT_NATIVE_FUNC = (RNW: object | null) => {
-      if (!this.isNative) {
-        this.isNative = true;
-        this.RNW = RNW;
-        document.body.classList.add("inNative");
-      }
-    };
+    // window.INIT_NATIVE_FUNC = (RNW: object | null) => {
+    //   if (!this.isNative) {
+    //     this.isNative = true;
+    //     this.RNW = RNW;
+    //     document.body.classList.add("inNative");
+    //   }
+    // };
     setTimeout(() => this.clickLoginBtn(), 100);
 
     this.initRoute();
@@ -83,7 +92,6 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
                   routeConfig={pageRoutersConfig}
                   navRouterMark={NavRouterMark} />
                 <TabBar
-                  RNW={this.RNW}
                   routes={getTabRouteConfig({
                     unreadCount: 0
                   })} />

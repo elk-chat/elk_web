@@ -13,6 +13,7 @@ import getTabRouteConfig from './config/tab-routers';
 import navRoutersConfig from './config/navigator-routers';
 import { TabBar, RouterRender, Navigator } from './components';
 import { CHAT, CONTACT } from './config/path-mapper';
+import { NavRouterMark } from './config/app-config';
 
 import "./style/style.scss";
 
@@ -27,7 +28,6 @@ declare global {
 }
 
 const mapStateToProps = state => state;
-const NavRouterMark = "N";
 
 class ChatApp extends RouterMultiple<ChatAppProps, {}> {
   static defaultProps = {
@@ -62,7 +62,6 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
   getProps = () => ({
     ...this.props,
     ...this.state,
-    NavRouterMark,
     onNavigate: this.onNavigate,
   })
 
@@ -91,6 +90,7 @@ class ChatApp extends RouterMultiple<ChatAppProps, {}> {
                 <Navigator
                   {...this.getProps()}
                   activeRoute={activeRoute}
+                  NavRouterMark={NavRouterMark}
                   navRoutersConfig={navRoutersConfig}
                   currRouterConfig={routerInfo[NavRouterMark]} />
               </div>

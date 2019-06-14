@@ -1,36 +1,36 @@
 import React from 'react';
 import { Avatar } from 'ukelli-ui/core/avatar';
-import { UserInfo, ContactEntity } from '@little-chat/core/types';
-import { Link } from 'react-multiple-router';
+import { UserInfo, ContactEntity, ContactList } from '@little-chat/core/types';
+import {
+  selectContact
+} from '@little-chat/core/actions';
+import Link from '../components/nav-link';
 
 interface ContactProps extends UserInfo {
-  contactData: ContactEntity[];
-  NavRouterMark: string;
-  selectContact: Function;
+  contactData: ContactList;
+  selectContact: typeof selectContact;
 }
 
 export default class Contact extends React.PureComponent<ContactProps, {}> {
   render() {
     const { contactData, selectContact } = this.props;
-    const hasChat = contactData && contactData.length > 0;
+    const contactIDs = Object.keys(contactData);
+    const hasContact = contactData && contactIDs.length > 0;
 
-    return hasChat ? (
+    return hasContact ? (
       <div className="contact-list">
         {
-          contactData.map((item) => {
+          contactIDs.map((contactID) => {
+            const item = contactData[contactID];
             const { UserName, ID } = item;
             const contactAvatar = item.Avatar;
             return (
               <Link
-                className=""
                 key={ID}
-                to={this.props.NavRouterMark}
+                Com="ContactDetail"
+                Title={UserName}
                 onClick={() => {
                   selectContact(item);
-                }}
-                params={{
-                  Com: 'ContactDetail',
-                  Title: UserName
                 }}>
                 <div className="c-item">
                   <Avatar src={contactAvatar || null} size={26}>

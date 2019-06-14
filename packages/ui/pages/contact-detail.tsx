@@ -1,20 +1,21 @@
 import React from 'react';
 import { UserInfo, ContactEntity, ChatListEntity } from '@little-chat/core/types';
 import { Avatar } from 'ukelli-ui/core/avatar';
-import { Link } from 'react-multiple-router';
+import Link from '../components/nav-link';
 
 interface ContactDetailProps extends UserInfo {
   selectedContact: ContactEntity;
   chatListData: ChatListEntity;
   onNavigate: Function;
+  selectChat: Function;
 }
 
 export default class ContactDetail extends React.Component<ContactDetailProps, {}> {
   render() {
     const {
-      selectedContact, NavRouterMark, selectChat, chatListData, onNavigate
+      selectedContact, selectChat, chatListData, onNavigate
     } = this.props;
-    const { UserName, ChatID } = selectedContact;
+    const { UserName = '', ChatID } = selectedContact;
     const userAvatar = selectedContact.Avatar;
 
     return (
@@ -26,11 +27,11 @@ export default class ContactDetail extends React.Component<ContactDetailProps, {
         </div>
         {UserName}
         <div className="action-group">
-          <Link to={NavRouterMark}
-            params={{
-              Com: 'ChatContent',
-              Title: UserName
-            }} onClick={(e) => {
+          <Link
+            className="action-item"
+            Com="ChatContent"
+            Title={UserName}
+            onClick={(e) => {
               selectChat(chatListData[ChatID]);
             }}>
             发信息

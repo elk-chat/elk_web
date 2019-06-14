@@ -8,7 +8,9 @@ import React from 'react';
 import { PureIcon } from 'ukelli-ui/core/icon';
 
 import { RouteEntity } from '../types';
-import { CHAT, CONTACT, DISCOVER, ACCOUNT } from './path-mapper';
+import {
+  CHAT, CONTACT, DISCOVER, ACCOUNT
+} from './path-mapper';
 
 interface RouteParams {
   unreadCount: number;
@@ -38,7 +40,7 @@ const getTabRouteConfig = (params: RouteParams): RouteEntity[] => {
       text: "我的",
       icon: [<PureIcon n="far fa-user-circle" />, <PureIcon n="fas fa-user-circle" />]
     }
-  ]
+  ];
 };
 
 export default getTabRouteConfig;

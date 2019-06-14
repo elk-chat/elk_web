@@ -3,7 +3,7 @@ import { Icon } from 'ukelli-ui/core/icon';
 import { RouterEntity } from 'react-multiple-router';
 
 import NavHeader from "./nav-header";
-import MobileCoverHead from "./mobile-cover-head";
+// import MobileCoverHead from "./mobile-cover-head";
 
 import { RouteEntity } from '../../types';
 
@@ -84,7 +84,7 @@ const Navigator: React.SFC<NavigatorProps> = (props) => {
           back
           title={Title} />
         <div className="navigator-content">
-          <C {...props} />
+          <C {...props} {...currRouterConfig.params} />
         </div>
         {/* {routesNav}
           {routes} */}

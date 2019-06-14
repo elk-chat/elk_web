@@ -1,15 +1,20 @@
 import React from 'react';
 import { HasValue, DateFormat } from 'basic-helper';
 import { Avatar, Icon } from 'ukelli-ui';
-import { ChatItemEntity, ChatContentState, UserInfo } from '@little-chat/core/types';
-import { Link } from 'react-multiple-router';
+import {
+  ChatItemEntity, ChatContentState, UserInfo, ContactEntity
+} from '@little-chat/core/types';
+import {
+  selectContact
+} from '@little-chat/core/actions';
+import Link from '../components/nav-link';
 
 interface ChatContentProps {
   onQueryHistory: Function;
   onSendMsg: Function;
+  selectContact: typeof selectContact;
   selectedChat: ChatItemEntity;
   chatContentData: ChatContentState;
-  NavRouterMark: string;
   userInfo: UserInfo;
 }
 
@@ -49,22 +54,22 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     });
   }
 
-  onPasteInput = (event) => {
+  onPasteInput = (event: React.ClipboardEvent<HTMLInputElement>) => {
     const { items } = event.clipboardData || event.originalEvent.clipboardData;
     for (let index = 0; index < items.length; index++) {
       const item = items[index];
       if (item.kind === 'file') {
         const blob = item.getAsFile();
         const reader = new FileReader();
-        reader.onload = (event) => {
-          const base64Data: string = event.target.result;
+        reader.onload = (loadEvent: ProgressEvent) => {
+          const base64Data: string = loadEvent.target.result;
           const img = this.convertBase64ToImg(base64Data);
           this.addImgToPanel(img);
           this.toggleDragArea(true);
           this.planningImgList.push(base64Data);
           // console.log(event.target.result)
         }; // data url!
-        reader.readAsDataURL(blob);
+        blob && reader.readAsDataURL(blob);
       }
     }
   }
@@ -161,7 +166,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   }
 
   renderChatMsgs() {
-    const { chatContentData, userInfo, selectedChat } = this.props;
+    const {
+      chatContentData, userInfo, selectedChat, selectContact, contactData
+    } = this.props;
     const isGroupChat = selectedChat.ChatType === 1;
     const myName = userInfo.UserName;
     let prevTime = 0;
@@ -241,11 +248,11 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
           {/* {userAvatarElem} */}
           <div className={`msg-item ${msgTypeMapper[MsgType]}`}>
             <Link
-              className=""
-              to={this.props.NavRouterMark} params={{
-                Com: 'ContactDetail',
-                Title: displayName
-              }}>
+              onClick={(e) => {
+                selectContact(contactData[selectedChat.ContactID]);
+              }}
+              Com="ContactDetail"
+              Title={displayName}>
               <Avatar size={30}>
                 {displayName[0]}
               </Avatar>

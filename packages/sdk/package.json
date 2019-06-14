@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "devDependencies": {},
   "dependencies": {
-    "uke-request": "^0.13.8"
+    "uke-request": "^1.0.1"
   },
   "author": "Alex"
 }

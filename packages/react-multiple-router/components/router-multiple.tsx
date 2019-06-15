@@ -153,9 +153,10 @@ class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends C
       let nextRouters = [...routers];
       const nextRouterInfo = { ...routerInfo };
       const currParams = getAllUrlParams();
-      Object.assign(nextRouterInfo[activeRoute], {
+      nextRouterInfo[activeRoute] = {
+        ...(nextRouterInfo[activeRoute] || {}),
         params: currParams
-      });
+      };
       let activeIdx = currComIdx;
       if (currComIdx === -1) {
         nextRouters = [...routers, activeRoute];

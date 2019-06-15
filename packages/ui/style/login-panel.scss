@@ -1,0 +1,23 @@
+.login-panel {
+  @include fill;
+  background-color: #fafafa;
+  .login-btn {
+    padding: 12px 0;
+  }
+  .input-control {
+    width: 100%;
+    .form-control {
+      min-height: 50px;
+    }
+    .title {
+      bottom: inherit;
+    }
+  }
+  .login-layout {
+    padding: 20px 0;
+    background-color: rgba(#FFF, 0.6);
+    transform: translateY(50%);
+    margin: 20px auto;
+    width: 90%;
+  }
+}

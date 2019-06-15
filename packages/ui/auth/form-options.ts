@@ -15,11 +15,11 @@ export default [
     iconName: 'lock',
     required: true
   },
-  {
-    ref: 'GooglePassword',
-    type: 'input',
-    iconName: 'security',
-    title: 'Google认证码',
-    // required: true
-  }
+  // {
+  //   ref: 'GooglePassword',
+  //   type: 'input',
+  //   iconName: 'security',
+  //   title: 'Google认证码',
+  //   // required: true
+  // }
 ];

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
-import { FormLayout } from 'ukelli-ui';
+import { FormGenerator } from 'ukelli-ui/core/form-generator';
+import { Button } from 'ukelli-ui/core/button';
 import { Call } from 'basic-helper/call';
 import { tuple } from 'basic-helper/utils/type';
 import formOptions from './form-options';
@@ -42,9 +43,11 @@ export default class LoginPanel extends Component<LoginPanelProps> {
   static defaultProps = {
     logging: false,
     autoLoging: false,
-    btnGColor: 'red',
+    btnGColor: 'blue',
     fixed: true,
-    logo: () => <h3 className="title">Little chat</h3>
+    logo: () => <h2 className="title" style={{
+      fontFamily: 'cursive'
+    }}>Little chat</h2>
   };
 
   formHelper!: {
@@ -53,10 +56,16 @@ export default class LoginPanel extends Component<LoginPanelProps> {
 
   componentDidMount() {
     Call(this.props.didMount);
+    setTimeout(() => this.clickLoginBtn(), 100);
   }
 
   saveForm = (e: any) => {
-    if (e && e.formHelper) this.formHelper = e.formHelper;
+    if (e) this.formHelper = e;
+  }
+
+  clickLoginBtn = () => {
+    /** 自动点击登陆按钮完成登陆操作，方便开发 */
+    // document.querySelector('.login-btn').click();
   }
 
   render() {
@@ -80,31 +89,44 @@ export default class LoginPanel extends Component<LoginPanelProps> {
     return (
       <div className={`login-panel fixbg ${fixed ? 'fixed' : ''}`}
         style={{
-          backgroundImage
+          // backgroundImage: `url(/img/login_bg.jpg)`
         }}>
         <div className="login-layout">
           {Call(logo)}
-          <FormLayout
+          <FormGenerator
+            showInputTitle={false}
             // className="login"
-            btnConfig={[
-              {
-                style: btnGColor ? {
-                  backgroundImage: gradientColorFilter(btnGColor)
-                } : null,
-                type: 'submit',
-                text: btnTxt,
-                className: 'res login-btn',
-                color: btnColor,
-                action: submitable ? () => {
-                  applyLogin(this.formHelper.value);
-                } : null
-              }
-            ]}
+            // btnConfig={[
+            //   {
+            //     style: btnGColor ? {
+            //       backgroundImage: gradientColorFilter(btnGColor)
+            //     } : null,
+            //     type: 'submit',
+            //     text: btnTxt,
+            //     className: 'res login-btn',
+            //     color: btnColor,
+            //     action: submitable ? () => {
+            //       applyLogin(this.formHelper.value);
+            //     } : null
+            //   }
+            // ]}
             // onSubmit={e => {
             //   login(this.formHelper.value);
             // }}
             formOptions={formOptions}
-            ref={this.saveForm} />
+            ref={this.saveForm}>
+            <Button
+              onClick={() => {
+                applyLogin(this.formHelper.value);
+              }}
+              disabled={!submitable}
+              className="res login-btn"
+              style={{
+                backgroundImage: gradientColorFilter(btnGColor)
+              }}>
+              登陆
+            </Button>
+          </FormGenerator>
         </div>
       </div>
     );

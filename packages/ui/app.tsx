@@ -58,14 +58,8 @@ class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
     //     document.body.classList.add("inNative");
     //   }
     // };
-    setTimeout(() => this.clickLoginBtn(), 100);
 
     this.initRoute();
-  }
-
-  clickLoginBtn = () => {
-    /** 自动点击登陆按钮完成登陆操作，方便开发 */
-    document.querySelector('.login-btn').click();
   }
 
   getProps = () => ({

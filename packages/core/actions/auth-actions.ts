@@ -33,6 +33,6 @@ export function applyLogin(form: LoginForm) {
   };
 }
 
-export function* watchApplyLogin() {
+export function* watchAuthActions() {
   yield takeLatest(APPLY_LOGIN, login);
 }

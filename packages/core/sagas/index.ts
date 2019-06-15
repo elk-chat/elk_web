@@ -3,11 +3,13 @@ import {
 } from 'redux-saga/effects';
 
 import {
-  watchApplyLogin
+  watchAuthActions,
+  watchChatActions
 } from '../actions';
 
 export default function* rootSaga() {
   yield all([
-    watchApplyLogin(),
+    watchAuthActions(),
+    watchChatActions(),
   ]);
 }

@@ -11,7 +11,7 @@ import Link from '../components/nav-link';
 
 interface ChatContentProps {
   onQueryHistory: Function;
-  onSendMsg: Function;
+  sendMsg: Function;
   selectContact: typeof selectContact;
   selectedChat: ChatItemEntity;
   chatContentData: ChatContentState;
@@ -125,13 +125,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   }
 
   reSendMsg(reSendMsgData) {
-    this.props.onSendMsg(reSendMsgData);
+    this.props.sendMsg(reSendMsgData);
   }
 
-  sendMsg = (msg, msgType = 0) => {
+  onSendMsg = (msg, msgType = 0) => {
     const _msg = msg.trim();
     if (_msg === '') return;
-    const { selectedChat, onSendMsg } = this.props;
+    const { selectedChat, sendMsg } = this.props;
 
     const msgID = Date.now();
 
@@ -147,7 +147,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     };
     this.textContent.value = '';
 
-    onSendMsg(sendMsgData);
+    sendMsg(sendMsgData);
   }
 
   _onSendImage = () => {
@@ -155,7 +155,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
     if (!selectedChat.ID || this.planningImgList.length === 0) return;
 
-    this.planningImgList.forEach(imgData => this.sendMsg(imgData, 1));
+    this.planningImgList.forEach(imgData => this.onSendMsg(imgData, 1));
     // this.onClearAllPic();
     // this.onCancelPic();
   }
@@ -293,7 +293,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
           onPaste={e => this.onPasteInput(e)}
           contentEditable
           onKeyPress={(e) => {
-            if (e.charCode === 13) this.sendMsg(e.target.value);
+            if (e.charCode === 13) this.onSendMsg(e.target.value);
           }}/>
         {/* <span className="file-btn item" onClick={e => this.addFile()}>
           <Icon n="file"/>

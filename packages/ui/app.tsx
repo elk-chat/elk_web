@@ -42,7 +42,7 @@ const mapStateToProps = state => state;
 
 class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
   static defaultProps = {
-    isMobile: true,
+    isMobile: /Android|iOS/.test(navigator.userAgent),
   }
 
   /** 默认跳转的路由 */
@@ -70,36 +70,40 @@ class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
 
   render() {
     // console.log(this.props);
-    const { authState, applyLogin, ...other } = this.props;
+    const {
+      authState, applyLogin, isMobile, ...other
+    } = this.props;
     const { activeRoute, routerInfo } = this.state;
     return (
-      <React.Fragment>
-        <AutoSelector
-          applyLogin={applyLogin}
-          {...authState}>
-          {
-            () => (
-              <div>
-                <RouterRender
-                  {...this.getProps()}
-                  activeRoute={activeRoute}
-                  routeConfig={pageRoutersConfig}
-                  navRouterMark={NavRouterMark} />
-                <TabBar
-                  routes={getTabRouteConfig({
-                    unreadCount: 0
-                  })} />
-                <Navigator
-                  {...this.getProps()}
-                  activeRoute={activeRoute}
-                  NavRouterMark={NavRouterMark}
-                  navRoutersConfig={navRoutersConfig}
-                  currRouterConfig={routerInfo[NavRouterMark]} />
-              </div>
-            )
-          }
-        </AutoSelector>
-      </React.Fragment>
+      <div className={`little-chat-app ${isMobile ? 'mobile' : 'pc'}`}>
+        <div className="container">
+          <AutoSelector
+            applyLogin={applyLogin}
+            {...authState}>
+            {
+              () => (
+                <div>
+                  <RouterRender
+                    {...this.getProps()}
+                    activeRoute={activeRoute}
+                    routeConfig={pageRoutersConfig}
+                    navRouterMark={NavRouterMark} />
+                  <TabBar
+                    routes={getTabRouteConfig({
+                      unreadCount: 0
+                    })} />
+                  <Navigator
+                    {...this.getProps()}
+                    activeRoute={activeRoute}
+                    NavRouterMark={NavRouterMark}
+                    navRoutersConfig={navRoutersConfig}
+                    currRouterConfig={routerInfo[NavRouterMark]} />
+                </div>
+              )
+            }
+          </AutoSelector>
+        </div>
+      </div>
     );
   }
 }

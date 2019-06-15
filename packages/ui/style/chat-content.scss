@@ -188,7 +188,7 @@ $headerH: 40px;
     justify-content: space-between;
     align-items: center;
     border-radius: 0 0 5px 0;
-    position: fixed;
+    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
@@ -211,7 +211,7 @@ $headerH: 40px;
       }
       &:focus {
         outline: none;
-        border-color: $colorCyan;
+        border-color: $themeColor;
       }
     }
     .item {

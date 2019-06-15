@@ -9,3 +9,17 @@
 body {
   font-family: "lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
 }
+
+.little-chat-app {
+  @include fill;
+  &.pc {
+    background-color: #EEE;
+    .container {
+      background-color: #FFF;
+      width: 320px;
+      height: 640px;
+      position: relative;
+      margin: 20px auto;
+    }
+  }
+}

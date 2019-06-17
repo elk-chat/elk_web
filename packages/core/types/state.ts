@@ -16,6 +16,7 @@ export interface ChatItemEntity extends ChatSDK.kproto.IChat {
   /** Chat ID */
   ContactID?: number;
   ID?: (number|Long);
+  FromUser: string;
 }
 
 export interface ChatListEntity {
@@ -40,8 +41,8 @@ export interface ContactList {
 }
 
 export interface ContactEntity {
-  ID?: number;
-  ChatID?: number;
-  UserName?: string;
+  ID: number;
+  ChatID: number;
+  UserName: string;
   Avatar?: string;
 }

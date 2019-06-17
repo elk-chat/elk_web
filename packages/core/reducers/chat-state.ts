@@ -4,7 +4,7 @@ import {
 import {
   ChatActions, ChatContentState, ChatItemEntity, ChatListEntity
 } from '../types';
-import { FakeChatList, FakeChatContent } from './fake-data';
+import { FakeChatList, getFakeChatContent } from './fake-data';
 
 export function chatListData(
   state: ChatListEntity = FakeChatList,
@@ -22,10 +22,10 @@ export function chatContentData(
 ) {
   switch (action.type) {
     case SELECT_CHAT:
-      const { ID = '' } = action.chatEntity;
+      const { ID = '', FromUser } = action.chatEntity;
       return {
         ...state,
-        [ID.toString()]: FakeChatContent
+        [ID.toString()]: getFakeChatContent(FromUser)
       };
     default:
       return state;

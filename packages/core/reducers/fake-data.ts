@@ -5,63 +5,76 @@ import * as ChatSDK from '@little-chat/sdk/lib';
 import FakeChatMsgDatas from './fake-chat-msg-data';
 import { ContactList, ChatListEntity } from '../types';
 
-const genFakeChatListData = (count: number = 50): ChatListEntity => {
-  const res: ChatListEntity = {};
-  // console.log([...Array(count)].forEach);
-  for (let i = 0; i < count; i++) {
-    const ChatID = i;
-    const ContactID = i;
-    res[ChatID] = {
-      ID: ChatID,
-      ContactID,
-      CreateAt: 1559618145623,
-      UpdatedAt: 1559618545623,
-      ChatType: 1,
-      Title: `Chat_${i}`,
-      Disabled: 0,
-    };
-  }
+const selfUserName = 'Alex';
+const randomUserColl = ['Chili', 'Yakult', 'Milk', 'Wavy', 'None'];
+const userLen = randomUserColl.length;
+let userCursor = 0;
+function getUser(idx: number) {
+  userCursor = idx % userLen;
+  const res = randomUserColl[userCursor];
+  if (userCursor >= userLen) userCursor = 0;
   return res;
-};
+}
 
-const randomUserColl = ['alex', 'Chili', 'Yakult', 'Milk'];
-const getFakeChatContent = (count: number = 50) => {
-  const res: {} = {};
-  // console.log([...Array(count)].forEach);
-  for (let i = 0; i < count; i++) {
-    res[i] = {
-      ID: i,
-      SendTime: 1559618145623,
-      UpdatedAt: 1559618545623,
-      MsgType: 0,
-      FromUser: randomUserColl[Random([0, randomUserColl.length])],
-      Message: FakeChatMsgDatas[Random([0, FakeChatMsgDatas.length])],
-    };
-  }
-  return res;
-};
-
+/** 随机生成联系人 */
 const getFakeContact = (count: number = 50) => {
   const res: ContactList = {};
-  // console.log([...Array(count)].forEach);
   for (let i = 0; i < count; i++) {
     const ContactID = i;
     res[ContactID] = {
       ID: i,
       ChatID: i,
-      UserName: `${randomUserColl[+Random([0, randomUserColl.length])]}_${i}`,
+      UserName: `${getUser(i)}_${i}`,
       Avatar: ''
     };
   }
   return res;
 };
 
-const FakeChatList = genFakeChatListData();
-const FakeChatContent = getFakeChatContent();
 const FakeContactData = getFakeContact();
+
+/** 根据联系人随机生成 chat */
+const genFakeChatListData = (): ChatListEntity => {
+  const res: ChatListEntity = {};
+  const contactIDs = Object.keys(FakeContactData);
+  const contactLen = contactIDs.length;
+  for (let i = 0; i < contactLen; i++) {
+    const currContact = FakeContactData[i];
+    const { ChatID, ID, UserName } = currContact;
+    res[ChatID] = {
+      ID: ChatID,
+      ContactID: ID,
+      CreateAt: 1559618145623,
+      UpdatedAt: 1559618545623,
+      ChatType: 1,
+      FromUser: UserName,
+      Title: `${getUser(i)}_${i}`,
+      Disabled: 0,
+    };
+  }
+  return res;
+};
+
+/** 随机生成聊天内容 */
+const getFakeChatContent = (FromUser: string, count: number = 20) => {
+  const res: {} = {};
+  for (let i = 0; i < count; i++) {
+    res[i] = {
+      ID: i,
+      SendTime: Date.now() + +Random([10000, 50000]),
+      UpdatedAt: 1559618545623,
+      MsgType: 0,
+      FromUser: i % 3 === 0 ? selfUserName : FromUser,
+      Message: FakeChatMsgDatas[Random([0, FakeChatMsgDatas.length])],
+    };
+  }
+  return res;
+};
+
+const FakeChatList = genFakeChatListData();
 
 export {
   FakeChatList,
-  FakeChatContent,
+  getFakeChatContent,
   FakeContactData,
 };

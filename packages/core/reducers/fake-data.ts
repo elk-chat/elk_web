@@ -60,10 +60,11 @@ const genFakeChatListData = (): ChatListEntity => {
 const getFakeChatContent = (FromUser: string, count: number = 20) => {
   const res: {} = {};
   for (let i = 0; i < count; i++) {
+    const sendTime = Date.now() - (+Random([10000 * 1000, 500000 * 1000]));
     res[i] = {
       ID: i,
-      SendTime: Date.now() + +Random([10000, 50000]),
-      UpdatedAt: 1559618545623,
+      SendTime: sendTime,
+      UpdatedAt: sendTime,
       MsgType: 0,
       FromUser: i % 3 === 0 ? selfUserName : FromUser,
       Message: FakeChatMsgDatas[Random([0, FakeChatMsgDatas.length])],

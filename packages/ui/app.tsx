@@ -46,7 +46,8 @@ class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
   }
 
   /** 默认跳转的路由 */
-  defaultPath = CONTACT;
+  // defaultPath = CONTACT;
+  defaultPath = CHAT;
 
   isNative = false;
 
@@ -69,7 +70,7 @@ class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
   })
 
   render() {
-    // console.log(this.props);
+    console.log(this.props);
     const {
       authState, applyLogin, isMobile, ...other
     } = this.props;

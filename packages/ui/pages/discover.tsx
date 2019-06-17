@@ -5,7 +5,7 @@ import Link from '../components/nav-link';
 const discoverItems = [
   {
     title: '朋友圈',
-    component: 'PYQ'
+    component: 'Moment'
   },
   {
     title: 'Google',

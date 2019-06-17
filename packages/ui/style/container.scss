@@ -2,12 +2,13 @@ $tabHeight: 50px;
 $headHeight: 50px;
 
 body {
+  @include fill;
   overflow: hidden;
 }
 
-#Main {
-  @include fill;
-}
+// #Main, .little-chat-app, .container, .main-container {
+//   height: 100%;
+// }
 .chat-list, .contact-list {
   .uke-avatar .avatar {
     border-radius: 3px;
@@ -16,12 +17,19 @@ body {
 }
 
 .main-container {
-  @include fill;
+  // @include fill;
+  // height: 100%;
   overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: $tabHeight;
   .page-item {
     @include fill;
+    // height: 100%;
     visibility: hidden;
-    height: calc(100vh - #{$tabHeight});
+    // height: calc(100vh - #{$tabHeight});
     .page-content {
       height: 100%;
       overflow: auto;

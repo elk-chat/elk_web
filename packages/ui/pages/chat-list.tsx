@@ -24,7 +24,7 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
         {
           Object.keys(chatListData).map((chatID) => {
             const item = chatListData[chatID];
-            const { Title, ID } = item;
+            const { Title, ID, LastMsg } = item;
             return (
               <Link
                 Title={Title}
@@ -36,9 +36,14 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
                   selectChat(item);
                 }}
                 className="chat-item layout" key={ID}>
-                <Avatar text={Title[0]} size={26} />
+                <Avatar text={Title[0]} size={46} />
                 <div className="content">
-                  {Title}
+                  <div className="chat-title">
+                    {Title}
+                  </div>
+                  <div className="last-msg">
+                    {LastMsg}
+                  </div>
                 </div>
               </Link>
             );

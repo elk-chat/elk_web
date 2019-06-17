@@ -23,10 +23,17 @@ export const SEND_MSG = "SEND_MSG";
 export const SENDING_MSG = "SENDING_MSG";
 export const SENT_MSG = "SENT_MSG";
 export const SEND_MSG_FAIL = "SEND_MSG_FAIL";
-export function* sendMsg(msg) {
+export function sendMsg(msg) {
+  return {
+    type: 'SEND_MSG',
+    msg
+  };
+}
+
+export function* sendMsgReq(action) {
   yield put({ type: SENDING_MSG });
 }
 
 export function* watchChatActions() {
-  yield takeLatest(SEND_MSG, sendMsg);
+  yield takeLatest(SEND_MSG, sendMsgReq);
 }

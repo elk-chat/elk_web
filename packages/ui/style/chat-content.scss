@@ -6,7 +6,7 @@
   right: 0;
   bottom: 0;
 }
-$textInputHeight: 30px;
+$textInputHeight: 24px;
 $textPanelPadding: 5px;
 $textPanelHeight: $textInputHeight + $textPanelPadding * 2;
 $chatContainerBgColor: #f9f9f9;
@@ -83,7 +83,7 @@ $headerH: 40px;
   }
   .msg-panel {
     padding: 10px;
-    padding-top: 50px;
+    // padding-top: 50px;
     .time-devide {
       color: #999;
       text-align: center;
@@ -199,12 +199,13 @@ $headerH: 40px;
     }
     .typing-area {
       border: 1px solid #DDD;
-      height: $textInputHeight;
+      // height: $textInputHeight;
       line-height: $textInputHeight;
       border-radius: 3px;
       // width: 90%;
       flex: 1;
       padding: 0 10px;
+      width: 100%;
       &[disabled] {
         background-color: #f3f3f3;
         cursor: not-allowed;

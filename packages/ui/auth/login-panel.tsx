@@ -95,24 +95,6 @@ export default class LoginPanel extends Component<LoginPanelProps> {
           {Call(logo)}
           <FormGenerator
             showInputTitle={false}
-            // className="login"
-            // btnConfig={[
-            //   {
-            //     style: btnGColor ? {
-            //       backgroundImage: gradientColorFilter(btnGColor)
-            //     } : null,
-            //     type: 'submit',
-            //     text: btnTxt,
-            //     className: 'res login-btn',
-            //     color: btnColor,
-            //     action: submitable ? () => {
-            //       applyLogin(this.formHelper.value);
-            //     } : null
-            //   }
-            // ]}
-            // onSubmit={e => {
-            //   login(this.formHelper.value);
-            // }}
             formOptions={formOptions}
             ref={this.saveForm}>
             <Button
@@ -124,7 +106,7 @@ export default class LoginPanel extends Component<LoginPanelProps> {
               style={{
                 backgroundImage: gradientColorFilter(btnGColor)
               }}>
-              登陆
+              {btnTxt}
             </Button>
           </FormGenerator>
         </div>

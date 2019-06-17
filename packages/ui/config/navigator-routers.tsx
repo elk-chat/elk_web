@@ -3,6 +3,7 @@ import React from 'react';
 import ChatContent from '../pages/chat-content';
 import ContactDetail from '../pages/contact-detail';
 import LinkLoader from '../pages/link-loader';
+import Moment from '../pages/moment';
 
 const navRoutersConfig = {
   Setting: {
@@ -20,6 +21,10 @@ const navRoutersConfig = {
   LinkLoader: {
     title: "详情",
     component: LinkLoader
+  },
+  Moment: {
+    title: "朋友圈",
+    component: Moment
   },
 };
 

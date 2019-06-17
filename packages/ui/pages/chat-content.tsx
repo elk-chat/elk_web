@@ -34,9 +34,15 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
   previewGroup!: HTMLElement | null;
 
-  textContent!: HTMLInputElement | null;
+  textContent!: HTMLDivElement | null;
+
+  editorPanel!: HTMLDivElement | null;
+
+  msgPanel!: HTMLInputElement | null;
 
   msgPanelHeight!: number;
+
+  prevEditorHeight!: number;
 
   constructor(props: ChatContentProps) {
     super(props);
@@ -54,7 +60,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     });
   }
 
-  onPasteInput = (event: React.ClipboardEvent<HTMLInputElement>) => {
+  onPasteInput = (event: React.ClipboardEvent<HTMLElement>) => {
     const { items } = event.clipboardData || event.originalEvent.clipboardData;
     for (let index = 0; index < items.length; index++) {
       const item = items[index];
@@ -115,7 +121,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   }
 
   scrollToBottom = (e: HTMLDivElement | null): void => {
-    this.scrollContent = e;
+    this.scrollContent = this.scrollContent || e;
     if (e) {
       setTimeout(() => {
         e.scrollTop = this.msgPanelHeight;
@@ -137,15 +143,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
     const sendMsgData = {
       FromUserType: 'user',
-      ToUserName: selectedChat.ToUserName,
-      ToUserType: selectedChat.ToUserType,
       MsgType: msgType,
       Message: _msg,
       chatId: selectedChat.ID || '',
       SendTime: msgID,
       msgID,
     };
-    this.textContent.value = '';
+    if (this.textContent) this.textContent.innerHTML = '';
 
     sendMsg(sendMsgData);
   }
@@ -271,30 +275,49 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     });
   }
 
+  saveMsgPanel = (e) => { this.msgPanel = e; };
+
+  saveEditprPanel = (e) => {
+    this.editorPanel = e;
+    if (e) this.setMsgPanelPadding(e.offsetHeight);
+  };
+
+  setMsgPanelPadding = (paddingBottom: number) => {
+    if (this.msgPanel) this.msgPanel.style.paddingBottom = `${paddingBottom}px`;
+  }
+
   render() {
     // const { selectedChat } = this.props;
     const chatPanelContainer = (
       <div className="msg-panel-container" ref={(e) => {
         if (e) this.msgPanelHeight = e.offsetHeight;
       }}>
-        <div className="msg-panel">
+        <div className="msg-panel" ref={this.saveMsgPanel}>
           {this.renderChatMsgs()}
         </div>
       </div>
     );
 
     const textPanel = (
-      <div className="editor-panel" ref={(e) => {
-        if (!e || !this.scrollContent) return;
-        /** 响应此区域的高度变化，设置 this.scrollContent 的padding-bottom */
-        this.scrollContent.style.paddingBottom = `${e.offsetHeight}px`;
-      }}>
-        <input className="typing-area" type="text" ref={(e) => { this.textContent = e; }}
+      <div className="editor-panel" ref={this.saveEditprPanel}>
+        <div
+          className="typing-area"
+          ref={(e) => {
+            this.textContent = e;
+          }}
           onPaste={e => this.onPasteInput(e)}
+          onInput={(e) => {
+            const { target } = e;
+            const { offsetHeight } = this.editorPanel;
+            if (this.prevEditorHeight === offsetHeight) return;
+            this.prevEditorHeight = offsetHeight;
+            this.setMsgPanelPadding(offsetHeight);
+            const value = target.innerHTML;
+          }}
           contentEditable
           onKeyPress={(e) => {
             if (e.charCode === 13) this.onSendMsg(e.target.value);
-          }}/>
+          }} />
         {/* <span className="file-btn item" onClick={e => this.addFile()}>
           <Icon n="file"/>
         </span> */}

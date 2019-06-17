@@ -33,7 +33,7 @@ export default class Contact extends React.PureComponent<ContactProps, {}> {
                   selectContact(item);
                 }}>
                 <div className="c-item">
-                  <Avatar src={contactAvatar || null} size={26}>
+                  <Avatar src={contactAvatar || null} size={30}>
                     {contactAvatar || UserName[0]}
                   </Avatar>
                   {UserName}

@@ -3,8 +3,19 @@
     padding: 10px;
     border-bottom: 1px solid #EEE;
     background-color: #fefefe;
+    flex-wrap: nowrap;
     &:hover {
       background-color: #fafafa;
     }
+  }
+  .chat-title {
+    margin-bottom: 5px;
+  }
+  .last-msg {
+    color: #999;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 20px;
   }
 }

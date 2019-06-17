@@ -3,6 +3,7 @@ import { Icon } from 'ukelli-ui/core/icon';
 import { RouterEntity, RouteParams } from 'react-multiple-router';
 
 import NavHeader from "./nav-header";
+import NotFound from '../404';
 // import MobileCoverHead from "./mobile-cover-head";
 
 import { RouteEntity } from '../../types';
@@ -78,7 +79,7 @@ const Navigator: React.SFC<NavigatorProps> = (props) => {
           const { component } = currConfig;
           const C = component;
           const isActive = activeComponentName === Com;
-          return C && (
+          return C ? (
             <div
               key={key}
               className={`navigator-page${isActive ? ' active' : ''}`}>
@@ -92,7 +93,7 @@ const Navigator: React.SFC<NavigatorProps> = (props) => {
               {/* {routesNav}
                 {routes} */}
             </div>
-          );
+          ) : <NotFound />;
         })
       }
     </React.Fragment>

@@ -6,13 +6,11 @@
   justify-content: center;
   align-items: center;
 }
-body {
-  font-family: "lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
-}
 
 .little-chat-app {
-  @include fill;
+  // height: 100%;
   &.pc {
+    @include fill;
     background-color: #EEE;
     .container {
       background-color: #FFF;

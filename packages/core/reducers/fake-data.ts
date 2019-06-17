@@ -48,6 +48,7 @@ const genFakeChatListData = (): ChatListEntity => {
       UpdatedAt: 1559618545623,
       ChatType: 1,
       FromUser: UserName,
+      LastMsg: FakeChatMsgDatas[Random([0, FakeChatMsgDatas.length])].slice(0, 20),
       Title: `${getUser(i)}_${i}`,
       Disabled: 0,
     };

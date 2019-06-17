@@ -42,7 +42,7 @@ const mapStateToProps = state => state;
 
 class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
   static defaultProps = {
-    isMobile: /Android|iOS/.test(navigator.userAgent),
+    isMobile: /Android|iOS|iPhone/.test(navigator.userAgent),
   }
 
   /** 默认跳转的路由 */

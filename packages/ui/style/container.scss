@@ -5,6 +5,16 @@ body {
   overflow: hidden;
 }
 
+#Main {
+  @include fill;
+}
+.chat-list, .contact-list {
+  .uke-avatar .avatar {
+    border-radius: 3px;
+    margin-right: 10px;
+  }
+}
+
 .main-container {
   @include fill;
   overflow: hidden;

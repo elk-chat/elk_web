@@ -36,7 +36,7 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
                   selectChat(item);
                 }}
                 className="chat-item layout" key={ID}>
-                <Avatar text={Title[0]} size={30} />
+                <Avatar text={Title[0]} size={26} />
                 <div className="content">
                   {Title}
                 </div>

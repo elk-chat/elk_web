@@ -2,7 +2,7 @@ export default [
   {
     ref: 'UserName',
     type: 'input',
-    defaultValue: 'alex',
+    defaultValue: 'Alex',
     title: '账号',
     iconName: 'account',
     required: true

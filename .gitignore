@@ -39,3 +39,5 @@ packages/sdk/lib/sdk.d.ts
 packages/sdk/lib/sdk.js
 
 dist
+
+.config.js

@@ -70,7 +70,6 @@ class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
   })
 
   render() {
-    console.log(this.props);
     const {
       authState, applyLogin, isMobile, ...other
     } = this.props;

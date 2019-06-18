@@ -56,7 +56,7 @@ export default class LoginPanel extends Component<LoginPanelProps> {
 
   componentDidMount() {
     Call(this.props.didMount);
-    setTimeout(() => this.clickLoginBtn(), 100);
+    setTimeout(() => this.clickLoginBtn(), 500);
   }
 
   saveForm = (e: any) => {

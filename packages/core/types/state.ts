@@ -1,5 +1,11 @@
 import * as ChatSDK from '@little-chat/sdk/lib';
 
+export enum MsgType {
+  Text,
+  Image,
+  Link,
+}
+
 export interface AuthState {
   isLogin: boolean;
   logging: boolean;
@@ -32,7 +38,7 @@ export interface ChatContentState {
       FromUser: string;
       SendTime: number;
       UpdatedAt: number;
-      MsgType: number;
+      MsgType: MsgType;
     };
   };
 }

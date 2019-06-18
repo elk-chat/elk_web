@@ -8,7 +8,7 @@ export function ApplyLogin(form: Msg.kproto.IUserLoginReq) {
     UserName: form.UserName,
     Password: form.Password,
   });
-  console.log(msg, 'sending msg');
+  console.log(msg, 'logging');
   const result = {
     UserName: form.UserName,
   };

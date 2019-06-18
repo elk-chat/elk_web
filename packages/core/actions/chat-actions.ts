@@ -3,8 +3,13 @@ import {
 } from 'redux-saga/effects';
 
 import {
+  SendMsg
+} from "@little-chat/sdk";
+
+import {
   ChatActions, ChatItemEntity
 } from '../types';
+
 
 export const SELECT_CHAT = "SELECT_CHAT";
 export function selectChat(chatEntity: ChatItemEntity): ChatActions {
@@ -31,7 +36,16 @@ export function sendMsg(msg) {
 }
 
 export function* sendMsgReq(action) {
+  // console.log(action)
+  const { msg } = action;
   yield put({ type: SENDING_MSG });
+  try {
+    const sendRes = yield call(SendMsg, msg);
+    console.log(sendRes);
+    yield put({ type: SENT_MSG });
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 export function* watchChatActions() {

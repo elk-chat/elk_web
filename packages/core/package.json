@@ -1,5 +1,6 @@
 {
   "name": "@little-chat/core",
+  "main": "./index",
   "version": "0.1.0",
   "devDependencies": {
     "@types/redux-logger": "^3.0.7",

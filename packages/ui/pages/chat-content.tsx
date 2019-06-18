@@ -1,17 +1,17 @@
 import React from 'react';
-import { HasValue, DateFormat } from 'basic-helper';
+import { HasValue, DateFormat, UUID } from 'basic-helper';
 import { Avatar, Icon } from 'ukelli-ui';
 import {
-  ChatItemEntity, ChatContentState, UserInfo, ContactEntity
+  ChatItemEntity, ChatContentState, UserInfo, MsgType
 } from '@little-chat/core/types';
 import {
-  selectContact
+  selectContact, sendMsg
 } from '@little-chat/core/actions';
 import Link from '../components/nav-link';
 
 interface ChatContentProps {
   onQueryHistory: Function;
-  sendMsg: Function;
+  sendMsg: typeof sendMsg;
   selectContact: typeof selectContact;
   selectedChat: ChatItemEntity;
   chatContentData: ChatContentState;
@@ -42,7 +42,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
   msgPanelHeight!: number;
 
-  prevEditorHeight!: number;
+  prevPadding!: number;
 
   constructor(props: ChatContentProps) {
     super(props);
@@ -134,22 +134,21 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     this.props.sendMsg(reSendMsgData);
   }
 
-  onSendMsg = (msg, msgType = 0) => {
+  onSendMsg = (msg, msgType: MsgType = MsgType.Text) => {
     const _msg = msg.trim();
     if (_msg === '') return;
     const { selectedChat, sendMsg } = this.props;
 
-    const msgID = Date.now();
+    const MsgID = UUID();
 
     const sendMsgData = {
       FromUserType: 'user',
       MsgType: msgType,
       Message: _msg,
-      chatId: selectedChat.ID || '',
-      SendTime: msgID,
-      msgID,
+      ChatID: selectedChat.ID || '',
+      SendTime: Date.now(),
+      MsgID,
     };
-    if (this.textContent) this.textContent.innerHTML = '';
 
     sendMsg(sendMsgData);
   }
@@ -159,7 +158,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
     if (!selectedChat.ID || this.planningImgList.length === 0) return;
 
-    this.planningImgList.forEach(imgData => this.onSendMsg(imgData, 1));
+    this.planningImgList.forEach(imgData => this.onSendMsg(imgData, MsgType.Image));
     // this.onClearAllPic();
     // this.onCancelPic();
   }
@@ -218,13 +217,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
       //   </div>
       // );
 
-      switch (true) {
-        case FAIL_MSG_QUEUE[msgID]:
-          statusDOM = (
-            <span className="fail-msg">发送失败, 请稍候再发</span>
-          );
-          break;
-      }
+      // switch (true) {
+      //   case FAIL_MSG_QUEUE[msgID]:
+      //     statusDOM = (
+      //       <span className="fail-msg">发送失败, 请稍候再发</span>
+      //     );
+      //     break;
+      // }
 
       switch (MsgType) {
         case 0:
@@ -283,7 +282,11 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   };
 
   setMsgPanelPadding = (paddingBottom: number) => {
-    if (this.msgPanel) this.msgPanel.style.paddingBottom = `${paddingBottom}px`;
+    if (this.prevPadding === paddingBottom) return;
+    if (this.msgPanel) {
+      this.msgPanel.style.paddingBottom = `${paddingBottom}px`;
+      this.prevPadding = paddingBottom;
+    }
   }
 
   render() {
@@ -301,6 +304,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     const textPanel = (
       <div className="editor-panel" ref={this.saveEditprPanel}>
         <div
+          contentEditable
           className="typing-area"
           ref={(e) => {
             this.textContent = e;
@@ -309,14 +313,19 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
           onInput={(e) => {
             const { target } = e;
             const { offsetHeight } = this.editorPanel;
-            if (this.prevEditorHeight === offsetHeight) return;
-            this.prevEditorHeight = offsetHeight;
             this.setMsgPanelPadding(offsetHeight);
             const value = target.innerHTML;
           }}
-          contentEditable
           onKeyPress={(e) => {
-            if (e.charCode === 13) this.onSendMsg(e.target.value);
+            // TODO: 实现 command + enter 换行
+            if (e.charCode === 13) {
+              e.preventDefault();
+              let val = e.target.innerHTML;
+              val = val.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
+              this.onSendMsg(val, MsgType.Text);
+              if (this.textContent) this.textContent.innerHTML = '';
+              this.setMsgPanelPadding(this.editorPanel.offsetHeight);
+            }
           }} />
         {/* <span className="file-btn item" onClick={e => this.addFile()}>
           <Icon n="file"/>

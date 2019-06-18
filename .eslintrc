@@ -25,6 +25,7 @@
     "import/prefer-default-export": 0,
     "no-underscore-dangle": 0,
     "no-console": 0,
+    "import/no-extraneous-dependencies": 0,
     "no-case-declarations": 0,
     "no-plusplus": 0,
     "comma-dangle": 0,
@@ -44,22 +45,20 @@
       {
         "extensions": [".js", ".jsx", "tsx", "ts"]
       }
-    ],
-    "import/no-extraneous-dependencies": ["error", {
-      "devDependencies": true, "packageDir": [
-        "./",
-        "./packages/ui",
-        "./packages/core",
-        "./packages/sdk"
-      ]
-    }]
+    ]
   },
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "moduleDirectory": [
+          "node_modules",
+          "./packages"
+        ]
       }
     },
-    "import/external-module-folders": ["./packages"]
+    "import/external-module-folders": [
+      "./packages"
+    ]
   }
 }

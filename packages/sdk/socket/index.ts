@@ -1,4 +1,5 @@
-import { EventEmitterClass } from 'basic-helper';
+import { EventEmitterClass, Call } from 'basic-helper';
+import { decodeAgent } from '../lib';
 
 interface SocketParams {
   /** 链接的 apiHost */
@@ -13,6 +14,10 @@ interface SocketParams {
   onErr?: () => void;
   onMessage?: (event: MessageEvent) => void;
 }
+interface SendOptions {
+  requestID: number;
+}
+
 const onOpenMark = 'onOpen';
 const onMessageMark = 'onMessage';
 
@@ -27,6 +32,8 @@ class SocketHelper extends EventEmitterClass {
 
   connecting: boolean = false;
 
+  reqQueue: {} = {};
+
   constructor(params: SocketParams) {
     super();
     const { apiHost } = params;
@@ -36,12 +43,13 @@ class SocketHelper extends EventEmitterClass {
     } else {
       console.error('请传入 apiHost');
     }
+    // this.send = this.send.bind(this);
   }
 
-  initWS = (apiHost) => {
+  initWS = (apiHost: string) => {
     const wsApiHost = wrapWSUrl(apiHost);
     this.socket = new WebSocket(wsApiHost);
-    // this.socket.binaryType = 'arraybuffer';
+    this.socket.binaryType = 'arraybuffer';
 
     this.socket.onopen = this.onOpen;
     this.socket.onmessage = this.onMessage;
@@ -53,13 +61,19 @@ class SocketHelper extends EventEmitterClass {
 
   after = data => data;
 
-  send = (data: any) => {
+  send = (buffer: ArrayBuffer, requestID: number, api, callback: Function) => {
     if (!this.connecting) {
       console.error('链接已中断');
     } else {
-      const wrapData = this.before(data);
+      const wrapData = this.before(buffer);
       this.socket.send(wrapData);
+      this.reqQueue[requestID] = {
+        callback,
+        api
+      };
     }
+    // this.socket.send(finalData);
+    // return finalData;
   }
 
   onOpen = () => {
@@ -69,9 +83,16 @@ class SocketHelper extends EventEmitterClass {
   }
 
   onMessage = (event) => {
-    console.log(event, 'onMessage');
+    const { data } = event;
+    const decodeResData = decodeAgent(data);
+    const { RequestID } = decodeResData;
+    const currReq = this.reqQueue[RequestID];
+    const { api, callback } = currReq;
+    const dataFromProtobuf = api.decode(decodeResData.data);
+    // console.log(decodeResData, event, 'onMessage');
     // this.params.onMessage(event);
-    const nextData = this.after(event);
+    const nextData = this.after(dataFromProtobuf);
+    Call(callback, nextData);
     this.emit(onMessageMark, nextData);
   }
 

@@ -1,3 +1,5 @@
+import { encodeData, decodeData } from './date-buffer';
+
 interface Api {
   create: ({}) => {};
   encode: ({}) => ({
@@ -7,17 +9,18 @@ interface Api {
   toObject: (any) => {};
 }
 
-function encodeAgent<T extends Api>(api: T, data: {}): Uint8Array {
+function encodeAgent<T extends Api>(api: T, data: {}, apiName: string): ArrayBuffer {
   const postData = api.create(data);
   const bufData = api.encode(postData).finish();
 
-  return bufData;
-}
-function decodeAgent<T extends Api>(api: T, buf: Uint8Array) {
-  const msgData = api.decode(buf);
-  const objData = api.toObject(msgData);
+  const finalData = encodeData(apiName, bufData);
 
-  return objData;
+  return finalData;
+}
+function decodeAgent(data: ArrayBuffer) {
+  const res = decodeData(data);
+
+  return res;
 }
 
 export {

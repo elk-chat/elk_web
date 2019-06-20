@@ -11,9 +11,14 @@ import Link from '../components/nav-link';
 interface ChatListProps extends UserInfo {
   chatListData: ChatListEntity;
   selectChat: Function;
+  applyFetchChatList: Function;
 }
 
 export default class ChatList extends React.Component<ChatListProps, {}> {
+  componentDidMount() {
+    this.props.applyFetchChatList();
+  }
+
   render() {
     const { chatListData, selectChat } = this.props;
     const chatIDs = Object.keys(chatListData);

@@ -5,13 +5,13 @@ import {
   ChatItemEntity, ChatContentState, UserInfo, MsgType
 } from '@little-chat/core/types';
 import {
-  selectContact, sendMsg
+  selectContact, applySendMsg
 } from '@little-chat/core/actions';
 import Link from '../components/nav-link';
 
 interface ChatContentProps {
   onQueryHistory: Function;
-  sendMsg: typeof sendMsg;
+  applySendMsg: typeof applySendMsg;
   selectContact: typeof selectContact;
   selectedChat: ChatItemEntity;
   chatContentData: ChatContentState;
@@ -131,13 +131,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   }
 
   reSendMsg(reSendMsgData) {
-    this.props.sendMsg(reSendMsgData);
+    this.props.applySendMsg(reSendMsgData);
   }
 
   onSendMsg = (msg, msgType: MsgType = MsgType.Text) => {
     const _msg = msg.trim();
     if (_msg === '') return;
-    const { selectedChat, sendMsg } = this.props;
+    const { selectedChat, applySendMsg } = this.props;
 
     const MsgID = UUID();
 
@@ -150,7 +150,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
       MsgID,
     };
 
-    sendMsg(sendMsgData);
+    applySendMsg(sendMsgData);
   }
 
   _onSendImage = () => {

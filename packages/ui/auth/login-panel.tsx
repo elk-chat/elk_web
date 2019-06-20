@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { FormGenerator } from 'ukelli-ui/core/form-generator';
+import { TipPanel } from 'ukelli-ui/core/tip-panel';
 import { Button } from 'ukelli-ui/core/button';
 import { Call } from 'basic-helper/call';
 import { tuple } from 'basic-helper/utils/type';
@@ -62,7 +63,7 @@ export default class LoginPanel extends Component<LoginPanelProps> {
 
   render() {
     const {
-      logging, applyLogin, backgroundImage, btnColor,
+      logging, applyLogin, backgroundImage, btnColor, msg, loginFail,
       autoLoging, logo, fixed, btnGColor
     } = this.props;
     const submitable = !autoLoging && !logging;
@@ -85,6 +86,11 @@ export default class LoginPanel extends Component<LoginPanelProps> {
         }}>
         <div className="login-layout">
           {Call(logo)}
+          {
+            loginFail && (
+              <TipPanel text={msg} type="error" />
+            )
+          }
           <FormGenerator
             showInputTitle={false}
             formOptions={formOptions}

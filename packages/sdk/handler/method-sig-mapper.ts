@@ -1,3 +1,7 @@
+/*
+ * 根据服务端的算法把 req method 转换成 int32 格式
+ */
+
 export default {
   SIG_ERROR: 2619118453,
   SIG_SUCCESS: 2696799790,

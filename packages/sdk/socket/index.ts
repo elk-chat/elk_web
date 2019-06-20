@@ -1,5 +1,5 @@
 import { EventEmitterClass, Call } from 'basic-helper';
-import { decodeAgent } from '../lib';
+import { decodeData, messageResHandler } from '../handler';
 
 interface SocketParams {
   /** 链接的 apiHost */
@@ -13,9 +13,6 @@ interface SocketParams {
   /** 失败 */
   onErr?: () => void;
   onMessage?: (event: MessageEvent) => void;
-}
-interface SendOptions {
-  requestID: number;
 }
 
 const onOpenMark = 'onOpen';
@@ -59,17 +56,16 @@ class SocketHelper extends EventEmitterClass {
 
   before = data => data;
 
-  after = data => data;
+  after = data => data.Data;
 
-  send = (buffer: ArrayBuffer, requestID: number, api, callback: Function) => {
+  send = (buffer: ArrayBuffer, requestID: BigInt, callback: Function) => {
     if (!this.connecting) {
       console.error('链接已中断');
     } else {
       const wrapData = this.before(buffer);
       this.socket.send(wrapData);
-      this.reqQueue[requestID] = {
+      this.reqQueue[requestID.toString()] = {
         callback,
-        api
       };
     }
     // this.socket.send(finalData);
@@ -84,14 +80,12 @@ class SocketHelper extends EventEmitterClass {
 
   onMessage = (event) => {
     const { data } = event;
-    const decodeResData = decodeAgent(data);
-    const { RequestID } = decodeResData;
-    const currReq = this.reqQueue[RequestID];
-    const { api, callback } = currReq;
-    const dataFromProtobuf = api.decode(decodeResData.data);
-    // console.log(decodeResData, event, 'onMessage');
-    // this.params.onMessage(event);
-    const nextData = this.after(dataFromProtobuf);
+    const decodedData = decodeData(data);
+    const { RequestID } = decodedData;
+    const currReq = this.reqQueue[RequestID.toString()];
+    const { callback } = currReq;
+    const finalData = messageResHandler(decodedData);
+    const nextData = this.after(finalData);
     Call(callback, nextData);
     this.emit(onMessageMark, nextData);
   }

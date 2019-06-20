@@ -1,5 +1,4 @@
 import SDK from '../lib/sdk';
-import { encodeAgent } from '../lib';
 import { WSSend } from '..';
 
 const {
@@ -11,6 +10,7 @@ export async function ApplyLogin(form: SDK.kproto.IUserLoginReq) {
     UserName: form.UserName,
     Password: form.Password,
   }, 'UserLoginReq');
+  console.log(res)
   const result = {
     UserName: form.UserName,
   };
@@ -22,15 +22,12 @@ export async function ApplyRegister(form: SDK.kproto.IUserRegisterReq) {
     UserName: form.UserName,
     Password: form.Password,
   }, 'UserRegisterReq');
-  const result = {
-    UserName: form.UserName,
-  };
-  return result;
+  return res;
 }
 
-setTimeout(() => {
-  ApplyRegister({
-    UserName: 'aaaalex',
-    Password: '123123123'
-  });
-}, 1000);
+// setTimeout(() => {
+//   ApplyRegister({
+//     UserName: 'Alex',
+//     Password: '123'
+//   });
+// }, 1000);

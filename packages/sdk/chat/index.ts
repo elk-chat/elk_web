@@ -1,16 +1,14 @@
 import Msg from '../lib/sdk';
-import { encodeAgent } from '../lib/proto-agent';
 import { WSSend } from '..';
 
 const { ChatSendMessageReq } = Msg.kproto;
 
-export function SendMsg(msgData: Msg.kproto.IChatSendMessageReq) {
-  const bufData = encodeAgent(ChatSendMessageReq, {
+export async function SendMsg(msgData: Msg.kproto.IChatSendMessageReq) {
+  const res = await WSSend(ChatSendMessageReq, {
     ChatID: msgData.ChatID,
     Message: msgData.Message,
     MessageType: msgData.MessageType,
-  });
-  WSSend(bufData);
+  }, 'ChatSendMessageReq');
   const result = {
     // UserName: msgData.UserName,
   };

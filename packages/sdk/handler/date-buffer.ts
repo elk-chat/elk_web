@@ -1,14 +1,7 @@
-import MethodSig from './method-sig';
-import ToConstName from './to-const-name';
+/* global BigInt */
 
-interface HeaderStruct {
-  Len: number;
-  Sig: number;
-  AuthKeyID: number;
-  SessionID: number;
-  RequestID: number;
-  ResponseID: number;
-}
+import getSigMapper from './method-sig';
+import { HeaderStruct, DecodedDataStruct } from '../struct';
 
 const HeaderByteLen = {
   Len: 4,
@@ -34,17 +27,27 @@ const headerBufferLen = (() => {
   return res;
 })();
 
-function encodeData(method: string, dataBuf: Uint8Array, RequestID: number) {
-  const methodMapper = `SIG_${ToConstName(method)}`;
-  const sig = MethodSig[methodMapper];
+/**
+ * 将数据进行 encode，步骤
+ *
+ * 1. 把特定格式的 header 的字段进行 unit 转换，写入 ArrayBuffer 缓存带中
+ * 2. 把已经通过 protobuf 的 data buffer 数据写入 ArrayBuffer
+ *
+ * @param {string} method
+ * @param {Uint8Array} dataBuf
+ * @param {BigInt} RequestID
+ * @returns
+ */
+function encodeData(method: string, dataBuf: Uint8Array, RequestID: BigInt) {
+  const sig = getSigMapper(method);
   const totalLen = headerBufferLen + dataBuf.length;
   const header: HeaderStruct = {
     Len: totalLen,
     Sig: sig,
-    AuthKeyID: 0,
-    SessionID: 0,
+    AuthKeyID: BigInt(0),
+    SessionID: BigInt(0),
     RequestID,
-    ResponseID: 0
+    ResponseID: BigInt(0)
   };
   const buffer = new ArrayBuffer(totalLen);
   const uint8 = new Uint8Array(buffer);
@@ -63,7 +66,15 @@ function encodeData(method: string, dataBuf: Uint8Array, RequestID: number) {
   return buffer;
 }
 
-function decodeData(buffer: ArrayBuffer) {
+/**
+ * 提取返回消息的 buffer 的内容
+ * 1. 提取 header 内容
+ * 2. 提取 data buffer 内容，交给 handler 函数根据返回的 Sig 做 toObject 处理
+ *
+ * @param {ArrayBuffer} buffer
+ * @returns {DecodedDataStruct}
+ */
+function decodeData(buffer: ArrayBuffer): DecodedDataStruct {
   const view = new DataView(buffer);
 
   const headerBufMapper = {
@@ -78,7 +89,7 @@ function decodeData(buffer: ArrayBuffer) {
 
   return {
     ...headerBufMapper,
-    data: new Uint8Array(dataBuf)
+    DataBuf: new Uint8Array(dataBuf),
   };
 }
 

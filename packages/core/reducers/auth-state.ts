@@ -1,16 +1,19 @@
 import {
   LOGIN_SUCCESS, LOGIN_FAIL, LOGGING, LOGIN_TIMEOUT
 } from '../actions';
-import { ActionType, LoginAction, AuthState, UserInfo } from '../types';
+import {
+  ActionType, LoginAction, AuthState, UserInfo, AuthActions
+} from '../types';
 
 const initAuthState: AuthState = {
   isLogin: false,
+  loginFail: false,
   logging: false,
   msg: '未登录',
 };
 export function authState(
   state = initAuthState,
-  action: ActionType,
+  action: AuthActions,
 ) {
   switch (action.type) {
     case LOGIN_SUCCESS:
@@ -26,14 +29,17 @@ export function authState(
         msg: '登陆中'
       });
     case LOGIN_FAIL:
+      const { failInfo } = action;
       return Object.assign({}, state, {
         isLogin: false,
+        loginFail: true,
         logging: false,
-        msg: '登陆失败'
+        msg: failInfo
       });
     case LOGIN_TIMEOUT:
       return Object.assign({}, state, {
         isLogin: false,
+        loginFail: true,
         logging: false,
         msg: '登陆超时'
       });

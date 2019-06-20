@@ -8,6 +8,7 @@ export enum MsgType {
 
 export interface AuthState {
   isLogin: boolean;
+  loginFail: boolean;
   logging: boolean;
   msg: string;
 }

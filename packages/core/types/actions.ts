@@ -9,12 +9,14 @@ export interface ActionType {
   type: string;
 }
 
-export interface ChatActions {
-  type: string;
+export interface ChatActions extends ActionType {
   chatEntity: ChatItemEntity;
 }
 
-export interface ContactActions {
-  type: string;
+export interface ContactActions extends ActionType {
   conctactEntity: ContactEntity;
+}
+
+export interface AuthActions extends ActionType {
+  failInfo?: string;
 }

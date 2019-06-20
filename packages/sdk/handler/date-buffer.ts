@@ -27,6 +27,19 @@ const headerBufferLen = (() => {
   return res;
 })();
 
+const COMMON_HEADER: HeaderStruct = {
+  Len: 0,
+  Sig: 0,
+  AuthKeyID: BigInt(0),
+  SessionID: BigInt(0),
+  RequestID: BigInt(0),
+  ResponseID: BigInt(0)
+};
+
+export function setHeaderSSID(SessionID) {
+  COMMON_HEADER.SessionID = BigInt(SessionID);
+}
+
 /**
  * 将数据进行 encode，步骤
  *
@@ -41,14 +54,11 @@ const headerBufferLen = (() => {
 function encodeData(method: string, dataBuf: Uint8Array, RequestID: BigInt) {
   const sig = getSigMapper(method);
   const totalLen = headerBufferLen + dataBuf.length;
-  const header: HeaderStruct = {
+  const header = Object.assign({}, COMMON_HEADER, {
     Len: totalLen,
     Sig: sig,
-    AuthKeyID: BigInt(0),
-    SessionID: BigInt(0),
-    RequestID,
-    ResponseID: BigInt(0)
-  };
+    RequestID
+  });
   const buffer = new ArrayBuffer(totalLen);
   const uint8 = new Uint8Array(buffer);
   const view = new DataView(buffer);

@@ -1,7 +1,12 @@
 import Msg from '../lib/sdk';
 import { WSSend } from '..';
 
-const { ChatSendMessageReq } = Msg.kproto;
+const { ChatSendMessageReq, ChatGetChatsReq } = Msg.kproto;
+
+export async function GetChatList() {
+  const res = await WSSend(ChatGetChatsReq, {}, 'ChatGetChatsReq');
+  return res;
+}
 
 export async function SendMsg(msgData: Msg.kproto.IChatSendMessageReq) {
   const res = await WSSend(ChatSendMessageReq, {
@@ -9,8 +14,5 @@ export async function SendMsg(msgData: Msg.kproto.IChatSendMessageReq) {
     Message: msgData.Message,
     MessageType: msgData.MessageType,
   }, 'ChatSendMessageReq');
-  const result = {
-    // UserName: msgData.UserName,
-  };
-  return result;
+  return res;
 }

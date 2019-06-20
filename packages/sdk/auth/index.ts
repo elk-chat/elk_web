@@ -1,5 +1,5 @@
 import SDK from '../lib/sdk';
-import { WSSend } from '..';
+import { WSSend, setHeaderSSID } from '..';
 
 const {
   UserLoginReq, UserRegisterReq
@@ -10,10 +10,11 @@ export async function ApplyLogin(form: SDK.kproto.IUserLoginReq) {
     UserName: form.UserName,
     Password: form.Password,
   }, 'UserLoginReq');
-  console.log(res)
-  const result = {
+  /** 成功后设置 sessionID */
+  if (res.SessionID) setHeaderSSID(res.SessionID);
+  const result = Object.assign({}, res, {
     UserName: form.UserName,
-  };
+  });
   return result;
 }
 

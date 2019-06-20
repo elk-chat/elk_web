@@ -58,18 +58,28 @@ class SocketHelper extends EventEmitterClass {
 
   after = data => data.Data;
 
-  send = (buffer: ArrayBuffer, requestID: BigInt, callback: Function) => {
+  resStatusFilter = data => !data.Data.Code
+
+  setReqQuquq = (requestID, success, fail) => {
+    this.reqQueue[requestID.toString()] = {
+      success,
+      fail,
+    };
+  }
+
+  getReqQueue = requestID => this.reqQueue[requestID.toString()] || {}
+
+  send = (
+    buffer: ArrayBuffer, requestID: BigInt,
+    success: Function, fail: Function
+  ) => {
     if (!this.connecting) {
       console.error('链接已中断');
     } else {
       const wrapData = this.before(buffer);
       this.socket.send(wrapData);
-      this.reqQueue[requestID.toString()] = {
-        callback,
-      };
+      this.setReqQuquq(requestID, success, fail);
     }
-    // this.socket.send(finalData);
-    // return finalData;
   }
 
   onOpen = () => {
@@ -82,11 +92,12 @@ class SocketHelper extends EventEmitterClass {
     const { data } = event;
     const decodedData = decodeData(data);
     const { RequestID } = decodedData;
-    const currReq = this.reqQueue[RequestID.toString()];
-    const { callback } = currReq;
+    const currReq = this.getReqQueue(RequestID);
+    const { success, fail } = currReq;
     const finalData = messageResHandler(decodedData);
+    const isSuccess = this.resStatusFilter(finalData);
     const nextData = this.after(finalData);
-    Call(callback, nextData);
+    Call(isSuccess ? success : fail, nextData);
     this.emit(onMessageMark, nextData);
   }
 

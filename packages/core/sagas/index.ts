@@ -1,6 +1,4 @@
-import {
-  put, takeEvery, all, delay
-} from 'redux-saga/effects';
+import { all } from 'redux-saga/effects';
 
 import {
   watchAuthActions,

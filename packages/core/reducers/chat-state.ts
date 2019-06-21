@@ -1,6 +1,6 @@
 // import sortedIndexBy from 'lodash/sortedIndexBy';
 import {
-  SELECT_CHAT, RECEIVE_CHAT_LIST, RECEIVE_CHAT_MESSAGE,
+  SELECT_CHAT, RECEIVE_CHAT_LIST, RECEIVE_CHAT_MESSAGE, SENT_MSG
 } from "../actions";
 import {
   ChatActions, ChatContentState, ChatContentItem,

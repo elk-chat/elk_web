@@ -7,19 +7,47 @@
  */
 
 import {
+  EventEmitter
+} from 'basic-helper';
+import {
   put, takeLatest, call
 } from 'redux-saga/effects';
 
 import {
   SendMsg, GetChatList, CreateChat, AddMemberToChat,
-  SyncChatMessage
+  SyncChatMessage, RECEIVE_STATE_UPDATE
 } from "@little-chat/sdk";
 
 import SDK from "@little-chat/sdk/lib/sdk";
 
 import {
-  ChatActions, ChatItemEntity
+  ChatActions, ChatItemEntity, MessageType
 } from '../types';
+
+export const INIT = 'INIT';
+export function init(dispatch) {
+  return {
+    type: INIT,
+    dispatch
+  };
+}
+
+/**
+ * 注册推送事件
+ */
+function* initSaga({ dispatch }) {
+  function handleStateUpdate(nextState) {
+    switch (nextState.MessageType) {
+      case MessageType.AddMember:
+
+        break;
+      case MessageType.SendMessage:
+        dispatch(receiveChatMessage([nextState], nextState.ChatID));
+        break;
+    }
+  }
+  yield EventEmitter.on(RECEIVE_STATE_UPDATE, handleStateUpdate);
+}
 
 export const SELECT_CHAT = "SELECT_CHAT";
 export function selectChat(chatEntity: ChatItemEntity) {
@@ -64,6 +92,15 @@ export function applySyncChatMessage(payload: SDK.kproto.IChatSyncChatMessagesRe
     payload
   };
 }
+export const RECEIVE_CHAT_MESSAGE = "RECEIVE_CHAT_MESSAGE";
+export function receiveChatMessage(chatContent, chatID) {
+  EventEmitter.emit(RECEIVE_CHAT_MESSAGE, chatContent);
+  return {
+    chatID,
+    chatContent,
+    type: RECEIVE_CHAT_MESSAGE,
+  };
+}
 
 export const SENDING_MSG = "SENDING_MSG";
 export const SENT_MSG = "SENT_MSG";
@@ -78,13 +115,17 @@ export function* sendMsgReq(action) {
   try {
     yield call(SendMsg, payload);
     yield put({ type: SENT_MSG, sentMsg: payload });
+    const { StateUpdates } = yield call(SyncChatMessage, {
+      ChatID: payload.ChatID,
+      State: payload.lastState
+    });
+    yield put(receiveChatMessage(StateUpdates, payload.ChatID));
   } catch (e) {
     console.log(e);
   }
 }
 
 export const SYNCING_CHAT_MESSAGE = "SYNCING_CHAT_MESSAGE";
-export const RECEIVE_CHAT_MESSAGE = "RECEIVE_CHAT_MESSAGE";
 export const SYNC_CHAT_MESSAGE_FAIL = "SYNC_CHAT_MESSAGE_FAIL";
 /**
  * 同步 Chat 的通讯内容
@@ -94,11 +135,7 @@ export function* syncChatMessage(action) {
   yield put({ type: SYNCING_CHAT_MESSAGE });
   try {
     const { StateUpdates } = yield call(SyncChatMessage, payload);
-    yield put({
-      type: RECEIVE_CHAT_MESSAGE,
-      chatContent: StateUpdates,
-      chatID: payload.ChatID
-    });
+    yield put(receiveChatMessage(StateUpdates, payload.ChatID));
   } catch (e) {
     console.log(e);
   }
@@ -144,6 +181,7 @@ export function* addChat(action) {
 }
 
 export function* watchChatActions() {
+  yield takeLatest(INIT, initSaga);
   yield takeLatest(APPLY_SEND_MSG, sendMsgReq);
   yield takeLatest(APPLY_FETCH_CHAT_LIST, getChatList);
   yield takeLatest(APPLY_ADD_CHAT, addChat);

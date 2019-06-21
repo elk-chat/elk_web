@@ -6,8 +6,9 @@ interface HeadBarProps {
   title?: string;
   /** 是否需要返回按钮 */
   back?: boolean;
+  passProps?: {};
   /** 嵌入右边的按钮 */
-  RightBtns?: () => React.ElementType;
+  RightBtns?: (passProps: {}) => React.ElementType;
   /** onNavigate */
   onNavigate: Function;
 }
@@ -16,6 +17,7 @@ const NavHeader: React.SFC<HeadBarProps> = (props) => {
   const {
     title,
     back,
+    passProps,
     RightBtns,
     onNavigate,
   } = props;
@@ -34,7 +36,7 @@ const NavHeader: React.SFC<HeadBarProps> = (props) => {
       {
         RightBtns && (
           <span className="right-btns">
-            {RightBtns(props)}
+            {RightBtns(passProps)}
           </span>
         )
       }

@@ -21,3 +21,12 @@
     }
   }
 }
+.horizontal-form {
+  padding: 20px 20px;
+  .input-control {
+    width: 100%;
+  }
+}
+.form-container .form-control {
+  max-width: 100% !important;
+}

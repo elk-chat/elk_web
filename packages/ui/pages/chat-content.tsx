@@ -2,10 +2,11 @@ import React from 'react';
 import { HasValue, DateFormat, UUID } from 'basic-helper';
 import { Avatar, Icon } from 'ukelli-ui';
 import {
-  ChatItemEntity, ChatContentState, UserInfo, MsgType
+  ChatItemEntity, ChatContentState, UserInfo, ContentType,
+  MessageType, ChatContentStateInfo
 } from '@little-chat/core/types';
 import {
-  selectContact, applySendMsg
+  selectContact, applySendMsg, applySyncChatMessage
 } from '@little-chat/core/actions';
 import Link from '../components/nav-link';
 
@@ -13,8 +14,10 @@ interface ChatContentProps {
   onQueryHistory: Function;
   applySendMsg: typeof applySendMsg;
   selectContact: typeof selectContact;
+  applySyncChatMessage: typeof applySyncChatMessage;
   selectedChat: ChatItemEntity;
   chatContentData: ChatContentState;
+  currChatContentData: ChatContentStateInfo;
   userInfo: UserInfo;
 }
 
@@ -52,6 +55,14 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
       limit: 12,
       showDragArea: false
     };
+  }
+
+  componentDidMount() {
+    const { currChatContentData, selectedChat } = this.props;
+    this.props.applySyncChatMessage({
+      ChatID: selectedChat.ID,
+      State: currChatContentData.lastState
+    });
   }
 
   toggleDragArea = (isShow: boolean) => {
@@ -98,7 +109,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     const { limit } = this.state;
     const { selectedChat, onQueryHistory } = nextProps;
 
-    const currChart = this.getActiveChatContent();
+    const currChart = this.props.currChatContentData.data;
     const lastId = currChart.length > 0 ? currChart[0].Id : 0;
 
     const queryData = {
@@ -115,7 +126,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   }
 
   queryNext() {
-    const currMsgLen = this.getActiveChatContent().length;
+    const currMsgLen = this.props.currChatContentData.data.length;
     this.queryHistory(this.props, currMsgLen, false);
     ++this.page;
   }
@@ -134,23 +145,18 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     this.props.applySendMsg(reSendMsgData);
   }
 
-  onSendMsg = (msg, msgType: MsgType = MsgType.Text) => {
+  onSendMsg = (msg, contentType: ContentType = ContentType.Text) => {
     const _msg = msg.trim();
     if (_msg === '') return;
-    const { selectedChat, applySendMsg } = this.props;
-
-    const MsgID = UUID();
+    const { selectedChat } = this.props;
 
     const sendMsgData = {
-      FromUserType: 'user',
-      MsgType: msgType,
-      Message: _msg,
-      ChatID: selectedChat.ID || '',
-      SendTime: Date.now(),
-      MsgID,
+      ChatID: selectedChat.ID,
+      ContentType: contentType,
+      Message: msg
     };
 
-    applySendMsg(sendMsgData);
+    this.props.applySendMsg(sendMsgData);
   }
 
   _onSendImage = () => {
@@ -158,47 +164,35 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
     if (!selectedChat.ID || this.planningImgList.length === 0) return;
 
-    this.planningImgList.forEach(imgData => this.onSendMsg(imgData, MsgType.Image));
+    this.planningImgList.forEach(imgData => this.onSendMsg(imgData, ContentType.Image));
     // this.onClearAllPic();
     // this.onCancelPic();
   }
 
-  getActiveChatContent() {
-    const { chatContentData, selectedChat } = this.props;
-    return chatContentData[selectedChat.ID] || [];
-  }
-
   renderChatMsgs() {
     const {
-      chatContentData, userInfo, selectedChat, selectContact, contactData
+      currChatContentData, chatContentData, userInfo, selectedChat, selectContact, contactData
     } = this.props;
     const isGroupChat = selectedChat.ChatType === 1;
     const myName = userInfo.UserName;
     let prevTime = 0;
-    // let prevUsername = '';
-    const selectedChatContent = this.getActiveChatContent();
-    // let _selectedChatContent = [...selectedChatContent].reverse();
+    const { data } = currChatContentData;
 
-    const msgBubbleClass = 'msg-bubble';
-    const { FAIL_MSG_QUEUE = {} } = chatContentData;
-
-    return Object.keys(selectedChatContent).map((msgID, idx) => {
-      const currMsg = selectedChatContent[msgID];
+    return data.map((currMsg, idx) => {
       const {
-        FromUser, MsgType, UpdatedAt, SendTime, Message
+        ContentType, UpdateMessage, SendTime,
+        MessageID
       } = currMsg;
 
-      const isMe = FromUser === myName;
-      const displayName = isMe ? myName : FromUser;
-
-      // const isSameUserMsg = prevUsername === FromUser;
       const timeout = SendTime - prevTime > timeDisplayDelay;
 
       let timeElem;
       let statusDOM;
       let msgUnit;
+      let message;
+      let senderName;
+      let isMe;
 
-      // if (!isSameUserMsg) prevUsername = FromUser;
       if (timeout) {
         prevTime = SendTime;
         timeElem = (
@@ -209,63 +203,55 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
         );
       }
 
-      // const userAvatarElem = (timeout || !isSameUserMsg) && (
-      //   <div className="user-mark">
-      //     <Avatar size={30}>
-      //       {displayName[0]}
-      //     </Avatar>
-      //   </div>
-      // );
-
-      // switch (true) {
-      //   case FAIL_MSG_QUEUE[msgID]:
-      //     statusDOM = (
-      //       <span className="fail-msg">发送失败, 请稍候再发</span>
-      //     );
-      //     break;
-      // }
-
-      switch (MsgType) {
-        case 0:
+      switch (currMsg.MessageType) {
+        case MessageType.SendMessage:
+          message = UpdateMessage.UpdateMessageChatSendMessage.Message;
+          senderName = UpdateMessage.UpdateMessageChatSendMessage.SenderName;
+          isMe = senderName === myName;
           msgUnit = (
-            <span className="msg">{statusDOM}{Message}</span>
+            <React.Fragment>
+              <Link
+                onClick={(e) => {
+                  selectContact(contactData[selectedChat.ContactID]);
+                }}
+                Com="ContactDetail"
+                Title={senderName}>
+                <Avatar size={30}>
+                  {senderName[0]}
+                </Avatar>
+              </Link>
+              <div className="unit">
+                {
+                  !isMe && isGroupChat && <div className="username">{senderName}</div>
+                }
+                <span className="msg">{statusDOM}{message}</span>
+              </div>
+            </React.Fragment>
           );
           break;
-        case 1:
+        case MessageType.AddMember:
+          message = UpdateMessage.UpdateMessageChatAddMember.Message;
+          senderName = UpdateMessage.UpdateMessageChatAddMember.SenderName;
+          isMe = senderName === myName;
           msgUnit = (
-            <img src={Message} alt="" />
+            <span className="msg">{statusDOM}{message}</span>
           );
           break;
         default:
           return '';
       }
 
+      const msgBubbleClass = 'msg-bubble';
       let bubbleClass = msgBubbleClass;
       if (isMe) bubbleClass += ' me';
       if (timeout) bubbleClass += ' divide';
 
       const itemElem = (
         <div
-          className={bubbleClass} key={idx}>
+          className={bubbleClass} key={MessageID}>
           {timeElem}
-          {/* {userAvatarElem} */}
-          <div className={`msg-item ${msgTypeMapper[MsgType]}`}>
-            <Link
-              onClick={(e) => {
-                selectContact(contactData[selectedChat.ContactID]);
-              }}
-              Com="ContactDetail"
-              Title={displayName}>
-              <Avatar size={30}>
-                {displayName[0]}
-              </Avatar>
-            </Link>
-            <div className="unit">
-              {
-                !isMe && isGroupChat && <div className="username">{displayName}</div>
-              }
-              {msgUnit}
-            </div>
+          <div className={`msg-item text`}>
+            {msgUnit}
           </div>
         </div>
       );
@@ -322,7 +308,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
               e.preventDefault();
               let val = e.target.innerHTML;
               val = val.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
-              this.onSendMsg(val, MsgType.Text);
+              this.onSendMsg(val, ContentType.Text);
               if (this.textContent) this.textContent.innerHTML = '';
               this.setMsgPanelPadding(this.editorPanel.offsetHeight);
             }

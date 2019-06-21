@@ -1,7 +1,11 @@
 import React from 'react';
 import { Avatar } from 'ukelli-ui/core/avatar';
+import { Icon } from 'ukelli-ui/core/icon';
+import { ShowModal } from 'ukelli-ui/core/modal';
 import { UserInfo, ChatItemEntity, ChatListEntity } from '@little-chat/core/types';
+import { selectChat } from '@little-chat/core/actions';
 import Link from '../components/nav-link';
+import AddChatPanel from './add-chat';
 
 // interface ChatEntity extends ChatItemEntity {
 //   Title: string;
@@ -9,26 +13,40 @@ import Link from '../components/nav-link';
 // }
 
 interface ChatListProps extends UserInfo {
-  chatListData: ChatListEntity;
-  selectChat: Function;
+  chatListData: ChatItemEntity[];
+  selectChat: typeof selectChat;
   applyFetchChatList: Function;
 }
 
 export default class ChatList extends React.Component<ChatListProps, {}> {
+  static RightBtns = props => (
+    <span className="add-btn action" onClick={(e) => {
+      // console.log(props)
+      // props.applyAddChat();
+      ShowModal({
+        width: '90%',
+        title: '添加聊天',
+        children: (
+          <AddChatPanel {...props} />
+        )
+      });
+    }}>
+      <Icon n="plus" />
+    </span>
+  )
+
   componentDidMount() {
     this.props.applyFetchChatList();
   }
 
   render() {
     const { chatListData, selectChat } = this.props;
-    const chatIDs = Object.keys(chatListData);
-    const hasChat = chatIDs.length > 0;
+    const hasChat = chatListData.length > 0;
 
     return hasChat ? (
       <div className="chat-list">
         {
-          Object.keys(chatListData).map((chatID) => {
-            const item = chatListData[chatID];
+          chatListData.map((item, idx) => {
             const { Title, ID, LastMsg } = item;
             return (
               <Link

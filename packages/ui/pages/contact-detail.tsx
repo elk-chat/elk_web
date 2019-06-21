@@ -1,13 +1,15 @@
 import React from 'react';
 import { UserInfo, ContactEntity, ChatListEntity } from '@little-chat/core/types';
 import { Avatar } from 'ukelli-ui/core/avatar';
+import { selectChat } from '@little-chat/core/actions';
+
 import Link from '../components/nav-link';
 
 interface ContactDetailProps extends UserInfo {
   selectedContact: ContactEntity;
   chatListData: ChatListEntity;
   onNavigate: Function;
-  selectChat: Function;
+  selectChat: typeof selectChat;
 }
 
 export default class ContactDetail extends React.Component<ContactDetailProps, {}> {
@@ -32,7 +34,7 @@ export default class ContactDetail extends React.Component<ContactDetailProps, {
             Com="ChatContent"
             Title={UserName}
             onClick={(e) => {
-              selectChat(chatListData[ChatID]);
+              selectChat(ChatID);
             }}>
             发信息
           </Link>

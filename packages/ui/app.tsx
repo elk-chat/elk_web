@@ -34,11 +34,18 @@ export interface ChatState extends RouterState {
   };
 }
 
-declare global {
-  interface Window { INIT_NATIVE_FUNC: Function }
-}
+// declare global {
+//   interface Window { INIT_NATIVE_FUNC: Function }
+// }
 
-const mapStateToProps = state => state;
+const mapStateToProps = (state) => {
+  const { chatContentData, selectedChat } = state;
+  return {
+    ...state,
+    currChatContentData: chatContentData[selectedChat.ID]
+    // selectedChat: chatListObjData[selectedChatID]
+  };
+};
 
 class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
   static defaultProps = {

@@ -30,6 +30,7 @@ const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterR
           } = route;
           const isActive = activeRoute === path;
           const C = component;
+          const { RightBtns } = C;
           const hasNavHeader = !!header;
           return (
             <div
@@ -38,6 +39,8 @@ const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterR
               {
                 hasNavHeader && (
                   <NavHeader
+                    passProps={propsOfRouterRender}
+                    RightBtns={RightBtns}
                     onNavigate={propsOfRouterRender.onNavigate}
                     title={title} />
                 )

@@ -18,6 +18,9 @@ function messageResHandler(msgData: DecodedDataStruct) {
     case SigMethod.SIG_ERROR:
       api = SDK.kproto.Error;
       break;
+    case SigMethod.SIG_STATE_UPDATE: // 消息推送统一接口
+      api = SDK.kproto.StateUpdate;
+      break;
     case SigMethod.SIG_USER_REGISTER_RESP:
       api = SDK.kproto.UserRegisterResp;
       break;
@@ -33,9 +36,6 @@ function messageResHandler(msgData: DecodedDataStruct) {
     case SigMethod.SIG_CHAT_ADD_MEMBER_RESP:
       api = SDK.kproto.ChatAddMemberResp;
       break;
-    case SigMethod.SIG_STATE_UPDATE:
-      api = SDK.kproto.StateUpdate;
-      break;
     case SigMethod.SIG_CHAT_SYNC_CHAT_MESSAGES_RESP:
       api = SDK.kproto.ChatSyncChatMessagesResp;
       break;
@@ -45,7 +45,7 @@ function messageResHandler(msgData: DecodedDataStruct) {
   } else {
     console.log(api ? api.name : `没有处理对应 ${Sig} 的函数，请检查`, res);
   }
-  // console.log(api ? api.name : `没有处理对应 ${Sig} 的函数，请检查`, res);
+  console.log(api ? api.name : `没有处理对应 ${Sig} 的函数，请检查`, res);
   return res;
 }
 

@@ -1,7 +1,8 @@
-/* global BigInt */
-
+// import JSBI from 'jsbi';
 import getSigMapper from './method-sig';
 import { HeaderStruct, DecodedDataStruct } from '../struct';
+
+// const { BigInt } = JSBI;
 
 const HeaderByteLen = {
   Len: 4,

@@ -55,6 +55,8 @@ message UpdateMessageChatSendMessage {
   int64 ChatID = 1;
   string SenderName = 2;
   string Message = 3;
+  int32 ContentType = 4;
+  int64 ActionTime = 5;
 }
 
 // request and response

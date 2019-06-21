@@ -1,5 +1,6 @@
-import { EventEmitterClass, Call } from 'basic-helper';
+import { EventEmitter, EventEmitterClass, Call } from 'basic-helper';
 import { decodeData, messageResHandler } from '../handler';
+import { RECEIVE_STATE_UPDATE } from '../constant';
 
 interface SocketParams {
   /** 链接的 apiHost */
@@ -92,13 +93,18 @@ class SocketHelper extends EventEmitterClass {
     const { data } = event;
     const decodedData = decodeData(data);
     const { RequestID } = decodedData;
-    const currReq = this.getReqQueue(RequestID);
-    const { success, fail } = currReq;
     const finalData = messageResHandler(decodedData);
-    const isSuccess = this.resStatusFilter(finalData);
-    const nextData = this.after(finalData);
-    Call(isSuccess ? success : fail, nextData);
-    this.emit(onMessageMark, nextData);
+    if (RequestID === BigInt(0)) {
+      /** 来自推送的消息 */
+      EventEmitter.emit(RECEIVE_STATE_UPDATE, finalData.Data);
+    } else {
+      const currReq = this.getReqQueue(RequestID);
+      const { success, fail } = currReq;
+      const isSuccess = this.resStatusFilter(finalData);
+      const nextData = this.after(finalData);
+      Call(isSuccess ? success : fail, nextData);
+      this.emit(onMessageMark, nextData);
+    }
   }
 
   onErr = (e) => {

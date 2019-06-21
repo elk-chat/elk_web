@@ -23,6 +23,7 @@ import "./style/style.scss";
 export interface ChatAppProps extends RouterHelperProps {
   authState: AuthState;
   applyLogin: Function;
+  dispatch: Function;
   isMobile?: boolean;
 }
 
@@ -66,7 +67,8 @@ class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
     //     document.body.classList.add("inNative");
     //   }
     // };
-
+    const { dispatch } = this.props;
+    this.props.init(dispatch);
     this.initRoute();
   }
 

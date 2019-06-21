@@ -58,7 +58,7 @@ export default class LoginPanel extends Component<LoginPanelProps> {
 
   clickLoginBtn = () => {
     /** 自动点击登陆按钮完成登陆操作，方便开发 */
-    if (process.env.NODE_ENV === 'development') document.querySelector('.login-btn').click();
+    // if (process.env.NODE_ENV === 'development') document.querySelector('.login-btn').click();
   }
 
   render() {

@@ -1,12 +1,15 @@
 import React from 'react';
-import { HasValue, DateFormat, UUID } from 'basic-helper';
+import {
+  HasValue, DateFormat, UUID, EventEmitter
+} from 'basic-helper';
 import { Avatar, Icon } from 'ukelli-ui';
 import {
   ChatItemEntity, ChatContentState, UserInfo, ContentType,
   MessageType, ChatContentStateInfo
 } from '@little-chat/core/types';
 import {
-  selectContact, applySendMsg, applySyncChatMessage
+  selectContact, applySendMsg, applySyncChatMessage,
+  RECEIVE_CHAT_MESSAGE
 } from '@little-chat/core/actions';
 import Link from '../components/nav-link';
 
@@ -22,7 +25,6 @@ interface ChatContentProps {
 }
 
 const timeDisplayDelay = 5 * 60 * 1000;
-const msgTypeMapper = ['text', 'img'];
 
 export default class ChatContent extends React.PureComponent<ChatContentProps, {}> {
   isAddDrapListener: boolean = false;
@@ -55,6 +57,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
       limit: 12,
       showDragArea: false
     };
+    EventEmitter.on(RECEIVE_CHAT_MESSAGE, this.handleScroll);
   }
 
   componentDidMount() {
@@ -63,6 +66,15 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
       ChatID: selectedChat.ID,
       State: currChatContentData.lastState
     });
+  }
+
+  componentWillUnmount() {
+    EventEmitter.rm(RECEIVE_CHAT_MESSAGE, this.handleScroll);
+  }
+
+  handleScroll = () => {
+    // console.log('123')
+    this.scrollToBottom(this.scrollContent);
   }
 
   toggleDragArea = (isShow: boolean) => {
@@ -131,7 +143,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     ++this.page;
   }
 
-  scrollToBottom = (e: HTMLDivElement | null): void => {
+  scrollToBottom = (e: HTMLDivElement | null) => {
     this.scrollContent = this.scrollContent || e;
     if (e) {
       setTimeout(() => {
@@ -141,19 +153,16 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     }
   }
 
-  reSendMsg(reSendMsgData) {
-    this.props.applySendMsg(reSendMsgData);
-  }
-
   onSendMsg = (msg, contentType: ContentType = ContentType.Text) => {
     const _msg = msg.trim();
     if (_msg === '') return;
-    const { selectedChat } = this.props;
+    const { selectedChat, currChatContentData } = this.props;
 
     const sendMsgData = {
       ChatID: selectedChat.ID,
       ContentType: contentType,
-      Message: msg
+      Message: msg,
+      lastState: currChatContentData.lastState
     };
 
     this.props.applySendMsg(sendMsgData);
@@ -212,7 +221,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
             <React.Fragment>
               <Link
                 onClick={(e) => {
-                  selectContact(contactData[selectedChat.ContactID]);
+                  // selectContact(contactData[selectedChat.ContactID]);
                 }}
                 Com="ContactDetail"
                 Title={senderName}>
@@ -320,7 +329,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     );
 
     return (
-      <section className="chat-panel-container" ref={(e) => { this.scrollContent = e; }}>
+      <section className="chat-panel-container">
         <div className="scroll-content" ref={this.scrollToBottom}>
           {chatPanelContainer}
         </div>

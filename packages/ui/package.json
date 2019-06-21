@@ -1,6 +1,6 @@
 {
   "name": "@little-chat/ui",
-  "main": "./app",
+  "main": "./index",
   "version": "0.1.0",
   "devDependencies": {},
   "peerDependencies": {

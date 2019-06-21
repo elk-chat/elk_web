@@ -21,7 +21,7 @@ function GetWS() {
   return $WS;
 }
 
-function WSSend<T extends Api>(api: T, data: {}, apiName: string) {
+function WSSend<T extends Api>(api: T, apiName: string, data: {}) {
   if (!$WS) console.error('请先调用 InitSDK');
   return new Promise((resolve, reject) => {
     const RequestID = BigInt(UUID(16));

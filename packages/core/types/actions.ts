@@ -10,7 +10,7 @@ export interface ActionType {
 }
 
 export interface ChatActions extends ActionType {
-  chatEntity: ChatItemEntity;
+  chatList: ChatItemEntity[];
 }
 
 export interface ContactActions extends ActionType {

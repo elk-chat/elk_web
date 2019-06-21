@@ -65,7 +65,7 @@ const getFakeChatContent = (FromUser: string, count: number = 20) => {
       ID: i,
       SendTime: sendTime,
       UpdatedAt: sendTime,
-      MsgType: 0,
+      ContentType: 0,
       FromUser: i % 3 === 0 ? selfUserName : FromUser,
       Message: FakeChatMsgDatas[Random([0, FakeChatMsgDatas.length])],
     };

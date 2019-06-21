@@ -1,9 +1,17 @@
 import * as ChatSDK from '@little-chat/sdk/lib';
 
-export enum MsgType {
-  Text,
-  Image,
-  Link,
+export enum ContentType {
+  Other = 0,
+  Text = 1,
+  Image = 2,
+  Audio = 3,
+  Video = 4,
+  Geo = 5,
+}
+
+export enum MessageType {
+  AddMember = 2,
+  SendMessage = 1,
 }
 
 export interface AuthState {
@@ -31,17 +39,15 @@ export interface ChatListEntity {
   [ChatID: string]: ChatItemEntity;
 }
 
+export interface ChatContentItem extends ChatSDK.kproto.IStateUpdate {}
+
+export interface ChatContentStateInfo {
+  lastState: number;
+  data: ChatContentItem[];
+}
+
 export interface ChatContentState {
-  [chatName: string]: {
-    [chatID: string]: {
-      ID: number;
-      Message: string;
-      FromUser: string;
-      SendTime: number;
-      UpdatedAt: number;
-      MsgType: MsgType;
-    };
-  };
+  [chatID: string]: ChatContentStateInfo;
 }
 
 export interface ContactList {

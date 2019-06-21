@@ -2994,10 +2994,10 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-basic-helper@^3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/basic-helper/-/basic-helper-3.0.3.tgz#3cbfe1b089162366e21f1ba238a7c72cc123e050"
-  integrity sha512-+r3rVFuxpP/hl8LuYZbGfv04Qn3u6rTShT8pmdixSqxyJ64aOG6WpsufjprJ+XA3c3tlEZxwEiBUTkWZM6ml/A==
+basic-helper@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/basic-helper/-/basic-helper-3.0.4.tgz#c0749c13c82e471efaf5b06d7e1be5e1301b1ae6"
+  integrity sha512-yFkNaVEUESP9YFOJWYrGmadqmyUbSuPruZ1Fl86MHR0rHsBXVuft1i2DIzT629lxcD+WHdbTtEQLSZrxjGGqgg==
 
 batch@0.6.1:
   version "0.6.1"
@@ -3015,6 +3015,11 @@ before-after-hook@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/before-after-hook/-/before-after-hook-1.4.0.tgz#2b6bf23dca4f32e628fd2747c10a37c74a4b484d"
   integrity sha512-l5r9ir56nda3qu14nAXIlyq1MmUSs0meCIaFAh8HwkFwP1F8eToOuS3ah2VAHHcY04jaYD7FpJC5JTXHYRbkzg==
+
+big-integer@^1.6.44:
+  version "1.6.44"
+  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.44.tgz#4ee9ae5f5839fc11ade338fea216b4513454a539"
+  integrity sha512-7MzElZPTyJ2fNvBkPxtFQ2fWIkVmuzw41+BZHSzpEq3ymB2MfeKp1+yXl/tS75xCx+WnyV+yb0kp+K1C3UNwmQ==
 
 big.js@^5.2.2:
   version "5.2.2"

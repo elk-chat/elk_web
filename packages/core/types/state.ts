@@ -10,8 +10,8 @@ export enum ContentType {
 }
 
 export enum MessageType {
-  AddMember = 2,
   SendMessage = 1,
+  AddMember = 2,
 }
 
 export interface AuthState {
@@ -43,6 +43,7 @@ export interface ChatContentItem extends ChatSDK.kproto.IStateUpdate {}
 
 export interface ChatContentStateInfo {
   lastState: number;
+  lastData: ChatContentItem;
   data: ChatContentItem[];
 }
 
@@ -50,12 +51,16 @@ export interface ChatContentState {
   [chatID: string]: ChatContentStateInfo;
 }
 
+export interface UnreadState {
+  [chatID: string]: number;
+}
+
 export interface ContactList {
   [ContactID: string]: ContactEntity;
 }
 
 export interface ContactEntity {
-  ID: number;
+  UserID: number;
   ChatID: number;
   UserName: string;
   Avatar?: string;

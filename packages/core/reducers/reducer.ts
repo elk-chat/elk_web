@@ -5,7 +5,7 @@ import {
 } from './auth-state';
 
 import {
-  chatListData, chatContentData, selectedChat, chatListObjData
+  chatListData, chatContentData, selectedChat, unreadInfo
 } from './chat-state';
 import {
   contactData, selectedContact
@@ -15,8 +15,8 @@ const rootReducers = combineReducers({
   selectedContact,
   contactData,
   selectedChat,
+  unreadInfo,
   chatListData,
-  chatListObjData,
   chatContentData,
   authState,
   userInfo,

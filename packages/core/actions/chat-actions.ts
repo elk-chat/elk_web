@@ -15,7 +15,8 @@ import {
 
 import {
   SendMsg, GetChatList, CreateChat, AddMemberToChat,
-  SyncChatMessage, RECEIVE_STATE_UPDATE
+  SyncChatMessage, RECEIVE_STATE_UPDATE,
+  MsgStateAck, MsgStateReadAck
 } from "@little-chat/sdk";
 
 import SDK from "@little-chat/sdk/lib/sdk";
@@ -70,6 +71,14 @@ export function applySendMsg(payload: SDK.kproto.IChatSendMessageReq) {
   };
 }
 
+export const READ_MSG = "READ_MSG";
+export function readMsg(payload: SDK.kproto.IStateReadAck) {
+  return {
+    type: READ_MSG,
+    payload
+  };
+}
+
 export const APPLY_FETCH_CHAT_LIST = 'APPLY_FETCH_CHAT_LIST';
 export function applyFetchChatList() {
   return {
@@ -95,6 +104,16 @@ export function applySyncChatMessage(payload: SDK.kproto.IChatSyncChatMessagesRe
 export const RECEIVE_CHAT_MESSAGE = "RECEIVE_CHAT_MESSAGE";
 export function receiveChatMessage(chatContent, chatID) {
   EventEmitter.emit(RECEIVE_CHAT_MESSAGE, chatContent);
+
+  /** 向服务端确认收到了消息 */
+  const lastMsg = chatContent[chatContent.length - 1];
+  if (lastMsg) {
+    MsgStateAck({
+      ChatID: chatID,
+      MessageID: lastMsg.MessageID,
+      State: lastMsg.State,
+    });
+  }
   return {
     chatID,
     chatContent,
@@ -180,10 +199,19 @@ export function* addChat(action) {
   }
 }
 
+export function* readMsgArk(action) {
+  try {
+    yield call(MsgStateReadAck, action.payload);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export function* watchChatActions() {
   yield takeLatest(INIT, initSaga);
   yield takeLatest(APPLY_SEND_MSG, sendMsgReq);
   yield takeLatest(APPLY_FETCH_CHAT_LIST, getChatList);
   yield takeLatest(APPLY_ADD_CHAT, addChat);
   yield takeLatest(APPLY_SYNC_CHAT_MESSAGE, syncChatMessage);
+  yield takeLatest(READ_MSG, readMsgArk);
 }

@@ -1,9 +1,9 @@
-// import sortedIndexBy from 'lodash/sortedIndexBy';
+// import { HasValue } from 'basic-helper';
 import {
   SELECT_CHAT, RECEIVE_CHAT_LIST, RECEIVE_CHAT_MESSAGE, SENT_MSG
 } from "../actions";
 import {
-  ChatActions, ChatContentState, ChatContentItem,
+  ChatActions, ChatContentState, ChatContentItem, UnreadState,
   ChatItemEntity, ChatListEntity, ActionType
 } from '../types';
 // import { FakeChatList, getFakeChatContent } from './fake-data';
@@ -23,18 +23,6 @@ export function chatListData(
   }
 }
 
-export function chatListObjData(
-  state: ChatListEntity = {},
-  action,
-) {
-  switch (action.type) {
-    default:
-      return state;
-    case RECEIVE_CHAT_LIST:
-      return array2obj(action.chatList, 'ID');
-  }
-}
-
 export function chatContentData(
   state: ChatContentState = {},
   action,
@@ -47,7 +35,8 @@ export function chatContentData(
       if (!nextState[ID.toString()]) {
         nextState[ID.toString()] = {
           data: [],
-          lastState: 0
+          lastState: 0,
+          lastData: {},
         };
       }
       return nextState;
@@ -56,8 +45,28 @@ export function chatContentData(
       const { chatContent, chatID } = action;
       const currChatContent = state[chatID].data;
       const nextContent = mergeChatContent(currChatContent, chatContent);
-      nextState[chatID].data = nextContent;
-      nextState[chatID].lastState = nextContent[nextContent.length - 1].State;
+      const lastData = nextContent[nextContent.length - 1];
+      nextState[chatID] = {
+        data: nextContent,
+        lastState: lastData.State,
+        lastData,
+      };
+      return nextState;
+    default:
+      return state;
+  }
+}
+
+export function unreadInfo(
+  state: UnreadState = {},
+  action,
+) {
+  let nextState;
+  switch (action.type) {
+    case RECEIVE_CHAT_MESSAGE:
+      const { chatContent, chatID } = action;
+      nextState = Object.assign({}, state);
+      nextState[chatID] = (+nextState[chatID] || 0) + chatContent.length;
       return nextState;
     default:
       return state;

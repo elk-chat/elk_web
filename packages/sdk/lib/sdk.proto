@@ -37,7 +37,8 @@ message StateUpdate {
   uint64 MessageID = 2;
   int32 MessageType = 3;
   uint64 State = 4;
-  UpdateMessage UpdateMessage = 5; // union message, must set one of UpdateMessage
+  int64 ActionTime = 5;
+  UpdateMessage UpdateMessage = 6; // union message, must set one of UpdateMessage
 }
 
 message UpdateMessage {
@@ -60,6 +61,12 @@ message UpdateMessageChatSendMessage {
 }
 
 // request and response
+message AuthPQReq { // 服务端每次为连接随机生成大质数
+}
+
+message AuthPQResp {
+}
+
 message AuthKeyReq {
 }
 
@@ -91,7 +98,7 @@ message CheckAppUpdateResp {
 }
 
 message User {
-  int64 ID = 1;
+  int64 UserID = 1;
   string UserName = 2;
 }
 
@@ -119,7 +126,42 @@ message UserLogoutReq {
 message UserLogoutResp {
 }
 
+message UserGetFullUserReq {
+  int64 UserID = 1;
+}
+
+message UserGetFullUserResp {
+  User User = 1;
+}
+
+message UserGetFullUsersReq {
+  repeated int64 UserIDs = 1;
+}
+
+message UserGetFullUsersResp {
+  repeated User Users = 1;
+}
+
+message UserGetUserCondition {
+  string UserName = 1;
+}
+
+message UserGetUsersReq{
+  Paging Paging = 1;
+  UserGetUserCondition Condition = 2;
+}
+
+message UserGetUsersResp{
+  Paging Paging = 1;
+  repeated User Users = 2;
+}
+
+// message Contact {
+//   int64 UserID = 1;
+// }
+
 message ContactAddReq {
+  int64 UserID = 1;
 }
 
 message ContactAddResp {
@@ -135,6 +177,13 @@ message ContactDeleteReq {
 }
 
 message ContactDeleteResp {
+}
+
+message ContactGetContactsReq {
+}
+
+message ContactGetContactsResp {
+  repeated Member Contacts = 1;
 }
 
 // chat struct
@@ -185,6 +234,18 @@ message ChatAddMemberReq {
 message ChatAddMemberResp {
 }
 
+message Member {
+  int64 UserID = 1;
+}
+
+message ChatGetMembersReq {
+  int64 ChatID = 1;
+}
+
+message ChatGetMembersResp {
+  repeated Member Members = 1;
+}
+
 message ChatSendMessageReq {
   int64 ChatID = 1;
   int32 ContentType = 2;
@@ -192,16 +253,6 @@ message ChatSendMessageReq {
 }
 
 message ChatSendMessageResp {
-}
-
-message ChatUploadMediaReq {
-  int64 ChatID = 1;
-  int32 ContentType = 2;
-  int32 HasNext = 3;
-  bytes Data = 4;
-}
-
-message ChatUploadMediaResp {
 }
 
 message ChatSetTypingReq {
@@ -220,8 +271,82 @@ message ChatSyncChatMessagesResp {
   repeated StateUpdate StateUpdates = 1;
 }
 
+message ChatGetChatMessagesCondition {
+  string SenderID = 1;
+}
+
 message ChatGetChatMessagesReq {
+  Paging Paging = 1;
+  ChatGetChatMessagesCondition Condition = 2;
 }
 
 message ChatGetChatMessagesResp {
+}
+
+message DfsFile {
+  int64 FileID = 1;
+}
+
+message UtilityUploadReq {
+  int64 ChatID = 1;
+  int32 ContentType = 2;
+  string FileName = 3;
+  string Caption = 4;
+  int32 Width = 5;
+	int32 Height = 6;
+  bytes Data = 7;
+}
+
+message UtilityUploadResp {
+  DfsFile File = 1;
+}
+
+// 分片上传 new upload, upload part, complete upload
+message UtilityNewMultipartUploadReq {
+  int64 ChatID = 1;
+  int32 ContentType = 2;
+  string FileName = 3;
+  string Caption = 4;
+	int32 Width = 5;
+	int32 Height = 6;
+  bytes Data = 7;
+}
+
+message UtilityNewMultipartUploadResp {
+  string UploadID = 1;
+}
+
+message UtilityUploadPartReq {
+  string UploadID = 1;
+  int32 PartSequence = 2;
+  bytes Data = 3;
+}
+
+message UtilityUploadPartResp {
+}
+
+message UtilityCompleteMultipartUploadReq {
+  string UploadID = 1;
+}
+
+message UtilityCompleteMultipartUploadResp {
+  DfsFile File = 1;
+}
+
+message UtilityDownloadReq {
+  int64 FileID = 1;
+  int64 Offset = 2;
+  int64 Length = 3;
+}
+
+message UtilityDownloadResp {
+  bytes Data = 1;
+}
+
+message UtilityFileStatReq {
+  int64 FileID = 1;
+}
+
+message UtilityFileStatResp {
+  DfsFile File = 1;
 }

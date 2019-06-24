@@ -22,7 +22,13 @@ export async function ApplyRegister(form: SDK.kproto.IUserRegisterReq) {
 
 // setTimeout(() => {
 //   ApplyRegister({
-//     UserName: 'Alex',
+//     UserName: `alex`,
 //     Password: '123'
 //   });
+//   for (let index = 0; index < 20; index++) {
+//     ApplyRegister({
+//       UserName: `user${index}`,
+//       Password: '1'
+//     });
+//   }
 // }, 1000);

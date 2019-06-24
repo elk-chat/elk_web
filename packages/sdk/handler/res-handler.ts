@@ -39,13 +39,31 @@ function messageResHandler(msgData: DecodedDataStruct) {
     case SigMethod.SIG_CHAT_SYNC_CHAT_MESSAGES_RESP:
       api = SDK.kproto.ChatSyncChatMessagesResp;
       break;
+    case SigMethod.SIG_CONTACT_GET_CONTACTS_RESP:
+      api = SDK.kproto.ContactGetContactsResp;
+      break;
+    case SigMethod.SIG_CONTACT_ADD_RESP:
+      api = SDK.kproto.ContactAddResp;
+      break;
+    case SigMethod.SIG_CONTACT_DELETE_RESP:
+      api = SDK.kproto.ContactDeleteResp;
+      break;
+    case SigMethod.SIG_CONTACT_UPDATE_RESP:
+      api = SDK.kproto.ContactUpdateResp;
+      break;
+    case SigMethod.SIG_USER_GET_FULL_USERS_RESP:
+      api = SDK.kproto.UserGetFullUsersResp;
+      break;
+    case SigMethod.SIG_USER_GET_USERS_RESP:
+      api = SDK.kproto.UserGetUsersResp;
+      break;
   }
   if (api) {
     res.Data = api.decode(msgData.DataBuf);
   } else {
     console.log(api ? api.name : `没有处理对应 ${Sig} 的函数，请检查`, res);
   }
-  console.log(api ? api.name : `没有处理对应 ${Sig} 的函数，请检查`, res);
+  // console.log(api ? api.name : `没有处理对应 ${Sig} 的函数，请检查`, res);
   return res;
 }
 

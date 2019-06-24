@@ -3500,7 +3500,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2.5:
+classnames@^2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
   integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
@@ -5395,10 +5395,10 @@ flat-cache@^2.0.1:
     rimraf "2.6.3"
     write "1.0.3"
 
-flatpickr@^4.5.7:
-  version "4.5.7"
-  resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-4.5.7.tgz#6efc0d93c65547aa77294205c67830ebabe3565c"
-  integrity sha512-JqPfihUc9A/j9QAsh6otoARmMyUauPE17vRBEG+ThJwbl8zAq4ssGpxlPK3wWM/i8EFxkHg9UuVo0ds7XluKxw==
+flatpickr@^4.6.1:
+  version "4.6.1"
+  resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-4.6.1.tgz#9eb498ab805dd27f5ae02e1ac6ac6c099ce45e94"
+  integrity sha512-3ULSxbXmcMIRzer/2jLNweoqHpwDvsjEawO2FUd9UFR8uPwLM+LruZcPDpuZStcEgbQKhuFOfXo4nYdGladSNw==
 
 flatted@^2.0.0:
   version "2.0.0"
@@ -11853,13 +11853,13 @@ uke-request@^1.0.2:
     rc4-ts "^2.0.0"
     whatwg-fetch "^3.0.0"
 
-ukelli-ui@^2.17.11:
-  version "2.17.11"
-  resolved "https://registry.yarnpkg.com/ukelli-ui/-/ukelli-ui-2.17.11.tgz#ed38eac2ad64cc3f2e579751857a7f8c090282e5"
-  integrity sha512-hC4V1ITV63uEGZwKxzRLPWlOD2btlRgfh7j4e1u156jitHS0hPKVHrhTzkcLPA4Kq9AEMtzNJA7PZ/7+r/y7yw==
+ukelli-ui@^2.17.13:
+  version "2.17.13"
+  resolved "https://registry.yarnpkg.com/ukelli-ui/-/ukelli-ui-2.17.13.tgz#94408aedac68e10ea3db6ffc25d10b0f072c883c"
+  integrity sha512-E5ckmWCTSGhpreEvUX3pOk1fhE8SHQX2hHVVFlZPFi5F+YE22vSR1T2nizF6xhNeaKrlgteZi/lwDc7guBsE9g==
   dependencies:
-    classnames "^2.2.5"
-    flatpickr "^4.5.7"
+    classnames "^2.2.6"
+    flatpickr "^4.6.1"
 
 umask@^1.1.0:
   version "1.1.0"

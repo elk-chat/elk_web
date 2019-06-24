@@ -1,4 +1,5 @@
 $tabHeight: 50px;
+
 /* 手机底部图标 */
 .tab-bar {
   position: absolute;
@@ -76,15 +77,6 @@ $tabHeight: 50px;
 
     .text {
       font-size: $fontsize_4;
-    }
-  }
-}
-
-.ios.iphone-x {
-  .tab-bar {
-    .tab-label {
-      padding-bottom: 20px;
-      height: 70px;
     }
   }
 }

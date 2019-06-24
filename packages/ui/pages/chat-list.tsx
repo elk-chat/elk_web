@@ -39,16 +39,22 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
     this.props.applyFetchChatList();
   }
 
+  chatListFilter = ChatType => [1, 2].indexOf(ChatType) !== -1
+
   render() {
-    const { chatListData, selectChat } = this.props;
+    const { chatListData, unreadInfo } = this.props;
     const hasChat = chatListData.length > 0;
 
     return hasChat ? (
       <div className="chat-list">
         {
           chatListData.map((item, idx) => {
-            const { Title, ID, LastMsg } = item;
-            return (
+            const {
+              Title, ID, LastMsg, ChatType
+            } = item;
+            const unreadCount = unreadInfo[ID];
+            const isDisplay = this.chatListFilter(ChatType);
+            return isDisplay && (
               <Link
                 Title={Title}
                 Com="ChatContent"
@@ -56,10 +62,10 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
                   ChatID: ID,
                 }}
                 onClick={() => {
-                  selectChat(item);
+                  this.props.selectChat(item);
                 }}
                 className="chat-item layout" key={ID}>
-                <Avatar text={Title[0]} size={46} />
+                <Avatar text={Title[0]} size={46} tip={unreadCount} />
                 <div className="content">
                   <div className="chat-title">
                     {Title}

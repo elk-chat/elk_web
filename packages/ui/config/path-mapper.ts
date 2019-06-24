@@ -5,4 +5,4 @@ const ACCOUNT = "Account";
 
 export {
   CHAT, CONTACT, DISCOVER, ACCOUNT
-}
+};

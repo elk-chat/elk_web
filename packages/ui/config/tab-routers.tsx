@@ -13,7 +13,7 @@ import {
 } from './path-mapper';
 
 interface RouteParams {
-  unreadCount: number;
+  unreadCount?: number;
 }
 
 const getTabRouteConfig = (params: RouteParams): RouteEntity[] => {

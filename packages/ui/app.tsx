@@ -39,10 +39,20 @@ export interface ChatState extends RouterState {
 //   interface Window { INIT_NATIVE_FUNC: Function }
 // }
 
+const getTotalUnreadCount = (unreadInfo) => {
+  let res = 0;
+  Object.keys(unreadInfo).forEach((chatID) => {
+    res += (+unreadInfo[chatID] || 0);
+  });
+  return +res;
+};
+
 const mapStateToProps = (state) => {
-  const { chatContentData, selectedChat } = state;
+  const { chatContentData, selectedChat, unreadInfo } = state;
+  const totalUnreadCount = getTotalUnreadCount(unreadInfo);
   return {
     ...state,
+    totalUnreadCount,
     currChatContentData: chatContentData[selectedChat.ID]
     // selectedChat: chatListObjData[selectedChatID]
   };
@@ -54,8 +64,8 @@ class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
   }
 
   /** 默认跳转的路由 */
-  // defaultPath = CONTACT;
-  defaultPath = CHAT;
+  defaultPath = CONTACT;
+  // defaultPath = CHAT;
 
   isNative = false;
 
@@ -80,7 +90,7 @@ class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
 
   render() {
     const {
-      authState, applyLogin, isMobile, ...other
+      authState, applyLogin, isMobile, totalUnreadCount, ...other
     } = this.props;
     const { activeRoute, routerInfo } = this.state;
     return (
@@ -99,7 +109,7 @@ class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
                     navRouterMark={NavRouterMark} />
                   <TabBar
                     routes={getTabRouteConfig({
-                      unreadCount: 0
+                      unreadCount: totalUnreadCount
                     })} />
                   <Navigator
                     {...this.getProps()}

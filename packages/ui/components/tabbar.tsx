@@ -4,6 +4,7 @@
 
 import React from "react";
 import { Link } from 'react-multiple-router';
+import { Tip } from 'ukelli-ui/core/tip';
 
 import { RouteEntity } from '../types';
 
@@ -50,7 +51,7 @@ const TabBar: React.SFC<TabBarProps> = ({ routes }) => (
       {
         routes.map((route) => {
           const {
-            path, text, icon, exact, onClick
+            path, text, icon, exact, unreadCount, onClick
           } = route;
           const Com: string | typeof Link = Link;
           const obj = { to: path, exact, onClick };
@@ -60,6 +61,11 @@ const TabBar: React.SFC<TabBarProps> = ({ routes }) => (
                 <RenderIcon icons={icon} />
               </div>
               <span className="text">{text}</span>
+              {
+                !!unreadCount && (
+                  <Tip animate={false} color="red">{unreadCount}</Tip>
+                )
+              }
             </Com>
           );
         })}

@@ -1,36 +1,73 @@
 import React from 'react';
 import { Avatar } from 'ukelli-ui/core/avatar';
+import { DropdownWrapper } from 'ukelli-ui/core/selector';
+import { Menus } from 'ukelli-ui/core/menu';
+import { Icon } from 'ukelli-ui/core/icon';
+
 import { UserInfo, ContactEntity, ContactList } from '@little-chat/core/types';
 import {
-  selectContact
+  selectContact, applyGetContacts
 } from '@little-chat/core/actions';
 import Link from '../components/nav-link';
 
 interface ContactProps extends UserInfo {
-  contactData: ContactList;
+  contactData: ContactEntity[];
+  applyGetContacts: typeof applyGetContacts;
   selectContact: typeof selectContact;
 }
 
-export default class Contact extends React.PureComponent<ContactProps, {}> {
+export default class Contacts extends React.PureComponent<ContactProps, {}> {
+  static RightBtns = props => (
+    <div className="p20">
+      <DropdownWrapper
+        position="right"
+        needAction={false}
+        outside
+        overlay={({ hide }) => (
+          <Menus data={[
+            {
+              text: '添加联系人',
+              id: '1',
+              action: () => {
+                props.onNavigate({
+                  type: 'PUSH',
+                  route: 'N',
+                  params: {
+                    Com: 'SearchContact',
+                    Title: '搜索联系人'
+                  }
+                });
+              }
+            }
+          ]} />
+        )}>
+        <Icon n="plus" />
+      </DropdownWrapper>
+    </div>
+  )
+
+  componentDidMount() {
+    this.props.applyGetContacts();
+  }
+
   render() {
-    const { contactData, selectContact } = this.props;
-    const contactIDs = Object.keys(contactData);
-    const hasContact = contactData && contactIDs.length > 0;
+    const { contactData } = this.props;
+    const hasContact = contactData.length > 0;
 
     return hasContact ? (
       <div className="contact-list">
         {
-          contactIDs.map((contactID) => {
-            const item = contactData[contactID];
-            const { UserName, ID } = item;
+          contactData.map((item) => {
+            // const item = contactData[contactID];
+            const { UserName, UserID } = item;
             const contactAvatar = item.Avatar;
             return (
               <Link
-                key={ID}
+                key={UserID}
                 Com="ContactDetail"
                 Title={UserName}
                 onClick={() => {
-                  selectContact(item);
+                  this.props.selectContact(item);
                 }}>
                 <div className="c-item">
                   <Avatar src={contactAvatar || null} size={30}>

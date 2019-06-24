@@ -2,22 +2,23 @@ import React from 'react';
 import {
   HasValue, DateFormat, UUID, EventEmitter
 } from 'basic-helper';
-import { Avatar, Icon } from 'ukelli-ui';
+import { Avatar } from 'ukelli-ui/core/avatar';
 import {
   ChatItemEntity, ChatContentState, UserInfo, ContentType,
   MessageType, ChatContentStateInfo
 } from '@little-chat/core/types';
 import {
-  selectContact, applySendMsg, applySyncChatMessage,
+  selectContact, applySendMsg, applySyncChatMessage, readMsg,
   RECEIVE_CHAT_MESSAGE
 } from '@little-chat/core/actions';
 import Link from '../components/nav-link';
 
 interface ChatContentProps {
-  onQueryHistory: Function;
   applySendMsg: typeof applySendMsg;
   selectContact: typeof selectContact;
   applySyncChatMessage: typeof applySyncChatMessage;
+  onQueryHistory: Function;
+  readMsg: typeof readMsg;
   selectedChat: ChatItemEntity;
   chatContentData: ChatContentState;
   currChatContentData: ChatContentStateInfo;
@@ -25,6 +26,12 @@ interface ChatContentProps {
 }
 
 const timeDisplayDelay = 5 * 60 * 1000;
+
+/** 对应 MessageType */
+const MsgTypeClass = {
+  1: 'send-msg',
+  2: 'add-member',
+};
 
 export default class ChatContent extends React.PureComponent<ChatContentProps, {}> {
   isAddDrapListener: boolean = false;
@@ -143,6 +150,19 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     ++this.page;
   }
 
+  readMsg = () => {
+    const { selectedChat, currChatContentData } = this.props;
+    const { lastData, lastState } = currChatContentData;
+    const { MessageID } = lastData;
+    // console.log(this.props)
+    this.props.readMsg({
+      ChatID: selectedChat.ID,
+      MessageID,
+      MessageType: lastData.MessageType,
+      StateRead: lastState
+    });
+  }
+
   scrollToBottom = (e: HTMLDivElement | null) => {
     this.scrollContent = this.scrollContent || e;
     if (e) {
@@ -151,6 +171,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
         e.classList.add('ready');
       });
     }
+    this.readMsg();
   }
 
   onSendMsg = (msg, contentType: ContentType = ContentType.Text) => {
@@ -189,34 +210,20 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
     return data.map((currMsg, idx) => {
       const {
-        ContentType, UpdateMessage, SendTime,
-        MessageID
+        UpdateMessage, MessageID
       } = currMsg;
 
-      const timeout = SendTime - prevTime > timeDisplayDelay;
 
       let timeElem;
-      let statusDOM;
       let msgUnit;
-      let message;
-      let senderName;
       let isMe;
-
-      if (timeout) {
-        prevTime = SendTime;
-        timeElem = (
-          <div className="time-devide">
-            <time>{DateFormat(SendTime, 'YYYY-MM-DD hh:mm:ss')}</time>
-            <div className="divide"></div>
-          </div>
-        );
-      }
+      let actionTime;
 
       switch (currMsg.MessageType) {
         case MessageType.SendMessage:
-          message = UpdateMessage.UpdateMessageChatSendMessage.Message;
-          senderName = UpdateMessage.UpdateMessageChatSendMessage.SenderName;
-          isMe = senderName === myName;
+          const { Message, SenderName, ActionTime } = UpdateMessage.UpdateMessageChatSendMessage;
+          actionTime = ActionTime;
+          isMe = SenderName === myName;
           msgUnit = (
             <React.Fragment>
               <Link
@@ -224,33 +231,43 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
                   // selectContact(contactData[selectedChat.ContactID]);
                 }}
                 Com="ContactDetail"
-                Title={senderName}>
+                Title={SenderName}>
                 <Avatar size={30}>
-                  {senderName[0]}
+                  {SenderName[0]}
                 </Avatar>
               </Link>
               <div className="unit">
                 {
-                  !isMe && isGroupChat && <div className="username">{senderName}</div>
+                  !isMe && isGroupChat && <div className="username">{SenderName}</div>
                 }
-                <span className="msg">{statusDOM}{message}</span>
+                <span className="msg">{Message}</span>
               </div>
             </React.Fragment>
           );
           break;
         case MessageType.AddMember:
-          message = UpdateMessage.UpdateMessageChatAddMember.Message;
-          senderName = UpdateMessage.UpdateMessageChatAddMember.SenderName;
-          isMe = senderName === myName;
+          const { AddedMemeberName, ActionTime } = UpdateMessage.UpdateMessageChatAddMember;
+          actionTime = ActionTime;
           msgUnit = (
-            <span className="msg">{statusDOM}{message}</span>
+            <span className="msg">{AddedMemeberName} 加入了聊天</span>
           );
           break;
         default:
           return '';
       }
 
-      const msgBubbleClass = 'msg-bubble';
+      const timeout = actionTime - prevTime > timeDisplayDelay;
+      if (timeout) {
+        prevTime = actionTime;
+        timeElem = (
+          <div className="time-devide">
+            <time>{DateFormat(actionTime, 'YYYY-MM-DD hh:mm:ss')}</time>
+            <div className="divide"></div>
+          </div>
+        );
+      }
+
+      const msgBubbleClass = 'bubble';
       let bubbleClass = msgBubbleClass;
       if (isMe) bubbleClass += ' me';
       if (timeout) bubbleClass += ' divide';
@@ -259,7 +276,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
         <div
           className={bubbleClass} key={MessageID}>
           {timeElem}
-          <div className={`msg-item text`}>
+          <div className={`msg-item ${MsgTypeClass[currMsg.MessageType]}`}>
             {msgUnit}
           </div>
         </div>

@@ -4,6 +4,7 @@ import ChatContent from '../pages/chat-content';
 import ContactDetail from '../pages/contact-detail';
 import LinkLoader from '../pages/link-loader';
 import Moment from '../pages/moment';
+import SearchContact from '../pages/search-contact';
 
 const navRoutersConfig = {
   Setting: {
@@ -25,6 +26,10 @@ const navRoutersConfig = {
   Moment: {
     title: "朋友圈",
     component: Moment
+  },
+  SearchContact: {
+    title: "搜索联系人",
+    component: SearchContact
   },
 };
 

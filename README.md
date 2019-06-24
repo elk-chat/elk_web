@@ -12,7 +12,7 @@ Little Chat 是一套即时通讯 web 客户端程序。
 
 ## 本地配置
 
-在根目录创建 `.config.js` 文件
+配置文件 `./client/.config.js`
 
 ```js
 module.exports = {

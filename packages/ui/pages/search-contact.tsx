@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormLayout } from 'ukelli-ui/core/form-generator';
+import { FormGenerator } from 'ukelli-ui/core/form-generator';
 import { SearchUser } from '@little-chat/sdk';
 
 import Link from '../components/nav-link';
@@ -13,16 +13,15 @@ export default class SearchContact extends React.Component<SearchContactProps> {
       type: 'input',
       title: '用户名',
       defaultValue: 'user1',
-      ref: 'UserName'
-    }
-  ]
-
-  btnConfig = [
-    {
-      text: '搜索',
-      action: (formRef) => {
-        this.searchContact(formRef.value);
-      }
+      ref: 'UserName',
+      inputBtnConfig: {
+        text: '搜索',
+        action: (inputDOM) => {
+          this.searchContact({
+            UserName: inputDOM.value
+          });
+        }
+      },
     }
   ]
 
@@ -36,9 +35,9 @@ export default class SearchContact extends React.Component<SearchContactProps> {
 
     return (
       <div className="discover-page action-group">
-        <FormLayout
-          formOptions={this.formOptions}
-          btnConfig={this.btnConfig} />
+        <FormGenerator
+          showInputTitle={false}
+          formOptions={this.formOptions} />
       </div>
     );
   }

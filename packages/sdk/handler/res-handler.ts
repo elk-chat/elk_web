@@ -36,8 +36,8 @@ function messageResHandler(msgData: DecodedDataStruct) {
     case SigMethod.SIG_CHAT_ADD_MEMBER_RESP:
       api = SDK.kproto.ChatAddMemberResp;
       break;
-    case SigMethod.SIG_CHAT_SYNC_CHAT_MESSAGES_RESP:
-      api = SDK.kproto.ChatSyncChatMessagesResp;
+    case SigMethod.SIG_CHAT_SYNC_CHAT_STATES_RESP:
+      api = SDK.kproto.ChatSyncChatStatesResp;
       break;
     case SigMethod.SIG_CONTACT_GET_CONTACTS_RESP:
       api = SDK.kproto.ContactGetContactsResp;
@@ -56,6 +56,9 @@ function messageResHandler(msgData: DecodedDataStruct) {
       break;
     case SigMethod.SIG_USER_GET_USERS_RESP:
       api = SDK.kproto.UserGetUsersResp;
+      break;
+    case SigMethod.SIG_CHAT_INITIATE_RESP:
+      api = SDK.kproto.ChatInitiateResp;
       break;
   }
   if (api) {

@@ -3,7 +3,7 @@ import { WSSend } from '..';
 
 const {
   ContactAddReq, ContactDeleteReq, ContactGetContactsReq, ContactUpdateReq,
-  UserGetFullUsersReq, UserGetUsersReq
+  UserGetFullUsersReq, UserGetUsersReq, ChatInitiateReq
 } = SDK.kproto;
 
 /**
@@ -51,5 +51,13 @@ export async function GetFullUsers(form: SDK.kproto.IUserGetFullUsersReq) {
  */
 export async function SearchUser(form: SDK.kproto.IUserGetUsersReq) {
   const res = await WSSend(UserGetUsersReq, 'UserGetUsersReq', form);
+  return res;
+}
+
+/**
+ * 更新联系人信息
+ */
+export async function InitPeerChat(form: SDK.kproto.IChatInitiateReq) {
+  const res = await WSSend(ChatInitiateReq, 'ChatInitiateReq', form);
   return res;
 }

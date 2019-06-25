@@ -32,8 +32,7 @@ message StateAck {
 message StateReadAck {
   int64 ChatID = 1;
   uint64 MessageID = 2;
-  int32 MessageType = 3;
-  uint64 StateRead = 4;
+  uint64 StateRead = 3;
 }
 
 // todo : 改为数组形式批量更新, 减少消息数量, 提高效率
@@ -49,6 +48,7 @@ message StateUpdate {
 message UpdateMessage {
   UpdateMessageChatAddMember UpdateMessageChatAddMember = 1;
   UpdateMessageChatSendMessage UpdateMessageChatSendMessage = 2;
+  UpdateMessageChatReadMessage UpdateMessageChatReadMessage = 3;
 }
 
 message UpdateMessageChatAddMember {
@@ -64,6 +64,13 @@ message UpdateMessageChatSendMessage {
   int32 ContentType = 4;
   int64 ActionTime = 5;
 }
+
+message UpdateMessageChatReadMessage {
+  int64 ChatID = 1;
+  string SenderName = 2;
+  uint64 StateRead = 3;
+}
+
 
 // request and response
 message AuthPQReq { // 服务端每次为连接随机生成大质数
@@ -147,19 +154,35 @@ message UserGetFullUsersResp {
   repeated User Users = 1;
 }
 
-message UserGetUserCondition {
+message UserGetUsersCondition {
   string UserName = 1;
 }
 
-message UserGetUsersReq{
+message UserGetUsersReq {
   Paging Paging = 1;
-  UserGetUserCondition Condition = 2;
+  UserGetUsersCondition Condition = 2;
 }
 
-message UserGetUsersResp{
+message UserGetUsersResp {
   Paging Paging = 1;
   repeated User Users = 2;
 }
+
+message ChatUserState {
+  int64 ChatID = 1;
+  int64 UserID = 2;
+  uint64 State = 3;
+  uint64 StateRead = 4;
+}
+
+message UserGetChatUserStatesReq {
+  int64 ChatID = 1;
+}
+
+message UserGetChatUserStatesResp {
+  repeated ChatUserState States = 1;
+}
+
 
 // message Contact {
 //   int64 UserID = 1;
@@ -194,7 +217,7 @@ message ContactGetContactsResp {
 // chat struct
 // 协议结构里, 时间类型统一使用时间戳 int64
 message Chat {
-  int64 ID = 1;
+  int64 ChatID = 1;
   int64 CreateAt = 2;
   int64 UpdatedAt = 3;
   int32 ChatType = 4;
@@ -295,6 +318,17 @@ message ChatGetChatStatesResp {
   repeated StateUpdate StateUpdates = 2;
 }
 
+// 已读消息
+message ChatReadMessageReq {
+  int64 ChatID = 1;
+  uint64 StateRead = 2;
+}
+
+message ChatReadMessageResp {
+}
+
+
+// dfs file
 message DfsFile {
   int64 FileID = 1;
   string Caption = 2;

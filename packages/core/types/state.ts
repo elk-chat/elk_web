@@ -30,7 +30,7 @@ export interface UserInfo {
 export interface ChatItemEntity extends ChatSDK.kproto.IChat {
   /** Chat ID */
   ContactID?: number;
-  ID?: (number|Long);
+  ChatID?: (number|Long);
   FromUser: string;
   LastMsg: string;
 }
@@ -64,4 +64,11 @@ export interface ContactEntity {
   ChatID: number;
   UserName: string;
   Avatar?: string;
+}
+
+export interface ContactState {
+  array: ContactEntity[];
+  obj: {
+    [ContactID: string]: ContactEntity;
+  };
 }

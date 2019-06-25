@@ -2,23 +2,29 @@ import {
   SELECT_CONTACT, RECEIVE_CONTACTS
 } from "../actions";
 import {
-  ContactEntity, ContactList,
+  ContactEntity, ContactList, ContactState,
   ContactActions, ActionType
 } from '../types';
+import array2obj from "../lib/array2obj";
 
 // import { FakeContactData } from './fake-data';
 
 export const contactData = (
-  state: ContactEntity[] = [],
+  state: ContactState = {
+    array: [],
+    obj: {}
+  },
   action: ActionType
 ) => {
   let nextState;
   switch (action.type) {
     case RECEIVE_CONTACTS:
       const { contactsData } = action;
-      console.log(contactsData)
-      nextState = [...contactsData];
-      nextState.sort((f, s) => s.Username[0].charCodeAt() - f.Username[0].charCodeAt());
+      const nextArr = [...contactsData].sort((f, s) => s.UserName[0].charCodeAt() - f.UserName[0].charCodeAt());
+      nextState = {
+        array: nextArr,
+        obj: array2obj(nextArr, 'UserID')
+      };
       return nextState;
     default:
       return state;

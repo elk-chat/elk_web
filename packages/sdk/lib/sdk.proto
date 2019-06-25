@@ -16,6 +16,11 @@ message Paging {
 	int64 PageSize = 3;
 }
 
+message TimeRange {
+  int64 StartTime = 1;
+  int64 EndTime = 2;
+}
+
 // 确认收到消息
 message StateAck {
   int64 ChatID = 1;
@@ -262,29 +267,42 @@ message ChatSetTypingReq {
 message ChatSetTypingResp {
 }
 
-message ChatSyncChatMessagesReq {
+message ChatSyncChatStatesReq {
   int64 ChatID = 1;
   uint64 State = 2;
 }
 
-message ChatSyncChatMessagesResp {
+message ChatSyncChatStatesResp {
   repeated StateUpdate StateUpdates = 1;
 }
 
-message ChatGetChatMessagesCondition {
-  string SenderID = 1;
+message ChatGetChatStatesCondition {
+  int64 SenderID = 1;
+  int64 ChatID = 2;
+  uint64 State = 3;
+  // int32 StateOp = 4;
+  string MessageContent = 5;
+  TimeRange ActionTimeRange = 6;
 }
 
-message ChatGetChatMessagesReq {
+message ChatGetChatStatesReq {
   Paging Paging = 1;
-  ChatGetChatMessagesCondition Condition = 2;
+  ChatGetChatStatesCondition Condition = 2;
 }
 
-message ChatGetChatMessagesResp {
+message ChatGetChatStatesResp {
+  Paging Paging = 1;
+  repeated StateUpdate StateUpdates = 2;
 }
 
 message DfsFile {
   int64 FileID = 1;
+  string Caption = 2;
+  int64 FileSize = 3;
+  string Ext = 4;
+  int32 ContentType = 5;
+  int32 Width = 6;
+  int32 Height = 7;
 }
 
 message UtilityUploadReq {

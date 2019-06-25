@@ -9,13 +9,13 @@ $tabHeight: 50px;
   right: 0;
   z-index: 101;
   transition: all 0.3s linear;
-  background-color: $bg;
+  background-color: #fafafa;
   box-shadow: 0 -2px 2px rgba(#000, 0.05);
-  border-top: 1px solid $border;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 
   .inner {
     display: flex;
-    color: $color_2;
+    color: #505050;
   }
   &.down {
     transform: translateY($tabHeight);
@@ -32,7 +32,7 @@ $tabHeight: 50px;
     text-align: center;
     color: inherit;
     text-decoration: none;
-    color: $color_2;
+    color: #505050;
 
     &.active {
       .icon.default {
@@ -76,7 +76,7 @@ $tabHeight: 50px;
     }
 
     .text {
-      font-size: $fontsize_4;
+      font-size: 12px;
     }
   }
 }

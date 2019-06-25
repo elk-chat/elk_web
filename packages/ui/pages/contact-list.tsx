@@ -4,14 +4,14 @@ import { DropdownWrapper } from 'ukelli-ui/core/selector';
 import { Menus } from 'ukelli-ui/core/menu';
 import { Icon } from 'ukelli-ui/core/icon';
 
-import { UserInfo, ContactEntity, ContactList } from '@little-chat/core/types';
+import { UserInfo, ContactState, ContactList } from '@little-chat/core/types';
 import {
   selectContact, applyGetContacts
 } from '@little-chat/core/actions';
 import Link from '../components/nav-link';
 
 interface ContactProps extends UserInfo {
-  contactData: ContactEntity[];
+  contactData: ContactState;
   applyGetContacts: typeof applyGetContacts;
   selectContact: typeof selectContact;
 }
@@ -52,12 +52,12 @@ export default class Contacts extends React.PureComponent<ContactProps, {}> {
 
   render() {
     const { contactData } = this.props;
-    const hasContact = contactData.length > 0;
+    const hasContact = contactData.array.length > 0;
 
     return hasContact ? (
       <div className="contact-list">
         {
-          contactData.map((item) => {
+          contactData.array.map((item) => {
             // const item = contactData[contactID];
             const { UserName, UserID } = item;
             const contactAvatar = item.Avatar;
@@ -66,6 +66,7 @@ export default class Contacts extends React.PureComponent<ContactProps, {}> {
                 key={UserID}
                 Com="ContactDetail"
                 Title={UserName}
+                params={item}
                 onClick={() => {
                   this.props.selectContact(item);
                 }}>

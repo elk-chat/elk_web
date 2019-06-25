@@ -201,7 +201,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
   renderChatMsgs() {
     const {
-      currChatContentData, chatContentData, userInfo, selectedChat, selectContact, contactData
+      currChatContentData, userInfo, selectedChat
     } = this.props;
     const isGroupChat = selectedChat.ChatType === 1;
     const myName = userInfo.UserName;

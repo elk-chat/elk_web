@@ -44,27 +44,28 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
   render() {
     const { chatListData, unreadInfo } = this.props;
     const hasChat = chatListData.length > 0;
+    console.log(chatListData);
 
     return hasChat ? (
       <div className="chat-list">
         {
           chatListData.map((item, idx) => {
             const {
-              Title, ID, LastMsg, ChatType
+              Title, ChatID, LastMsg, ChatType
             } = item;
-            const unreadCount = unreadInfo[ID];
+            const unreadCount = unreadInfo[ChatID];
             const isDisplay = this.chatListFilter(ChatType);
             return isDisplay && (
               <Link
                 Title={Title}
                 Com="ChatContent"
                 params={{
-                  ChatID: ID,
+                  ChatID,
                 }}
                 onClick={() => {
                   this.props.selectChat(item);
                 }}
-                className="chat-item layout" key={ID}>
+                className="chat-item layout" key={ChatID}>
                 <Avatar text={Title[0]} size={46} tip={unreadCount} />
                 <div className="content">
                   <div className="chat-title">

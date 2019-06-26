@@ -27,7 +27,7 @@ export default class SearchContact extends React.Component<SearchContactProps> {
             searching: true
           });
           this.searchContact({
-            UserName: inputDOM.value
+            UserName: inputDOM.value,
           });
         }
       },
@@ -35,7 +35,14 @@ export default class SearchContact extends React.Component<SearchContactProps> {
   ]
 
   searchContact = async (options) => {
-    const { Users } = await SearchUser({ Condition: options });
+    const { Users } = await SearchUser({
+      Condition: options,
+      Paging: {
+        AllCount: 0,
+        PageIndex: 0,
+        PageSize: 10,
+      }
+    });
     this.setState({
       searchRes: Users,
       searching: false

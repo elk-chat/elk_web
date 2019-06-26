@@ -12,7 +12,6 @@ import Link from '../components/nav-link';
 
 interface ContactProps extends UserInfo {
   contactData: ContactState;
-  applyGetContacts: typeof applyGetContacts;
   selectContact: typeof selectContact;
 }
 
@@ -45,10 +44,6 @@ export default class Contacts extends React.PureComponent<ContactProps, {}> {
       </DropdownWrapper>
     </div>
   )
-
-  componentDidMount() {
-    this.props.applyGetContacts();
-  }
 
   render() {
     const { contactData } = this.props;

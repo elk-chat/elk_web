@@ -3,7 +3,7 @@ import { Avatar } from 'ukelli-ui/core/avatar';
 import { Icon } from 'ukelli-ui/core/icon';
 import { ShowModal } from 'ukelli-ui/core/modal';
 import { UserInfo, ChatItemEntity, ChatListEntity } from '@little-chat/core/types';
-import { selectChat } from '@little-chat/core/actions';
+// import { selectChat } from '@little-chat/core/actions';
 import Link from '../components/nav-link';
 import AddChatPanel from './add-chat';
 
@@ -13,9 +13,9 @@ import AddChatPanel from './add-chat';
 // }
 
 interface ChatListProps extends UserInfo {
-  chatListData: ChatItemEntity[];
-  selectChat: typeof selectChat;
-  applyFetchChatList: Function;
+  chatListData: ChatListEntity;
+  selectChat: Function;
+  syncContactsAndChats: Function;
 }
 
 export default class ChatList extends React.Component<ChatListProps, {}> {
@@ -36,20 +36,21 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
   )
 
   componentDidMount() {
-    this.props.applyFetchChatList();
+    this.props.syncContactsAndChats();
   }
 
   chatListFilter = ChatType => [1, 2].indexOf(ChatType) !== -1
 
   render() {
     const { chatListData, unreadInfo } = this.props;
-    const hasChat = chatListData.length > 0;
-    console.log(chatListData);
+    const chatList = chatListData.array;
+    const hasChat = chatList.length > 0;
+    // console.log(chatList);
 
     return hasChat ? (
       <div className="chat-list">
         {
-          chatListData.map((item, idx) => {
+          chatList.map((item, idx) => {
             const {
               Title, ChatID, LastMsg, ChatType
             } = item;

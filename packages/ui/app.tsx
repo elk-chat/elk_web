@@ -53,7 +53,7 @@ const mapStateToProps = (state) => {
   return {
     ...state,
     totalUnreadCount,
-    currChatContentData: chatContentData[selectedChat.ID]
+    currChatContentData: chatContentData[selectedChat.ChatID]
     // selectedChat: chatListObjData[selectedChatID]
   };
 };
@@ -64,8 +64,8 @@ class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
   }
 
   /** 默认跳转的路由 */
-  defaultPath = CONTACT;
-  // defaultPath = CHAT;
+  // defaultPath = CONTACT;
+  defaultPath = CHAT;
 
   isNative = false;
 

@@ -24,7 +24,13 @@ interface ContactCacheState {
 
 const CONTACT_CACHE_STATE: ContactCacheState = {};
 
-export default class ContactDetail extends React.Component<ContactDetailProps, {}> {
+export default class ContactDetail extends React.PureComponent<ContactDetailProps, {}> {
+  connectChat: {
+    ChatID: number;
+  } = {
+    ChatID: -1
+  };
+
   state = {
     contactDetail: {}
   }
@@ -34,10 +40,19 @@ export default class ContactDetail extends React.Component<ContactDetailProps, {
     const { UserID } = this.props;
     const isMyContact = this.isMyContact();
     if (isMyContact) {
-      const initRes = await InitPeerChat({
-        PeerID: UserID
+      this.peerContactToChat(UserID);
+    }
+  }
+
+  peerContactToChat = async (UserID) => {
+    try {
+      const { Chat } = await InitPeerChat({
+        PeerID: +UserID
       });
-      console.log(initRes)
+      console.log(Chat);
+      this.connectChat = Chat;
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -45,21 +60,20 @@ export default class ContactDetail extends React.Component<ContactDetailProps, {
     const res = await AddContact({
       UserID
     });
-    const initRes = await InitPeerChat({
-      PeerID: UserID
-    });
-    console.log(initRes);
+    await this.peerContactToChat(UserID);
+    this.props.applyGetContacts();
+    this.props.applyFetchChatList();
     callback(res);
   }
 
   isMyContact = () => {
     const { UserID, contactData } = this.props;
-    return contactData.obj[UserID];
+    return !!contactData.obj[UserID];
   }
 
   render() {
     const {
-      selectChat, chatListData, onNavigate, contactData, UserID, UserName,
+      chatListData, onNavigate, contactData, UserID, UserName = '',
     } = this.props;
     const { contactDetail } = this.state;
     const userAvatar = contactDetail.Avatar;
@@ -76,15 +90,25 @@ export default class ContactDetail extends React.Component<ContactDetailProps, {
         <div className="action-group">
           {
             isMyContact ? (
-              <Link
+              <div
                 className="action-item"
-                Com="ChatContent"
-                Title={UserName}
                 onClick={(e) => {
-                  selectChat(ChatID);
+                  const chatEntity = chatListData.obj[this.connectChat.ChatID];
+                  console.log(chatListData.obj, this.connectChat.ChatID);
+                  if (chatEntity) {
+                    this.props.selectChat(chatEntity);
+                    onNavigate({
+                      type: 'PUSH',
+                      route: 'N',
+                      params: {
+                        Com: 'ChatContent',
+                        Title: UserName
+                      }
+                    });
+                  }
                 }}>
                 发信息
-              </Link>
+              </div>
             ) : (
               <div className="action-item" onClick={(e) => {
                 const ModalID = ShowModal({

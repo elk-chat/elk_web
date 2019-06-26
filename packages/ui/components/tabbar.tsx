@@ -63,7 +63,7 @@ const TabBar: React.SFC<TabBarProps> = ({ routes }) => (
               <span className="text">{text}</span>
               {
                 !!unreadCount && (
-                  <Tip animate={false} color="red">{unreadCount}</Tip>
+                  <Tip animate={false} scale={20} color="red">{unreadCount}</Tip>
                 )
               }
             </Com>

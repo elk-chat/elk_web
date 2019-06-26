@@ -25,7 +25,7 @@ interface ChatContentProps {
   userInfo: UserInfo;
 }
 
-const timeDisplayDelay = 5 * 60 * 1000;
+const timeDisplayDelay = 5 * 60;
 
 /** 对应 MessageType */
 const MsgTypeClass = {
@@ -40,7 +40,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
   planningImgList: string[] = [];
 
-  scrollContent!: HTMLElement | null;
+  scrollContent!: HTMLDivElement | null;
 
   drapPanel!: HTMLElement | null;
 
@@ -70,7 +70,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   componentDidMount() {
     const { currChatContentData, selectedChat } = this.props;
     this.props.applySyncChatMessage({
-      ChatID: selectedChat.ID,
+      ChatID: selectedChat.ChatID,
       State: currChatContentData.lastState
     });
   }
@@ -129,7 +129,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     const { selectedChat, onQueryHistory } = nextProps;
 
     const currChart = this.props.currChatContentData.data;
-    const lastId = currChart.length > 0 ? currChart[0].Id : 0;
+    const lastId = currChart.length > 0 ? currChart[0].ChatID : 0;
 
     const queryData = {
       ToUserType: selectedChat.ToUserType,
@@ -156,7 +156,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     const { MessageID } = lastData;
     // console.log(this.props)
     this.props.readMsg({
-      ChatID: selectedChat.ID,
+      ChatID: selectedChat.ChatID,
       MessageID,
       MessageType: lastData.MessageType,
       StateRead: lastState
@@ -180,7 +180,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     const { selectedChat, currChatContentData } = this.props;
 
     const sendMsgData = {
-      ChatID: selectedChat.ID,
+      ChatID: selectedChat.ChatID,
       ContentType: contentType,
       Message: msg,
       lastState: currChatContentData.lastState
@@ -192,7 +192,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
   _onSendImage = () => {
     const { selectedChat } = this.props;
 
-    if (!selectedChat.ID || this.planningImgList.length === 0) return;
+    if (!selectedChat.ChatID || this.planningImgList.length === 0) return;
 
     this.planningImgList.forEach(imgData => this.onSendMsg(imgData, ContentType.Image));
     // this.onClearAllPic();
@@ -261,8 +261,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
         prevTime = actionTime;
         timeElem = (
           <div className="time-devide">
-            <time>{DateFormat(actionTime, 'YYYY-MM-DD hh:mm:ss')}</time>
-            <div className="divide"></div>
+            <time>{DateFormat(actionTime * 1000, 'YYYY-MM-DD hh:mm:ss')}</time>
+            {/* <div className="divide"></div> */}
           </div>
         );
       }

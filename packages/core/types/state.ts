@@ -14,6 +14,13 @@ export enum MessageType {
   AddMember = 2,
 }
 
+export enum ChatType {
+  Group = 1,
+  OneToOne = 2,
+  Contact = 3,
+  Follower = 4,
+}
+
 export interface AuthState {
   isLogin: boolean;
   loginFail: boolean;
@@ -36,7 +43,10 @@ export interface ChatItemEntity extends ChatSDK.kproto.IChat {
 }
 
 export interface ChatListEntity {
-  [ChatID: string]: ChatItemEntity;
+  array: ChatItemEntity[];
+  obj: {
+    [ChatID: string]: ChatItemEntity;
+  };
 }
 
 export interface ChatContentItem extends ChatSDK.kproto.IStateUpdate {}

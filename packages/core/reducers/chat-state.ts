@@ -11,15 +11,23 @@ import array2obj from '../lib/array2obj';
 import mergeChatContent from '../lib/merge-chat-content';
 
 export function chatListData(
-  state: ChatItemEntity[] = [],
+  state: ChatListEntity = {
+    array: [],
+    obj: {}
+  },
   action: ChatActions,
 ) {
+  let nextState;
   switch (action.type) {
+    case RECEIVE_CHAT_LIST:
+      const nextChatList = [...action.chatList].sort((f, s) => s.UpdatedAt - f.UpdatedAt);
+      nextState = {
+        array: nextChatList,
+        obj: array2obj(nextChatList, 'ChatID')
+      };
+      return nextState;
     default:
       return state;
-    case RECEIVE_CHAT_LIST:
-      const sortedChatList = [...action.chatList].sort((f, s) => s.UpdatedAt - f.UpdatedAt);
-      return sortedChatList;
   }
 }
 
@@ -30,10 +38,10 @@ export function chatContentData(
   let nextState;
   switch (action.type) {
     case SELECT_CHAT:
-      const { ID = '' } = action.chatEntity;
+      const { ChatID = '' } = action.chatEntity;
       nextState = Object.assign({}, state);
-      if (!nextState[ID.toString()]) {
-        nextState[ID.toString()] = {
+      if (!nextState[ChatID.toString()]) {
+        nextState[ChatID.toString()] = {
           data: [],
           lastState: 0,
           lastData: {},
@@ -43,9 +51,10 @@ export function chatContentData(
     case RECEIVE_CHAT_MESSAGE:
       nextState = Object.assign({}, state);
       const { chatContent, chatID } = action;
-      const currChatContent = state[chatID].data;
+      if (!nextState[chatID]) nextState[chatID] = {};
+      const currChatContent = nextState[chatID].data;
       const nextContent = mergeChatContent(currChatContent, chatContent);
-      const lastData = nextContent[nextContent.length - 1];
+      const lastData = nextContent[nextContent.length - 1] || {};
       nextState[chatID] = {
         data: nextContent,
         lastState: lastData.State,
@@ -64,9 +73,9 @@ export function unreadInfo(
   let nextState;
   switch (action.type) {
     case RECEIVE_CHAT_MESSAGE:
-      const { chatContent, chatID } = action;
+      const { chatContent, chatID, senderIsMe } = action;
       nextState = Object.assign({}, state);
-      nextState[chatID] = (+nextState[chatID] || 0) + chatContent.length;
+      if (senderIsMe) nextState[chatID] = (+nextState[chatID] || 0) + chatContent.length;
       return nextState;
     default:
       return state;

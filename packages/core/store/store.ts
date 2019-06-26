@@ -5,9 +5,15 @@ import createSagaMiddleware from 'redux-saga';
 import chatReducers from '../reducers';
 import sagas from '../sagas';
 
+let store;
+
+export function getStore() {
+  return store;
+}
+
 export default function createChatStore(preloadedState) {
   const sagaMiddleware = createSagaMiddleware();
-  const store = createStore(
+  store = createStore(
     chatReducers,
     preloadedState,
     applyMiddleware(

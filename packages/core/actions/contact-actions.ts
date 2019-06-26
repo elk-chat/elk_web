@@ -4,6 +4,7 @@ import {
 import {
   put, takeLatest, call
 } from 'redux-saga/effects';
+import { Call } from 'basic-helper';
 import {
   ContactEntity, ContactActions
 } from '../types';
@@ -18,12 +19,12 @@ export const selectContact = (conctactEntity: ContactEntity): ContactActions => 
 export const APPLY_GET_CONTACTS = 'APPLY_GET_CONTACTS';
 export function applyGetContacts() {
   return {
-    type: APPLY_GET_CONTACTS
+    type: APPLY_GET_CONTACTS,
   };
 }
 
 export const RECEIVE_CONTACTS = 'RECEIVE_CONTACTS';
-export function* getContacts() {
+export function* fetchContacts() {
   try {
     const { Contacts } = yield call(GetContacts);
     // const contactsDataObj = array2obj(Contacts, 'UserID');
@@ -36,5 +37,5 @@ export function* getContacts() {
 }
 
 export function* watchContactActions() {
-  yield takeLatest(APPLY_GET_CONTACTS, getContacts);
+  yield takeLatest(APPLY_GET_CONTACTS, fetchContacts);
 }

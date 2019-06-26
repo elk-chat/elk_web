@@ -15,40 +15,18 @@ import {
 
 import {
   SendMsg, GetChatList, CreateChat, AddMemberToChat,
-  SyncChatMessage, RECEIVE_STATE_UPDATE,
-  MsgStateAck, MsgStateReadAck
+  SyncChatMessage, GetFullUser,
+  MsgStateAck, MsgStateReadAck, GetChatMembers
 } from "@little-chat/sdk";
 
 import SDK from "@little-chat/sdk/lib/sdk";
 
+import { getStore } from '../store';
+
 import {
-  ChatActions, ChatItemEntity, MessageType
+  ChatActions, ChatItemEntity, MessageType, ChatType
 } from '../types';
-
-export const INIT = 'INIT';
-export function init(dispatch) {
-  return {
-    type: INIT,
-    dispatch
-  };
-}
-
-/**
- * 注册推送事件
- */
-function* initSaga({ dispatch }) {
-  function handleStateUpdate(nextState) {
-    switch (nextState.MessageType) {
-      case MessageType.AddMember:
-
-        break;
-      case MessageType.SendMessage:
-        dispatch(receiveChatMessage([nextState], nextState.ChatID));
-        break;
-    }
-  }
-  yield EventEmitter.on(RECEIVE_STATE_UPDATE, handleStateUpdate);
-}
+import array2obj from '../lib/array2obj';
 
 export const SELECT_CHAT = "SELECT_CHAT";
 export function selectChat(chatEntity: ChatItemEntity) {
@@ -95,14 +73,14 @@ export function applyAddChat(payload: SDK.kproto.IChatCreateReq) {
 }
 
 export const APPLY_SYNC_CHAT_MESSAGE = 'APPLY_SYNC_CHAT_MESSAGE';
-export function applySyncChatMessage(payload: SDK.kproto.IChatSyncChatMessagesReq) {
+export function applySyncChatMessage(payload: SDK.kproto.IChatSyncChatStatesReq) {
   return {
     type: APPLY_SYNC_CHAT_MESSAGE,
     payload
   };
 }
 export const RECEIVE_CHAT_MESSAGE = "RECEIVE_CHAT_MESSAGE";
-export function receiveChatMessage(chatContent, chatID) {
+export function receiveChatMessage(chatContent, chatID, senderIsMe: boolean) {
   EventEmitter.emit(RECEIVE_CHAT_MESSAGE, chatContent);
 
   /** 向服务端确认收到了消息 */
@@ -117,6 +95,7 @@ export function receiveChatMessage(chatContent, chatID) {
   return {
     chatID,
     chatContent,
+    senderIsMe,
     type: RECEIVE_CHAT_MESSAGE,
   };
 }
@@ -133,12 +112,6 @@ export function* sendMsgReq(action) {
   yield put({ type: SENDING_MSG });
   try {
     yield call(SendMsg, payload);
-    yield put({ type: SENT_MSG, sentMsg: payload });
-    const { StateUpdates } = yield call(SyncChatMessage, {
-      ChatID: payload.ChatID,
-      State: payload.lastState
-    });
-    yield put(receiveChatMessage(StateUpdates, payload.ChatID));
   } catch (e) {
     console.log(e);
   }
@@ -154,7 +127,7 @@ export function* syncChatMessage(action) {
   yield put({ type: SYNCING_CHAT_MESSAGE });
   try {
     const { StateUpdates } = yield call(SyncChatMessage, payload);
-    yield put(receiveChatMessage(StateUpdates, payload.ChatID));
+    yield put(receiveChatMessage(StateUpdates, payload.ChatID, false));
   } catch (e) {
     console.log(e);
   }
@@ -162,6 +135,48 @@ export function* syncChatMessage(action) {
 
 export const FETCHING_CHAT_LIST = 'FETCHING_CHAT_LIST';
 export const RECEIVE_CHAT_LIST = 'RECEIVE_CHAT_LIST';
+export function* getChatMembers(Chats) {
+  const getMemberInfoList: SDK.kproto.IChatGetMembersResp[] = [];
+  const currState = getStore().getState();
+  const { contactData, userInfo } = currState;
+  const myID = userInfo.UserID;
+  const nextChats = [...Chats];
+  /** 这里主要为了查找 Chat 的 UserName */
+  Chats.forEach((chat, idx) => {
+    if (chat.ChatType === ChatType.OneToOne) {
+      /** 如果是一对一聊天 */
+      const { ChatID } = chat;
+      const func = (resolve: typeof Promise.resolve, reject: typeof Promise.reject) => {
+        GetChatMembers({
+          ChatID,
+        })
+          .then((getChatMembersRes) => {
+            const { Members } = getChatMembersRes;
+            const memberObj = array2obj(Members, 'UserID');
+            delete memberObj[myID];
+            const contactID = Object.keys(memberObj)[0];
+            if (contactID) {
+              GetFullUser({
+                UserID: +contactID
+              }).then((fullUserRes) => {
+                const { User } = fullUserRes;
+                nextChats[idx].Title = User.UserName;
+                resolve();
+              });
+            } else {
+              resolve();
+            }
+          }).catch((e) => {
+            reject(e);
+          });
+      };
+      getMemberInfoList.push(new Promise<SDK.kproto.IChatGetMembersResp>(func));
+    }
+  });
+  yield Promise.all(getMemberInfoList);
+
+  yield put({ type: RECEIVE_CHAT_LIST, chatList: nextChats });
+}
 /**
  * 获取 Chat 列表
  */
@@ -170,6 +185,7 @@ export function* getChatList() {
   try {
     const { Chats } = yield call(GetChatList);
     yield put({ type: RECEIVE_CHAT_LIST, chatList: Chats });
+    yield* getChatMembers(Chats);
   } catch (res) {
     console.log(res);
   }
@@ -201,14 +217,13 @@ export function* addChat(action) {
 
 export function* readMsgArk(action) {
   try {
-    yield call(MsgStateReadAck, action.payload);
+    // yield call(MsgStateReadAck, action.payload);
   } catch (e) {
     console.log(e);
   }
 }
 
 export function* watchChatActions() {
-  yield takeLatest(INIT, initSaga);
   yield takeLatest(APPLY_SEND_MSG, sendMsgReq);
   yield takeLatest(APPLY_FETCH_CHAT_LIST, getChatList);
   yield takeLatest(APPLY_ADD_CHAT, addChat);

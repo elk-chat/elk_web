@@ -3,7 +3,7 @@ import {
 } from '../types';
 
 function mergeChatContent(array: ChatContentItem[], mergeArr: ChatContentItem[]): ChatContentItem[] {
-  const mergedArr = [...array, ...mergeArr];
+  const mergedArr = [...(array || []), ...(mergeArr || [])];
   const obj = {};
   let res: ChatContentItem[] = [];
   mergedArr.forEach((item) => {

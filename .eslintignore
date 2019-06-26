@@ -1,3 +1,6 @@
 __test__
 /config
 /scripts
+
+packages/sdk/lib/sdk.js
+packages/sdk/lib/sdk.d.ts

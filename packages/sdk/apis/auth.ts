@@ -6,11 +6,12 @@ const {
 } = SDK.kproto;
 
 export async function ApplyLogin(form: SDK.kproto.IUserLoginReq) {
-  const res = await WSSend(UserLoginReq, 'UserLoginReq', form);
+  const res = await WSSend<typeof UserLoginReq, SDK.kproto.IUserLoginResp>(UserLoginReq, 'UserLoginReq', form);
   /** 成功后设置 sessionID */
   if (res.SessionID) setHeaderSSID(res.SessionID);
   const result = Object.assign({}, res, {
     UserName: form.UserName,
+    ...res.User
   });
   return result;
 }

@@ -3,7 +3,7 @@ import { WSSend } from '..';
 
 const {
   ContactAddReq, ContactDeleteReq, ContactGetContactsReq, ContactUpdateReq,
-  UserGetFullUsersReq, UserGetUsersReq, ChatInitiateReq
+  UserGetFullUsersReq, UserGetUsersReq, ChatInitiateReq, UserGetFullUserReq
 } = SDK.kproto;
 
 /**
@@ -49,15 +49,31 @@ export async function GetFullUsers(form: SDK.kproto.IUserGetFullUsersReq) {
 /**
  * 更新联系人信息
  */
-export async function SearchUser(form: SDK.kproto.IUserGetUsersReq) {
-  const res = await WSSend(UserGetUsersReq, 'UserGetUsersReq', form);
+export async function GetFullUser(form: SDK.kproto.IUserGetFullUserReq) {
+  const res = await WSSend<typeof UserGetFullUserReq, SDK.kproto.IUserGetFullUserResp>(UserGetFullUserReq, 'UserGetFullUserReq', form);
   return res;
 }
 
 /**
  * 更新联系人信息
  */
-export async function InitPeerChat(form: SDK.kproto.IChatInitiateReq) {
-  const res = await WSSend(ChatInitiateReq, 'ChatInitiateReq', form);
+export async function SearchUser(
+  form: SDK.kproto.IUserGetUsersReq
+): Promise<SDK.kproto.IUserGetUsersResp> {
+  const res = await WSSend<typeof UserGetUsersReq, SDK.kproto.IUserGetUsersResp>(
+    UserGetUsersReq, 'UserGetUsersReq', form
+  );
+  return res;
+}
+
+/**
+ * 更新联系人信息
+ */
+export async function InitPeerChat(
+  form: SDK.kproto.IChatInitiateReq
+): Promise<SDK.kproto.IChatInitiateResp> {
+  const res = await WSSend<typeof ChatInitiateReq, SDK.kproto.IChatInitiateResp>(
+    ChatInitiateReq, 'ChatInitiateReq', form
+  );
   return res;
 }

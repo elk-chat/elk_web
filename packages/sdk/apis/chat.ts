@@ -3,14 +3,14 @@ import { WSSend } from '..';
 
 const {
   ChatSendMessageReq, ChatGetChatsReq, ChatCreateReq, ChatAddMemberReq,
-  ChatSyncChatMessagesReq, StateAck, StateReadAck
+  ChatSyncChatStatesReq, StateAck, StateReadAck, ChatGetMembersReq
 } = SDK.kproto;
 
 /**
  * 同步聊天消息
  */
-export async function SyncChatMessage(options: SDK.kproto.IChatSyncChatMessagesReq) {
-  const res = await WSSend(ChatSyncChatMessagesReq, 'ChatSyncChatMessagesReq', options);
+export async function SyncChatMessage(options: SDK.kproto.IChatSyncChatStatesReq) {
+  const res = await WSSend(ChatSyncChatStatesReq, 'ChatSyncChatStatesReq', options);
   return res;
 }
 
@@ -51,6 +51,14 @@ export async function AddMemberToChat(options: SDK.kproto.IChatAddMemberReq) {
  */
 export async function GetChatList() {
   const res = await WSSend(ChatGetChatsReq, 'ChatGetChatsReq', {});
+  return res;
+}
+
+/**
+ * 获取 Chat 中的联系人信息
+ */
+export async function GetChatMembers(options: SDK.kproto.IChatGetMembersReq) {
+  const res = await WSSend(ChatGetMembersReq, 'ChatGetMembersReq', options);
   return res;
 }
 

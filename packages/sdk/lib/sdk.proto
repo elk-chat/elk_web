@@ -11,9 +11,9 @@ message Error {
 message Success {}
 
 message Paging {
-	int64 AllCount = 1;
-	int64 PageIndex = 2;
-	int64 PageSize = 3;
+  int64 AllCount = 1;
+  int64 PageIndex = 2;
+  int64 PageSize = 3;
 }
 
 message TimeRange {
@@ -28,21 +28,22 @@ message StateAck {
   uint64 State = 3;
 }
 
-// 已读消息
-message StateReadAck {
-  int64 ChatID = 1;
-  uint64 MessageID = 2;
-  uint64 StateRead = 3;
-}
+// // 已读消息
+// message StateReadAck {
+//   int64 ChatID = 1;
+//   uint64 MessageID = 2;
+//   uint64 StateRead = 3;
+// }
 
 // todo : 改为数组形式批量更新, 减少消息数量, 提高效率
 message StateUpdate {
   int64 ChatID = 1;
-  uint64 MessageID = 2;
-  int32 MessageType = 3;
-  uint64 State = 4;
-  int64 ActionTime = 5;
-  UpdateMessage UpdateMessage = 6; // union message, must set one of UpdateMessage
+  int64 SenderID = 2;
+  uint64 MessageID = 3;
+  int32 MessageType = 4;
+  uint64 State = 5;
+  int64 ActionTime = 6;
+  UpdateMessage UpdateMessage = 7; // union message, must set one of UpdateMessage
 }
 
 message UpdateMessage {
@@ -70,7 +71,6 @@ message UpdateMessageChatReadMessage {
   string SenderName = 2;
   uint64 StateRead = 3;
 }
-
 
 // request and response
 message AuthPQReq { // 服务端每次为连接随机生成大质数
@@ -112,6 +112,7 @@ message CheckAppUpdateResp {
 message User {
   int64 UserID = 1;
   string UserName = 2;
+  int64 AvatarFileID = 3;
 }
 
 message UserRegisterReq {
@@ -126,16 +127,25 @@ message UserRegisterResp {
 message UserLoginReq {
   string UserName = 1;
   string Password = 2;
+  string ClientApplication = 3;
 }
 
 message UserLoginResp {
   uint64 SessionID = 1;
+  User User = 2;
 }
 
 message UserLogoutReq {
 }
 
 message UserLogoutResp {
+}
+
+message UserUpdateProfileReq {
+  int64 AvatarFileID = 1;
+}
+
+message UserUpdateProfileResp {
 }
 
 message UserGetFullUserReq {
@@ -183,6 +193,24 @@ message UserGetChatUserStatesResp {
   repeated ChatUserState States = 1;
 }
 
+message UserSetOptionReq {
+  string Name = 1;
+  string Value = 2;
+}
+
+message UserSetOptionResp {
+}
+
+message UserGetOptionReq {
+  string Name = 1;
+}
+
+message UserGetOptionResp {
+  string Name = 1;
+  string Value = 2;
+}
+
+
 
 // message Contact {
 //   int64 UserID = 1;
@@ -202,6 +230,7 @@ message ContactUpdateResp {
 }
 
 message ContactDeleteReq {
+  int64 UserID = 1;
 }
 
 message ContactDeleteResp {
@@ -222,7 +251,8 @@ message Chat {
   int64 UpdatedAt = 3;
   int32 ChatType = 4;
   string Title = 5;
-  int32 Disabled = 6;
+  int64 AvatarFileID = 6;
+  int32 Disabled = 7;
 }
 
 // 用户只能创建普通群
@@ -303,7 +333,7 @@ message ChatGetChatStatesCondition {
   int64 SenderID = 1;
   int64 ChatID = 2;
   uint64 State = 3;
-  // int32 StateOp = 4;
+  repeated int32 MessageTypes = 4;
   string MessageContent = 5;
   TimeRange ActionTimeRange = 6;
 }
@@ -345,7 +375,7 @@ message UtilityUploadReq {
   string FileName = 3;
   string Caption = 4;
   int32 Width = 5;
-	int32 Height = 6;
+  int32 Height = 6;
   bytes Data = 7;
 }
 
@@ -359,8 +389,8 @@ message UtilityNewMultipartUploadReq {
   int32 ContentType = 2;
   string FileName = 3;
   string Caption = 4;
-	int32 Width = 5;
-	int32 Height = 6;
+  int32 Width = 5;
+  int32 Height = 6;
   bytes Data = 7;
 }
 

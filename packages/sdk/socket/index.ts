@@ -20,7 +20,10 @@ const onOpenMark = 'onOpen';
 const onMessageMark = 'onMessage';
 
 function wrapWSUrl(hostname) {
-  return `ws://${hostname}`;
+  if (/wss?:\/\//.test(hostname)) {
+    console.warn('websocket host 不正确');
+  }
+  return hostname;
 }
 
 class SocketHelper extends EventEmitterClass {

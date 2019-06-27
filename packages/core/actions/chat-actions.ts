@@ -16,7 +16,7 @@ import {
 import {
   SendMsg, GetChatList, CreateChat, AddMemberToChat,
   SyncChatMessage, GetFullUser,
-  MsgStateAck, MsgStateReadAck, GetChatMembers
+  MsgStateAck, ReadMsg, GetChatMembers
 } from "@little-chat/sdk";
 
 import SDK from "@little-chat/sdk/lib/sdk";
@@ -50,7 +50,7 @@ export function applySendMsg(payload: SDK.kproto.IChatSendMessageReq) {
 }
 
 export const READ_MSG = "READ_MSG";
-export function readMsg(payload: SDK.kproto.IStateReadAck) {
+export function readMsg(payload: SDK.kproto.IChatReadMessageReq) {
   return {
     type: READ_MSG,
     payload
@@ -80,7 +80,7 @@ export function applySyncChatMessage(payload: SDK.kproto.IChatSyncChatStatesReq)
   };
 }
 export const RECEIVE_CHAT_MESSAGE = "RECEIVE_CHAT_MESSAGE";
-export function receiveChatMessage(chatContent, chatID, senderIsMe: boolean) {
+export function receiveChatMessage(chatContent, chatID, countUnread: boolean) {
   EventEmitter.emit(RECEIVE_CHAT_MESSAGE, chatContent);
 
   /** 向服务端确认收到了消息 */
@@ -95,7 +95,7 @@ export function receiveChatMessage(chatContent, chatID, senderIsMe: boolean) {
   return {
     chatID,
     chatContent,
-    senderIsMe,
+    countUnread,
     type: RECEIVE_CHAT_MESSAGE,
   };
 }
@@ -217,7 +217,7 @@ export function* addChat(action) {
 
 export function* readMsgArk(action) {
   try {
-    // yield call(MsgStateReadAck, action.payload);
+    // yield call(ReadMsg, action.payload);
   } catch (e) {
     console.log(e);
   }
@@ -228,5 +228,5 @@ export function* watchChatActions() {
   yield takeLatest(APPLY_FETCH_CHAT_LIST, getChatList);
   yield takeLatest(APPLY_ADD_CHAT, addChat);
   yield takeLatest(APPLY_SYNC_CHAT_MESSAGE, syncChatMessage);
-  yield takeLatest(READ_MSG, readMsgArk);
+  // yield takeLatest(READ_MSG, readMsgArk);
 }

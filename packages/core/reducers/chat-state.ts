@@ -1,6 +1,6 @@
 // import { HasValue } from 'basic-helper';
 import {
-  SELECT_CHAT, RECEIVE_CHAT_LIST, RECEIVE_CHAT_MESSAGE, SENT_MSG
+  SELECT_CHAT, RECEIVE_CHAT_LIST, RECEIVE_CHAT_MESSAGE, READ_MSG
 } from "../actions";
 import {
   ChatActions, ChatContentState, ChatContentItem, UnreadState,
@@ -73,9 +73,16 @@ export function unreadInfo(
   let nextState;
   switch (action.type) {
     case RECEIVE_CHAT_MESSAGE:
-      const { chatContent, chatID, senderIsMe } = action;
+      const { chatContent, chatID, countUnread } = action;
       nextState = Object.assign({}, state);
-      if (senderIsMe) nextState[chatID] = (+nextState[chatID] || 0) + chatContent.length;
+      if (countUnread) nextState[chatID] = (+nextState[chatID] || 0) + chatContent.length;
+      return nextState;
+    case SELECT_CHAT:
+      const { chatEntity } = action;
+      nextState = Object.assign({}, state);
+      nextState[chatEntity.ChatID] = 0;
+      // nextState = Object.assign({}, state);
+      // if (!countUnread) nextState[chatID] = (+nextState[chatID] || 0) + chatContent.length;
       return nextState;
     default:
       return state;

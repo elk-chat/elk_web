@@ -2,7 +2,9 @@ import {
   ChatContentItem
 } from '../types';
 
-function mergeChatContent(array: ChatContentItem[], mergeArr: ChatContentItem[]): ChatContentItem[] {
+function mergeChatContent(
+  array: ChatContentItem[], mergeArr: ChatContentItem[]
+): ChatContentItem[] {
   const mergedArr = [...(array || []), ...(mergeArr || [])];
   const obj = {};
   let res: ChatContentItem[] = [];

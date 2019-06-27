@@ -37,7 +37,7 @@ function* initSaga({ dispatch }) {
         const { userInfo } = getStore().getState();
         const myName = userInfo.UserName;
         const isMyMsg = nextState.UpdateMessage.UpdateMessageChatSendMessage.SenderName === myName;
-        dispatch(receiveChatMessage([nextState], nextState.ChatID, isMyMsg));
+        dispatch(receiveChatMessage([nextState], nextState.ChatID, !isMyMsg));
         break;
     }
   }

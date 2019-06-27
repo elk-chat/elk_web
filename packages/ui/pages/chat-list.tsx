@@ -4,8 +4,12 @@ import { Icon } from 'ukelli-ui/core/icon';
 import { ShowModal } from 'ukelli-ui/core/modal';
 import { UserInfo, ChatItemEntity, ChatListEntity } from '@little-chat/core/types';
 // import { selectChat } from '@little-chat/core/actions';
-import Link from '../components/nav-link';
+import { Link } from 'react-multiple-router';
+import NavLink from '../components/nav-link';
 import AddChatPanel from './add-chat';
+import {
+  CONTACT
+} from '../config/path-mapper';
 
 // interface ChatEntity extends ChatItemEntity {
 //   Title: string;
@@ -42,12 +46,13 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
     this.props.syncContactsAndChats();
   }
 
-  chatListFilter = ChatType => [1, 2].indexOf(ChatType) !== -1
+  chatListFilter = chatList => [...chatList].filter(item => [1, 2].indexOf(item) !== -1)
 
   render() {
     const { chatListData, unreadInfo } = this.props;
-    const chatList = chatListData.array;
+    const chatList = this.chatListFilter(chatListData.array);
     const hasChat = chatList.length > 0;
+    console.log(chatList);
     // console.log(chatList);
 
     return hasChat ? (
@@ -58,9 +63,8 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
               Title = '', ChatID, LastMsg, ChatType
             } = item;
             const unreadCount = unreadInfo[ChatID];
-            const isDisplay = this.chatListFilter(ChatType);
-            return isDisplay && (
-              <Link
+            return (
+              <NavLink
                 Title={Title}
                 Com="ChatContent"
                 params={{
@@ -79,15 +83,18 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
                     {LastMsg}
                   </div>
                 </div>
-              </Link>
+              </NavLink>
             );
           })
         }
       </div>
     ) : (
-      <div className="no-chat-tip">
-        请选择一个联系人开始
-      </div>
+      <Link
+        to={CONTACT}>
+        <div className="no-chat-tip p20">
+          请添加一个联系人开始
+        </div>
+      </Link>
     );
   }
 }

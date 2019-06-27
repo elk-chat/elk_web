@@ -18,7 +18,6 @@ export default class SearchContact extends React.Component<SearchContactProps> {
     {
       type: 'input',
       title: '用户名',
-      defaultValue: 'user1',
       ref: 'UserName',
       inputBtnConfig: {
         text: '搜索',

@@ -2,12 +2,13 @@ import React from 'react';
 import { Link, LinkProps } from 'react-multiple-router';
 
 import { NavRouterMark } from '../config/app-config';
+import NavRouter from '../config/navigator-routers';
 
 interface NavLinkProps extends LinkProps {
   /** 对应 navRoutersConfig 中的 path 的 component */
   Com: string;
   /** 该页面的名字 */
-  Title: string;
+  Title?: string;
   to?: string;
 }
 
@@ -19,7 +20,7 @@ const NavLink: React.SFC<NavLinkProps> = (props) => {
   return (
     <Link {...props} to={NavRouterMark} params={{
       ...params,
-      Title,
+      Title: Title || NavRouter[Com],
       Com
     }} />
   );

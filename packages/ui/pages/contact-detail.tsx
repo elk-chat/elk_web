@@ -49,7 +49,6 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
       const { Chat } = await InitPeerChat({
         PeerID: +UserID
       });
-      console.log(Chat);
       this.connectChat = Chat;
     } catch (e) {
       console.log(e);
@@ -85,8 +84,8 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
           <Avatar size={50}>
             {userAvatar || UserName[0]}
           </Avatar>
+          <span className="username">{UserName}</span>
         </div>
-        {UserName}
         <div className="action-group">
           {
             isMyContact ? (

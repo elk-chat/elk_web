@@ -25,6 +25,7 @@ body {
   left: 0;
   right: 0;
   bottom: $tabHeight;
+  background-color: #FFF;
   .page-item {
     @include fill;
     // height: 100%;

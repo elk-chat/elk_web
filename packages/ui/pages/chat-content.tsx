@@ -69,6 +69,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
 
   componentDidMount() {
     const { currChatContentData, selectedChat } = this.props;
+    console.log(this.props);
     this.props.applySyncChatMessage({
       ChatID: selectedChat.ChatID,
       State: currChatContentData.lastState
@@ -90,8 +91,11 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     });
   }
 
-  onPasteInput = (event: React.ClipboardEvent<HTMLElement>) => {
-    const { items } = event.clipboardData || event.originalEvent.clipboardData;
+  handlePasteText = () => {
+
+  }
+
+  handlePasteImg = (items) => {
     for (let index = 0; index < items.length; index++) {
       const item = items[index];
       if (item.kind === 'file') {
@@ -107,6 +111,21 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
         }; // data url!
         blob && reader.readAsDataURL(blob);
       }
+    }
+  }
+
+  onPasteInput = (event: React.ClipboardEvent<HTMLElement>) => {
+    event.preventDefault();
+    const { items } = event.clipboardData || event.originalEvent.clipboardData;
+    switch (true) {
+      case items.length > 2:
+        this.handlePasteImg(items);
+        break;
+      default:
+        const text = event.clipboardData.getData('Text');
+        const nextText = this.getTextContent() + text;
+        this.setTextContent(nextText);
+        break;
     }
   }
 
@@ -293,6 +312,16 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
     if (e) this.setMsgPanelPadding(e.offsetHeight);
   };
 
+  setTextContent = (nextContent) => {
+    if (this.textContent) this.textContent.innerHTML = nextContent;
+  }
+
+  getTextContent = () => {
+    let res = '';
+    if (this.textContent) res = this.textContent.innerHTML;
+    return res;
+  }
+
   setMsgPanelPadding = (paddingBottom: number) => {
     if (this.prevPadding === paddingBottom) return;
     if (this.msgPanel) {
@@ -322,6 +351,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
             this.textContent = e;
           }}
           onPaste={e => this.onPasteInput(e)}
+          onFocus={e => this.scrollToBottom(this.scrollContent)}
           onInput={(e) => {
             const { target } = e;
             const { offsetHeight } = this.editorPanel;
@@ -335,7 +365,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, {
               let val = e.target.innerHTML;
               val = val.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
               this.onSendMsg(val, ContentType.Text);
-              if (this.textContent) this.textContent.innerHTML = '';
+              this.setTextContent('');
               this.setMsgPanelPadding(this.editorPanel.offsetHeight);
             }
           }} />

@@ -19,6 +19,7 @@ import { NavRouterMark } from './config/app-config';
 import { NavParams } from './components/navigator/navigator';
 
 import "./style/style.scss";
+import { Call } from "basic-helper";
 
 export interface ChatAppProps extends RouterHelperProps {
   authState: AuthState;
@@ -35,9 +36,9 @@ export interface ChatState extends RouterState {
   };
 }
 
-// declare global {
-//   interface Window { INIT_NATIVE_FUNC: Function }
-// }
+declare global {
+  interface Window { __removeLoading: Function }
+}
 
 const getTotalUnreadCount = (unreadInfo) => {
   let res = 0;
@@ -58,7 +59,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
+class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
   static defaultProps = {
     isMobile: /Android|iOS|iPhone/.test(navigator.userAgent),
   }
@@ -77,6 +78,7 @@ class ChatApp extends RouterMultiple<ChatAppProps, ChatState> {
     //     document.body.classList.add("inNative");
     //   }
     // };
+    Call(window.__removeLoading);
     const { dispatch } = this.props;
     this.props.init(dispatch);
     this.initRoute();

@@ -30,3 +30,17 @@
 .form-container .form-control {
   max-width: 100% !important;
 }
+
+.tabs-container.login-tabs {
+  margin: 0;
+  .tab-group {
+    z-index: 1;
+    .tab {
+      flex: 1;
+    }
+    .tab-label {
+      width: 100%;
+      text-align: center;
+    }
+  }
+}

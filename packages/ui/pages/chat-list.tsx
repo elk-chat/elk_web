@@ -25,7 +25,10 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
       // props.applyAddChat();
       ShowModal({
         width: '90%',
+        marginTop: '40px',
         title: '添加聊天',
+        needMinBtn: false,
+        needMaxBtn: false,
         children: (
           <AddChatPanel {...props} />
         )
@@ -52,7 +55,7 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
         {
           chatList.map((item, idx) => {
             const {
-              Title, ChatID, LastMsg, ChatType
+              Title = '', ChatID, LastMsg, ChatType
             } = item;
             const unreadCount = unreadInfo[ChatID];
             const isDisplay = this.chatListFilter(ChatType);

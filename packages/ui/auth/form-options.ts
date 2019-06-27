@@ -1,4 +1,4 @@
-export default [
+const loginFormOptions = [
   {
     ref: 'UserName',
     type: 'input',
@@ -23,3 +23,25 @@ export default [
   //   // required: true
   // }
 ];
+
+const registeFormOptions = [
+  {
+    ref: 'UserName',
+    type: 'input',
+    title: '账号',
+    iconName: 'account',
+    required: true
+  },
+  {
+    ref: 'Password',
+    type: 'password',
+    title: '密码',
+    iconName: 'lock',
+    required: true
+  },
+];
+
+export {
+  loginFormOptions,
+  registeFormOptions,
+};

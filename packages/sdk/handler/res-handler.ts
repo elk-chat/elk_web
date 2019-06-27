@@ -66,6 +66,9 @@ function messageResHandler(msgData: DecodedDataStruct) {
     case SigMethod.SIG_USER_GET_FULL_USER_RESP:
       api = SDK.kproto.UserGetFullUserResp;
       break;
+    case SigMethod.SIG_HEARTBEAT_RESP:
+      api = SDK.kproto.HeartbeatResp;
+      break;
   }
   if (api) {
     res.Data = api.decode(msgData.DataBuf);

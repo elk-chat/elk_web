@@ -3,7 +3,7 @@ import { WSSend } from '..';
 
 const {
   ChatSendMessageReq, ChatGetChatsReq, ChatCreateReq, ChatAddMemberReq,
-  ChatSyncChatStatesReq, StateAck, StateReadAck, ChatGetMembersReq
+  ChatSyncChatStatesReq, StateAck, ChatReadMessageReq, ChatGetMembersReq
 } = SDK.kproto;
 
 /**
@@ -25,8 +25,8 @@ export async function MsgStateAck(options: SDK.kproto.IStateAck) {
 /**
  * 告知服务端消息已读
  */
-export async function MsgStateReadAck(options: SDK.kproto.IStateReadAck) {
-  const res = await WSSend(StateReadAck, 'StateReadAck', options);
+export async function ReadMsg(options: SDK.kproto.IChatReadMessageReq) {
+  const res = await WSSend(ChatReadMessageReq, 'ChatReadMessageReq', options);
   return res;
 }
 

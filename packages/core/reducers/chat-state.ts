@@ -8,6 +8,7 @@ import {
 } from '../types';
 // import { FakeChatList, getFakeChatContent } from './fake-data';
 import array2obj from '../lib/array2obj';
+import { getStorage, setStorage } from '../lib/storage';
 import mergeChatContent from '../lib/merge-chat-content';
 
 export function chatListData(
@@ -25,6 +26,7 @@ export function chatListData(
         array: nextChatList,
         obj: array2obj(nextChatList, 'ChatID')
       };
+      // setStorage('chatListData', nextState);
       return nextState;
     default:
       return state;

@@ -4,7 +4,7 @@ import {
 import { EventEmitter } from 'basic-helper';
 
 import {
-  ApplyLogin, HeartBeat,
+  ApplyLogin,
   ON_CONNECT_CLOSE
 } from "@little-chat/sdk";
 import initHeartBeat from './heartbeat';

@@ -21,7 +21,7 @@ import {
 
 import SDK from "@little-chat/sdk/lib/sdk";
 
-import { getStore } from '../store';
+import { authStore } from './auth-action';
 
 import {
   ChatActions, ChatItemEntity, MessageType, ChatType
@@ -137,7 +137,7 @@ export const FETCHING_CHAT_LIST = 'FETCHING_CHAT_LIST';
 export const RECEIVE_CHAT_LIST = 'RECEIVE_CHAT_LIST';
 export function* getChatMembers(Chats) {
   const getMemberInfoList: SDK.kproto.IChatGetMembersResp[] = [];
-  const currState = getStore().getState();
+  const currState = authStore.getState();
   const { contactData, userInfo } = currState;
   const myID = userInfo.UserID;
   const nextChats = [...Chats];

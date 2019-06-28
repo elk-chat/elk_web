@@ -1,11 +1,5 @@
 // @import "../../style/var.scss";
-@mixin fill() {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
+$optionHeight: 100px;
 $textInputHeight: 16px;
 $textPanelPadding: 5px;
 $textPanelHeight: $textInputHeight + $textPanelPadding * 2;
@@ -226,9 +220,33 @@ $headerH: 40px;
     }
     .item {
       cursor: pointer;
-      &:hover {
-        color: $colorRed;
-      }
+      padding: 5px 0;
+      min-width: 30px;
+      border: 1px solid transparent;
+      text-align: center;
     }
+    .send-btn {
+      background-color: $themeColor;
+      color: #FFF;
+      border-radius: 3px;
+      border-color: $themeColor;
+      width: 40px;
+    }
+    .more-btn {
+      height: 30px;
+      width: 30px;
+      border-color: #DDD;
+      border-radius: 50%;
+      margin: 0 5px;
+    }
+  }
+}
+
+.more-options {
+  display: flex;
+  .item {
+    padding: 15px 0;
+    flex-basis: 25%;
+    text-align: center;
   }
 }

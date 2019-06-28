@@ -3,6 +3,7 @@ import { FormGenerator } from 'ukelli-ui/core/form-generator';
 import { Loading } from 'ukelli-ui/core/loading';
 import { SearchUser } from '@little-chat/sdk';
 
+import { Call } from 'basic-helper';
 import Link from '../components/nav-link';
 
 interface SearchContactProps {
@@ -49,7 +50,7 @@ export default class SearchContact extends React.Component<SearchContactProps> {
   }
 
   render() {
-    // const { } = this.props;
+    const { ActionComponent = Link, onAction } = this.props;
     const { searchRes, searching } = this.state;
     const hasRes = searchRes.length > 0;
 
@@ -67,14 +68,17 @@ export default class SearchContact extends React.Component<SearchContactProps> {
                   searchRes.map((item) => {
                     const { UserName, UserID } = item;
                     return (
-                      <Link
+                      <ActionComponent
                         Com="ContactDetail"
                         Title={UserName}
                         params={item}
                         className="list-item"
+                        onClick={(e) => {
+                          Call(onAction, item);
+                        }}
                         key={UserID}>
                         {UserName}
-                      </Link>
+                      </ActionComponent>
                     );
                   })
                 }

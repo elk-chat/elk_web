@@ -3,6 +3,7 @@ import {
   HasValue, DateFormat, UUID, EventEmitter
 } from 'basic-helper';
 import { Avatar } from 'ukelli-ui/core/avatar';
+import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { Icon } from 'ukelli-ui/core/icon';
 import {
   ChatItemEntity, ChatContentState, UserInfo, ContentType,
@@ -13,11 +14,14 @@ import {
   RECEIVE_CHAT_MESSAGE
 } from '@little-chat/core/actions';
 import {
-  UploadFile, GetFileState
+  UploadFile, GetFileState, AddMemberToChat
 } from '@little-chat/sdk';
 import Link from '../components/nav-link';
 import Editor from '../components/editor';
+import Image from '../components/image';
 import ImageReader from '../utils/image-reader';
+import AddMember from './add-member';
+import SearchUser from './search-contact';
 
 interface ChatContentProps {
   applySendMsg: typeof applySendMsg;
@@ -46,6 +50,35 @@ interface State {
 }
 
 export default class ChatContent extends React.PureComponent<ChatContentProps, State> {
+  static RightBtns = (props) => {
+    console.log(props);
+    const { selectedChat } = props;
+    return (
+      <span className="add-btn action" onClick={(e) => {
+        // console.log(props)
+        // props.applyAddChat();
+        const ModalID = ShowModal({
+          width: '90%',
+          marginTop: '40px',
+          title: '添加成员',
+          needMinBtn: false,
+          needMaxBtn: false,
+          children: (
+            <SearchUser {...props} onAction={({ UserID }) => {
+              AddMemberToChat({
+                ChatID: selectedChat.ChatID,
+                UserID
+              });
+              CloseModal(ModalID);
+            }} />
+          )
+        });
+      }}>
+        <Icon n="plus" />
+      </span>
+    );
+  }
+
   isAddDrapListener: boolean = false;
 
   page: number = 0;
@@ -235,10 +268,19 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       Height: fileInfo.height,
       Data: uint8,
     });
+    this.onSendMsg(File.FileID, ContentType.Image);
   }
 
   onSendMsg = (msg, contentType: ContentType = ContentType.Text) => {
-    const _msg = msg.trim();
+    let _msg;
+    switch (contentType) {
+      case ContentType.Text:
+        _msg = msg.trim();
+        break;
+      case ContentType.Image:
+
+        break;
+    }
     if (_msg === '') return;
     const { selectedChat, currChatContentData } = this.props;
 
@@ -246,6 +288,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       ChatID: selectedChat.ChatID,
       ContentType: contentType,
       Message: msg,
+      FileID: msg,
       lastState: currChatContentData.lastState
     };
 
@@ -253,16 +296,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
     this.setTextContent('');
     if (this.editorPanel) this.setMsgPanelPadding(this.editorPanel.current.offsetHeight);
-  }
-
-  _onSendImage = () => {
-    const { selectedChat } = this.props;
-
-    if (!selectedChat.ChatID || this.planningImgList.length === 0) return;
-
-    this.planningImgList.forEach(imgData => this.onSendMsg(imgData, ContentType.Image));
-    // this.onClearAllPic();
-    // this.onCancelPic();
   }
 
   renderChatMsgs() {
@@ -287,9 +320,22 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
       switch (currMsg.MessageType) {
         case MessageType.SendMessage:
-          const { Message, SenderName, ActionTime } = UpdateMessage.UpdateMessageChatSendMessage;
+          const {
+            Message, SenderName, ActionTime, FileID
+          } = UpdateMessage.UpdateMessageChatSendMessage;
+          let message;
           actionTime = ActionTime;
           isMe = SenderName === myName;
+          switch (UpdateMessage.UpdateMessageChatSendMessage.ContentType) {
+            case ContentType.Image:
+              message = <Image FileID={FileID} onLoad={(e) => {
+                this.scrollToBottom(this.scrollContent);
+              }} />;
+              break;
+            case ContentType.Text:
+              message = Message;
+              break;
+          }
           msgUnit = (
             <React.Fragment>
               <Link
@@ -306,7 +352,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
                 {
                   !isMe && isGroupChat && <div className="username">{SenderName}</div>
                 }
-                <span className="msg">{Message}</span>
+                <span className="msg">{message}</span>
               </div>
             </React.Fragment>
           );

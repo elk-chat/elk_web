@@ -69,6 +69,24 @@ function messageResHandler(msgData: DecodedDataStruct) {
     case SigMethod.SIG_HEARTBEAT_RESP:
       api = SDK.kproto.HeartbeatResp;
       break;
+    case SigMethod.SIG_UTILITY_UPLOAD_RESP:
+      api = SDK.kproto.UtilityUploadResp;
+      break;
+    case SigMethod.SIG_UTILITY_NEW_MULTIPART_UPLOAD_RESP:
+      api = SDK.kproto.UtilityNewMultipartUploadResp;
+      break;
+    case SigMethod.SIG_UTILITY_DOWNLOAD_RESP:
+      api = SDK.kproto.UtilityDownloadResp;
+      break;
+    case SigMethod.SIG_UTILITY_FILE_STAT_RESP:
+      api = SDK.kproto.UtilityFileStatResp;
+      break;
+    case SigMethod.SIG_CHAT_READ_MESSAGE_RESP:
+      api = SDK.kproto.ChatReadMessageResp;
+      break;
+    case SigMethod.SIG_CHAT_GET_CHAT_STATES_RESP:
+      api = SDK.kproto.ChatGetChatStatesResp;
+      break;
   }
   if (api) {
     res.Data = api.decode(msgData.DataBuf);

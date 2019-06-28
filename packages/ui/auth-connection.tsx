@@ -10,6 +10,10 @@ import ChatApp from './app';
 
 
 class LoginFilter extends React.PureComponent<{}, {}> {
+  static defaultProps = {
+    isMobile: /Android|iOS|iPhone/.test(navigator.userAgent),
+  }
+
   componentDidMount() {
     Call(window.__removeLoading);
   }
@@ -18,6 +22,7 @@ class LoginFilter extends React.PureComponent<{}, {}> {
     const {
       isLogin, applyLogin, isMobile = true, ...other
     } = this.props;
+    console.log(isMobile)
     return (
       <div className={`little-chat-app ${isMobile ? 'mobile' : 'pc'}`}>
         <div className="container">

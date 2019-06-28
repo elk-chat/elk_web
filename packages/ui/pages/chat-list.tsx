@@ -67,7 +67,7 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
               Title = '', ChatID, LastMsg, ChatType
             } = item;
             const unreadCount = unreadInfo[ChatID];
-            return (
+            return Title && (
               <NavLink
                 Title={Title}
                 Com="ChatContent"

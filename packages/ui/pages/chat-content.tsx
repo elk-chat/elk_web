@@ -51,7 +51,6 @@ interface State {
 
 export default class ChatContent extends React.PureComponent<ChatContentProps, State> {
   static RightBtns = (props) => {
-    console.log(props);
     const { selectedChat } = props;
     return (
       <span className="add-btn action" onClick={(e) => {

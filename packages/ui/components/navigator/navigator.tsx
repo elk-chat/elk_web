@@ -85,6 +85,7 @@ const Navigator: React.SFC<NavigatorProps> = (props) => {
               key={key}
               className={`navigator-page${isActive ? ' active' : ''}`}>
               <NavHeader
+                {...props}
                 passProps={props}
                 back
                 RightBtns={RightBtns}

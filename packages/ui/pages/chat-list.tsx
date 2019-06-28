@@ -2,7 +2,9 @@ import React from 'react';
 import { Avatar } from 'ukelli-ui/core/avatar';
 import { Icon } from 'ukelli-ui/core/icon';
 import { ShowModal } from 'ukelli-ui/core/modal';
-import { UserInfo, ChatItemEntity, ChatListEntity } from '@little-chat/core/types';
+import {
+  UserInfo, ChatItemEntity, ChatListEntity, ChatType
+} from '@little-chat/core/types';
 // import { selectChat } from '@little-chat/core/actions';
 import { Link } from 'react-multiple-router';
 import NavLink from '../components/nav-link';
@@ -46,13 +48,15 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
     this.props.syncContactsAndChats();
   }
 
-  chatListFilter = chatList => [...chatList].filter(item => [1, 2].indexOf(item) !== -1)
+  /**
+   * 过滤掉 ChatType 为联系人的数据
+   */
+  chatListFilter = chatList => [...chatList].filter(item => item.ChatType !== ChatType.Contact)
 
   render() {
     const { chatListData, unreadInfo } = this.props;
     const chatList = this.chatListFilter(chatListData.array);
     const hasChat = chatList.length > 0;
-    console.log(chatList);
     // console.log(chatList);
 
     return hasChat ? (

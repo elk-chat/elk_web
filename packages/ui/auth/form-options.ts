@@ -1,8 +1,10 @@
+const isDev = process.env.NODE_ENV === 'development';
+
 const loginFormOptions = [
   {
     ref: 'UserName',
     type: 'input',
-    defaultValue: 'alex',
+    defaultValue: isDev ? 'alex' : '',
     title: '账号',
     iconName: 'account',
     required: true
@@ -10,7 +12,7 @@ const loginFormOptions = [
   {
     ref: 'Password',
     type: 'password',
-    defaultValue: '123',
+    defaultValue: isDev ? '123' : '',
     title: '密码',
     iconName: 'lock',
     required: true

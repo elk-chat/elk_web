@@ -5,7 +5,7 @@ import { ApplyLogin } from '@little-chat/sdk';
 
 const defaultAuthStore = {
   userInfo: {},
-  username: 'none',
+  username: '',
   loginResDesc: '',
   logging: false,
   logouting: false,

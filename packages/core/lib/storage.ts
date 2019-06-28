@@ -38,7 +38,7 @@ export function getStorage(storageKey: string) {
     console.warn(`暂时没有用户 ID 为 ${UserID} 的 Storage`);
   } else {
     try {
-      res = currStorage[storageKey];
+      res = JSON.parse(currStorage[storageKey]);
     } catch (e) {
       console.log(e);
     }

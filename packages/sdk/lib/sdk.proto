@@ -50,6 +50,7 @@ message UpdateMessage {
   UpdateMessageChatAddMember UpdateMessageChatAddMember = 1;
   UpdateMessageChatSendMessage UpdateMessageChatSendMessage = 2;
   UpdateMessageChatReadMessage UpdateMessageChatReadMessage = 3;
+  UpdateMessageChatDeleteMember UpdateMessageChatDeleteMember = 4;
 }
 
 message UpdateMessageChatAddMember {
@@ -58,12 +59,19 @@ message UpdateMessageChatAddMember {
   string AddedMemeberName = 3;
 }
 
+message UpdateMessageChatDeleteMember {
+  int64 ChatID = 1;
+  string SenderName = 2;
+  string DeletedMemeberName = 3;
+}
+
 message UpdateMessageChatSendMessage {
   int64 ChatID = 1;
   string SenderName = 2;
   string Message = 3;
   int32 ContentType = 4;
-  int64 ActionTime = 5;
+  int64 FileID = 5;
+  int64 ActionTime = 6;
 }
 
 message UpdateMessageChatReadMessage {
@@ -292,6 +300,15 @@ message ChatAddMemberReq {
 message ChatAddMemberResp {
 }
 
+message ChatDeleteMemberReq {
+  int64 ChatID = 1;
+  int64 UserID = 2;
+}
+
+message ChatDeleteMemberResp {
+}
+
+
 message Member {
   int64 UserID = 1;
 }
@@ -308,6 +325,7 @@ message ChatSendMessageReq {
   int64 ChatID = 1;
   int32 ContentType = 2;
   string Message = 3;
+  int64 FileID = 4;
 }
 
 message ChatSendMessageResp {

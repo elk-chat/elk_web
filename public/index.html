@@ -67,6 +67,9 @@
         if(!loadingBg) return;
         document.body.removeChild(loadingBg)
       }
+      if(!window.BigInt) {
+        document.write('<div style="color:#fff">抱歉，由于您的浏览器暂时不支持 BigInt，我们会在后续版本兼容。<div>')
+      }
     </script>
   </head>
 

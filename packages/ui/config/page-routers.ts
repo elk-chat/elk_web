@@ -1,4 +1,6 @@
-import { CHAT, CONTACT, DISCOVER, ACCOUNT } from './path-mapper';
+import {
+  CHAT, CONTACT, DISCOVER, ACCOUNT
+} from './path-mapper';
 
 import ChatList from '../pages/chat-list';
 import ContactList from '../pages/contact-list';

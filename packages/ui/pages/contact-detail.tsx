@@ -7,6 +7,7 @@ import { Button } from 'ukelli-ui/core/button';
 import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { selectChat } from '@little-chat/core/actions';
 import { AddContact, InitPeerChat } from '@little-chat/sdk';
+import { CONTACT } from '../config/path-mapper';
 
 import Link from '../components/nav-link';
 
@@ -113,16 +114,29 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
                 const ModalID = ShowModal({
                   marginTop: 0,
                   title: '添加确定',
+                  needMaxBtn: false,
+                  needMinBtn: false,
+                  type: 'side',
+                  position: 'top',
                   children: (
-                    <div className="sure-add-panel">
-                      确认添加用户 {UserName} ?
+                    <div className="sure-add-panel p20">
+                      <h4>将要添加用户 ${UserName}</h4>
                       <Button text="添加" onClick={(e) => {
                         this.addToContact(UserID, () => {
                           CloseModal(ModalID);
+                          this.props.onNavigate({
+                            type: 'PUSH',
+                            route: CONTACT
+                          });
                         });
                       }} />
                     </div>
-                  )
+                  ),
+                  // onConfirm: () => {
+                  //   this.addToContact(UserID, () => {
+                  //     CloseModal(ModalID);
+                  //   });
+                  // }
                 });
               }}>
                 添加到通讯录

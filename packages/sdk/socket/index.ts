@@ -20,8 +20,8 @@ const onOpenMark = 'onOpen';
 const onMessageMark = 'onMessage';
 
 function wrapWSUrl(hostname) {
-  if (/wss?:\/\//.test(hostname)) {
-    console.warn('websocket host 不正确');
+  if (!/wss?:\/\//.test(hostname)) {
+    console.warn('websocket host 不正确', hostname);
   }
   return hostname;
 }

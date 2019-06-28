@@ -1,7 +1,7 @@
 import { all } from 'redux-saga/effects';
 
 import {
-  watchAuthActions,
+  // watchAuthActions,
   watchChatActions,
   watchContactActions,
   watchInitActions,
@@ -10,7 +10,7 @@ import {
 export default function* rootSaga() {
   yield all([
     watchInitActions(),
-    watchAuthActions(),
+    // watchAuthActions(),
     watchChatActions(),
     watchContactActions(),
   ]);

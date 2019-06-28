@@ -1,17 +1,16 @@
-import React from "react";
-import createChatStore, { getPersistor } from '@little-chat/core/store';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import ChatApp from './app';
+// import React from "react";
+// import createChatStore from '@little-chat/core/store';
+// import { Provider } from 'react-redux';
+import ChatApp from './auth-connection';
 
-const chatStore = createChatStore({});
+export default ChatApp;
 
-const AppWithRedux = () => (
-  <Provider store={chatStore}>
-    <PersistGate loading={null} persistor={getPersistor()}>
-      <ChatApp dispatch={chatStore.dispatch} />
-    </PersistGate>
-  </Provider>
-);
+// const chatStore = createChatStore({});
 
-export default AppWithRedux;
+// const AppWithRedux = () => (
+//   <Provider store={chatStore}>
+//     <ChatApp dispatch={chatStore.dispatch} />
+//   </Provider>
+// );
+
+// export default AppWithRedux;

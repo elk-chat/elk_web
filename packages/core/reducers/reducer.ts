@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
 
-import {
-  authState, userInfo
-} from './auth-state';
+// import {
+//   authState, userInfo
+// } from './auth-state';
 
 import {
   chatListData, chatContentData, selectedChat, unreadInfo
@@ -18,8 +18,8 @@ const rootReducers = combineReducers({
   unreadInfo,
   chatListData,
   chatContentData,
-  authState,
-  userInfo,
+  // authState,
+  // userInfo,
 });
 
 export default rootReducers;

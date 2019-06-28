@@ -4,11 +4,10 @@ import { AuthState } from '@little-chat/core/types';
 import * as ChatActions from '@little-chat/core/actions';
 import {
   RouterMultiple, RouterHelperProps, RouterState,
-  RouterEntity
 } from 'react-multiple-router';
 import { connect } from 'react-redux';
+import { Call } from "basic-helper";
 
-import AutoSelector from './auth';
 import pageRoutersConfig from './config/page-routers';
 import getTabRouteConfig from './config/tab-routers';
 import navRoutersConfig from './config/navigator-routers';
@@ -19,11 +18,8 @@ import { NavRouterMark } from './config/app-config';
 import { NavParams } from './components/navigator/navigator';
 
 import "./style/style.scss";
-import { Call } from "basic-helper";
 
 export interface ChatAppProps extends RouterHelperProps {
-  authState: AuthState;
-  applyLogin: Function;
   dispatch: Function;
   isMobile?: boolean;
 }
@@ -71,14 +67,6 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
   isNative = false;
 
   componentDidMount() {
-    // window.INIT_NATIVE_FUNC = (RNW: object | null) => {
-    //   if (!this.isNative) {
-    //     this.isNative = true;
-    //     this.RNW = RNW;
-    //     document.body.classList.add("inNative");
-    //   }
-    // };
-    Call(window.__removeLoading);
     const { dispatch } = this.props;
     this.props.init(dispatch);
     this.initRoute();
@@ -92,38 +80,26 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
 
   render() {
     const {
-      authState, applyLogin, isMobile, totalUnreadCount, ...other
+      isMobile, totalUnreadCount, ...other
     } = this.props;
     const { activeRoute, routerInfo } = this.state;
     return (
-      <div className={`little-chat-app ${isMobile ? 'mobile' : 'pc'}`}>
-        <div className="container">
-          <AutoSelector
-            applyLogin={applyLogin}
-            {...authState}>
-            {
-              () => (
-                <div>
-                  <RouterRender
-                    {...this.getProps()}
-                    activeRoute={activeRoute}
-                    routeConfig={pageRoutersConfig}
-                    navRouterMark={NavRouterMark} />
-                  <TabBar
-                    routes={getTabRouteConfig({
-                      unreadCount: totalUnreadCount
-                    })} />
-                  <Navigator
-                    {...this.getProps()}
-                    activeRoute={activeRoute}
-                    NavRouterMark={NavRouterMark}
-                    navRoutersConfig={navRoutersConfig}
-                    currRouterConfig={routerInfo[NavRouterMark]} />
-                </div>
-              )
-            }
-          </AutoSelector>
-        </div>
+      <div className="">
+        <RouterRender
+          {...this.getProps()}
+          activeRoute={activeRoute}
+          routeConfig={pageRoutersConfig}
+          navRouterMark={NavRouterMark} />
+        <TabBar
+          routes={getTabRouteConfig({
+            unreadCount: totalUnreadCount
+          })} />
+        <Navigator
+          {...this.getProps()}
+          activeRoute={activeRoute}
+          NavRouterMark={NavRouterMark}
+          navRoutersConfig={navRoutersConfig}
+          currRouterConfig={routerInfo[NavRouterMark]} />
       </div>
     );
   }

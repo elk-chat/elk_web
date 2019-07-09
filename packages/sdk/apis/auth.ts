@@ -20,7 +20,7 @@ export async function ApplyLogin(form: SDK.kproto.IUserLoginReq) {
  * 请求注册
  */
 export async function ApplyRegister(form: SDK.kproto.IUserRegisterReq) {
-  const res = await WSSend(UserRegisterReq, 'UserRegisterReq', form);
+  const res = await WSSend<typeof UserRegisterReq, SDK.kproto.IUserRegisterResp>(UserRegisterReq, 'UserRegisterReq', form);
   return res;
 }
 
@@ -28,7 +28,7 @@ export async function ApplyRegister(form: SDK.kproto.IUserRegisterReq) {
  * 心跳检测
  */
 export async function HeartBeat(form: SDK.kproto.IHeartbeatReq) {
-  const res = await WSSend(HeartbeatReq, 'HeartbeatReq', form);
+  const res = await WSSend<typeof HeartbeatReq, SDK.kproto.IHeartbeatResp>(HeartbeatReq, 'HeartbeatReq', form);
   return res;
 }
 

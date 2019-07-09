@@ -51,6 +51,7 @@ message UpdateMessage {
   UpdateMessageChatSendMessage UpdateMessageChatSendMessage = 2;
   UpdateMessageChatReadMessage UpdateMessageChatReadMessage = 3;
   UpdateMessageChatDeleteMember UpdateMessageChatDeleteMember = 4;
+  UpdateMessageChatSetTyping UpdateMessageChatSetTyping = 5;
 }
 
 message UpdateMessageChatAddMember {
@@ -78,6 +79,11 @@ message UpdateMessageChatReadMessage {
   int64 ChatID = 1;
   string SenderName = 2;
   uint64 StateRead = 3;
+}
+
+message UpdateMessageChatSetTyping {
+  int64 ChatID = 1;
+  string SenderName = 2;
 }
 
 // request and response
@@ -217,8 +223,6 @@ message UserGetOptionResp {
   string Name = 1;
   string Value = 2;
 }
-
-
 
 // message Contact {
 //   int64 UserID = 1;
@@ -385,6 +389,7 @@ message DfsFile {
   int32 ContentType = 5;
   int32 Width = 6;
   int32 Height = 7;
+  string URL = 8;
 }
 
 message UtilityUploadReq {
@@ -409,7 +414,6 @@ message UtilityNewMultipartUploadReq {
   string Caption = 4;
   int32 Width = 5;
   int32 Height = 6;
-  bytes Data = 7;
 }
 
 message UtilityNewMultipartUploadResp {

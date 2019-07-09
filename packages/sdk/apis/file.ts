@@ -17,7 +17,7 @@ export async function UploadFile(options: SDK.kproto.IUtilityUploadReq) {
  * 获取文件信息
  */
 export async function GetFileState(options: SDK.kproto.IUtilityFileStatReq) {
-  const res = await WSSend(UtilityFileStatReq, 'UtilityFileStatReq', options);
+  const res = await WSSend<typeof UtilityFileStatReq, SDK.kproto.IUtilityFileStatResp>(UtilityFileStatReq, 'UtilityFileStatReq', options);
   return res;
 }
 

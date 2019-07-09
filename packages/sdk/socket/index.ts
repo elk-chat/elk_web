@@ -1,6 +1,6 @@
 import { EventEmitter, EventEmitterClass, Call } from 'basic-helper';
 import { decodeData, messageResHandler } from '../handler';
-import { RECEIVE_STATE_UPDATE } from '../constant';
+import { RECEIVE_STATE_UPDATE, CONNECT_READY } from '../constant';
 
 interface SocketParams {
   /** 链接的 apiHost */
@@ -16,6 +16,14 @@ interface SocketParams {
   onMessage?: (event: MessageEvent) => void;
 }
 
+interface UnSendEntity {
+  [requestID: string]: {
+    success: Function;
+    fail: Function;
+    buffer: ArrayBuffer;
+  };
+}
+
 const onOpenMark = 'onOpen';
 const onMessageMark = 'onMessage';
 
@@ -27,27 +35,32 @@ function wrapWSUrl(hostname) {
 }
 
 class SocketHelper extends EventEmitterClass {
-  socket!: WebSocket;
+  socket!: WebSocket | null;
 
   params!: SocketParams;
+
+  connected: boolean = false;
 
   connecting: boolean = false;
 
   reqQueue: {} = {};
 
+  sendQueue: UnSendEntity = {};
+
   constructor(params: SocketParams) {
     super();
-    const { apiHost } = params;
     this.params = params;
-    if (apiHost) {
-      this.initWS(apiHost);
-    } else {
-      console.error('请传入 apiHost');
-    }
-    // this.send = this.send.bind(this);
+    this.initWS();
   }
 
-  initWS = (apiHost: string) => {
+  initWS = () => {
+    if (this.connecting) return;
+    this.connecting = true;
+    const { apiHost } = this.params;
+    if (!apiHost) {
+      console.error('请传入 apiHost');
+      return;
+    }
     const wsApiHost = wrapWSUrl(apiHost);
     this.socket = new WebSocket(wsApiHost);
     this.socket.binaryType = 'arraybuffer';
@@ -77,8 +90,12 @@ class SocketHelper extends EventEmitterClass {
     buffer: ArrayBuffer, requestID: BigInt,
     success: Function, fail: Function
   ) => {
-    if (!this.connecting) {
-      console.error('链接已中断');
+    if (!this.connected) {
+      console.error('尚未连接');
+      this.sendQueue[requestID.toString()] = {
+        buffer, success, fail
+      };
+      this.initWS();
     } else {
       const wrapData = this.before(buffer);
       this.socket.send(wrapData);
@@ -86,10 +103,29 @@ class SocketHelper extends EventEmitterClass {
     }
   }
 
+  /**
+   * 在 onopen 的时候发送在未 open 时候发送请求
+   */
+  sendNotCom = () => {
+    const unSendList = Object.keys(this.sendQueue);
+    if (unSendList.length === 0) return;
+    unSendList.forEach((requestID) => {
+      const item = this.sendQueue[requestID];
+      const {
+        buffer, success, fail
+      } = item;
+      this.send(buffer, BigInt(requestID), success, fail);
+      delete this.sendQueue[requestID];
+    });
+  }
+
   onOpen = () => {
     // this.params.onOpen();
-    this.connecting = true;
+    this.connected = true;
+    this.connecting = false;
     this.emit(onOpenMark, {});
+    this.emit(CONNECT_READY, {});
+    this.sendNotCom();
   }
 
   onMessage = (event) => {
@@ -111,12 +147,13 @@ class SocketHelper extends EventEmitterClass {
   }
 
   onErr = (e) => {
-    this.connecting = false;
+    this.connected = false;
     console.log(e, 'onErr');
   }
 
   onClose = (e) => {
-    this.connecting = false;
+    this.connected = false;
+    this.socket = null;
     console.log(e, 'onClose');
   }
 }

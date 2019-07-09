@@ -45,18 +45,29 @@ export default class Contacts extends React.PureComponent<ContactProps, {}> {
     </div>
   )
 
+  contactFilter = () => {
+    const { contactData, userInfo } = this.props;
+    // const { UserName } = userInfo;
+    const list = contactData.array;
+    // list.filter(item => item.UserName !== UserName);
+    return list;
+  }
+
   render() {
-    const { contactData } = this.props;
-    const hasContact = contactData.array.length > 0;
+    const { userInfo } = this.props;
+    const myName = userInfo.UserName;
+    const contactList = this.contactFilter();
+    const hasContact = contactList.length > 0;
 
     return hasContact ? (
       <div className="contact-list">
         {
-          contactData.array.map((item) => {
+          contactList.map((item) => {
             // const item = contactData[contactID];
             const { UserName, UserID } = item;
+            const isMe = UserName === myName;
             const contactAvatar = item.Avatar;
-            return (
+            return !isMe && (
               <Link
                 key={UserID}
                 Com="ContactDetail"

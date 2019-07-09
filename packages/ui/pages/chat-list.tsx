@@ -26,22 +26,24 @@ interface ChatListProps extends UserInfo {
 
 export default class ChatList extends React.Component<ChatListProps, {}> {
   static RightBtns = props => (
-    <span className="add-btn action" onClick={(e) => {
+    <div className="p20">
+      <span className="add-btn" onClick={(e) => {
       // console.log(props)
       // props.applyAddChat();
-      ShowModal({
-        width: '90%',
-        marginTop: '40px',
-        title: '添加聊天',
-        needMinBtn: false,
-        needMaxBtn: false,
-        children: (
-          <AddChatPanel {...props} />
-        )
-      });
-    }}>
-      <Icon n="plus" />
-    </span>
+        ShowModal({
+          width: '90%',
+          marginTop: '40px',
+          title: '添加聊天',
+          needMinBtn: false,
+          needMaxBtn: false,
+          children: (
+            <AddChatPanel {...props} />
+          )
+        });
+      }}>
+        <Icon n="plus" />
+      </span>
+    </div>
   )
 
   componentDidMount() {
@@ -64,7 +66,7 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
         {
           chatList.map((item, idx) => {
             const {
-              Title = '', ChatID, LastMsg, ChatType
+              Title = '', ChatID, LastMsg
             } = item;
             const unreadCount = unreadInfo[ChatID];
             return Title && (
@@ -77,7 +79,7 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
                 onClick={() => {
                   this.props.selectChat(item);
                 }}
-                className="chat-item layout" key={ChatID}>
+                className="chat-item layout" key={`${ChatID}`}>
                 <Avatar text={Title[0]} size={46} tip={unreadCount} />
                 <div className="content">
                   <div className="chat-title">

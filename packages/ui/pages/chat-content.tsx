@@ -327,26 +327,32 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           isMe = SenderName === myName;
           switch (UpdateMessage.UpdateMessageChatSendMessage.ContentType) {
             case ContentType.Image:
-              message = <Image FileID={FileID} onLoad={(e) => {
-                this.scrollToBottom(this.scrollContent);
-              }} />;
+              message = (
+                <Image FileID={FileID} onLoad={(e) => {
+                  this.scrollToBottom(this.scrollContent);
+                }} />
+              );
               break;
             case ContentType.Text:
               message = Message;
               break;
           }
+          const C = isMe ? 'div' : Link;
+          const propForC = isMe ? {} : {
+            Com: 'ContactDetail',
+            Title: SenderName
+          };
           msgUnit = (
             <React.Fragment>
-              <Link
+              <C
                 onClick={(e) => {
                   // selectContact(contactData[selectedChat.ContactID]);
                 }}
-                Com="ContactDetail"
-                Title={SenderName}>
+                {...propForC}>
                 <Avatar size={30}>
                   {SenderName[0]}
                 </Avatar>
-              </Link>
+              </C>
               <div className="unit">
                 {
                   !isMe && isGroupChat && <div className="username">{SenderName}</div>

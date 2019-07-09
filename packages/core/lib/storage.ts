@@ -1,4 +1,5 @@
 import Storage from 'basic-helper/storage';
+import { HasValue } from 'basic-helper';
 import { authStore } from '../actions/auth-action';
 
 interface StorageCacheStruct {
@@ -16,8 +17,14 @@ if (storageItem) {
   }
 }
 
-export function setStorage(storageKey: string, content: any) {
-  const { UserID } = authStore.getState().userInfo;
+export function setStorage(storageKey: string, content: any, userID?) {
+  let UserID;
+  if (userID) {
+    UserID = userID;
+  } else {
+    UserID = authStore.getState().userInfo.UserID;
+  }
+  if (!HasValue(UserID)) return;
 
   /** 创建已登陆用户的 Storage */
   if (!StorageCache[UserID]) StorageCache[UserID] = {};
@@ -27,8 +34,15 @@ export function setStorage(storageKey: string, content: any) {
   Storage.setItem(StorageMark, StorageCache);
 }
 
-export function getStorage(storageKey: string) {
-  const { UserID } = authStore.getState().userInfo;
+export function getStorage(storageKey: string, userID?) {
+  let UserID;
+  if (userID) {
+    UserID = userID;
+  } else {
+    UserID = authStore.getState().userInfo.UserID;
+  }
+
+  if (!HasValue(UserID)) return;
 
   const currStorage = StorageCache[UserID];
 
@@ -36,7 +50,7 @@ export function getStorage(storageKey: string) {
 
   if (!currStorage) {
     console.warn(`暂时没有用户 ID 为 ${UserID} 的 Storage`);
-  } else {
+  } else if (currStorage[storageKey]) {
     try {
       res = JSON.parse(currStorage[storageKey]);
     } catch (e) {

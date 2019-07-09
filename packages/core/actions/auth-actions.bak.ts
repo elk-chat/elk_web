@@ -14,7 +14,7 @@ export interface LoginForm {
   Password: string;
 }
 
-const stopHeartbeat = () => {};
+let stopHeartbeat = () => {};
 const handleConnectClose = () => {
   /** 链接断开时，停止心跳 */
   stopHeartbeat();
@@ -34,7 +34,7 @@ export function* login(action) {
     const userInfo = yield call(ApplyLogin, action.form);
     yield put({ type: LOGIN_SUCCESS, userInfo });
     /** 登陆成功后启动心跳检测 */
-    // stopHeartbeat = initHeartBeat();
+    stopHeartbeat = initHeartBeat();
   } catch (failInfo) {
     yield put({ type: LOGIN_FAIL, failInfo: failInfo.Message });
   }

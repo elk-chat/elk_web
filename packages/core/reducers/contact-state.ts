@@ -20,7 +20,9 @@ export const contactData = (
   switch (action.type) {
     case RECEIVE_CONTACTS:
       const { contactsData } = action;
-      const nextArr = [...contactsData].sort((f, s) => s.UserName[0].charCodeAt() - f.UserName[0].charCodeAt());
+      const nextArr = [...contactsData].sort(
+        (f, s) => s.UserName[0].charCodeAt() - f.UserName[0].charCodeAt()
+      );
       nextState = {
         array: nextArr,
         obj: array2obj(nextArr, 'UserID')

@@ -1,0 +1,1 @@
+export const USER_INFO_STORAGE = 'USER_INFO_STORAGE';

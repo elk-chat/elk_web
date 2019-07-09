@@ -10,9 +10,10 @@ import {
 import array2obj from '../lib/array2obj';
 import { getStorage, setStorage } from '../lib/storage';
 import mergeChatContent from '../lib/merge-chat-content';
+import merge from '../lib/merge';
 
 export function chatListData(
-  state: ChatListEntity = {
+  state: ChatListEntity = getStorage('chatListData') || {
     array: [],
     obj: {}
   },
@@ -21,12 +22,14 @@ export function chatListData(
   let nextState;
   switch (action.type) {
     case RECEIVE_CHAT_LIST:
-      const nextChatList = [...action.chatList].sort((f, s) => s.UpdatedAt - f.UpdatedAt);
+      const mergeKey = 'ChatID';
+      const chatList = merge(state.array, action.chatList, mergeKey);
+      const nextChatList = chatList.sort((f, s) => s.UpdatedAt - f.UpdatedAt);
       nextState = {
         array: nextChatList,
-        obj: array2obj(nextChatList, 'ChatID')
+        obj: array2obj(nextChatList, mergeKey)
       };
-      // setStorage('chatListData', nextState);
+      setStorage('chatListData', nextState);
       return nextState;
     default:
       return state;

@@ -3,7 +3,6 @@
   "name": "Little Chat Application",
   "icons": [
     {
-      "src": "favicon.png",
       "sizes": "192x192",
       "type": "image/png"
     }

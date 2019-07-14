@@ -328,9 +328,10 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           switch (UpdateMessage.UpdateMessageChatSendMessage.ContentType) {
             case ContentType.Image:
               message = (
-                <Image FileID={FileID} onLoad={(e) => {
-                  this.scrollToBottom(this.scrollContent);
-                }} />
+                <Image FileID={FileID}
+                  onLoad={(e) => {
+                    // this.scrollToBottom(this.scrollContent);
+                  }}/>
               );
               break;
             case ContentType.Text:

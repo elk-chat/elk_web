@@ -1,5 +1,5 @@
 import { EventEmitter, EventEmitterClass, Call } from 'basic-helper';
-import { decodeData, messageResHandler } from '../handler';
+import { decodeData, encodeData, messageResHandler } from '../handler';
 import { RECEIVE_STATE_UPDATE, CONNECT_READY } from '../constant';
 
 interface SocketParams {
@@ -16,12 +16,17 @@ interface SocketParams {
   onMessage?: (event: MessageEvent) => void;
 }
 
+interface SendOptions {
+  apiName: string;
+  bufData: Uint8Array;
+  requestID: BigInt;
+  success: Function;
+  fail: Function;
+  needAuth: boolean;
+}
+
 interface UnSendEntity {
-  [requestID: string]: {
-    success: Function;
-    fail: Function;
-    buffer: ArrayBuffer;
-  };
+  [requestID: string]: SendOptions;
 }
 
 const onOpenMark = 'onOpen';
@@ -43,9 +48,13 @@ class SocketHelper extends EventEmitterClass {
 
   connecting: boolean = false;
 
+  permissions: boolean = false;
+
   reqQueue: {} = {};
 
-  sendQueue: UnSendEntity = {};
+  unSendQueue: UnSendEntity = {};
+
+  permissionsQueue: UnSendEntity = {};
 
   constructor(params: SocketParams) {
     super();
@@ -71,6 +80,13 @@ class SocketHelper extends EventEmitterClass {
     this.socket.onclose = this.onClose;
   }
 
+  setPermissions = (permissions) => {
+    this.permissions = permissions;
+    if (permissions) {
+      this.sendNotComplete(this.permissionsQueue);
+    }
+  }
+
   before = data => data;
 
   after = data => data.Data;
@@ -86,17 +102,26 @@ class SocketHelper extends EventEmitterClass {
 
   getReqQueue = requestID => this.reqQueue[requestID.toString()] || {}
 
-  send = (
-    buffer: ArrayBuffer, requestID: BigInt,
-    success: Function, fail: Function
-  ) => {
-    if (!this.connected) {
+  send = (sendOptions: SendOptions) => {
+    const {
+      apiName, bufData, requestID,
+      success, fail, needAuth
+    } = sendOptions;
+    if (needAuth && !this.permissions) {
+      /**
+       * 如果改 api 需要通过权限验证后才能发送的
+       * 但是实际还没有通过权限验证的时候，把发送实体放入待验证权限队列中
+       */
+      this.permissionsQueue[requestID.toString()] = sendOptions;
+    } else if (!this.connected) {
+      /**
+       * 如果还没 onOpen 打开的，放入待发送队列中
+       */
       console.error('尚未连接');
-      this.sendQueue[requestID.toString()] = {
-        buffer, success, fail
-      };
+      this.unSendQueue[requestID.toString()] = sendOptions;
       this.initWS();
-    } else {
+    } else if (this.socket) {
+      const buffer = encodeData(apiName, bufData, requestID);
       const wrapData = this.before(buffer);
       this.socket.send(wrapData);
       this.setReqQuquq(requestID, success, fail);
@@ -106,16 +131,13 @@ class SocketHelper extends EventEmitterClass {
   /**
    * 在 onopen 的时候发送在未 open 时候发送请求
    */
-  sendNotCom = () => {
-    const unSendList = Object.keys(this.sendQueue);
+  sendNotComplete = (queue) => {
+    const unSendList = Object.keys(queue);
     if (unSendList.length === 0) return;
     unSendList.forEach((requestID) => {
-      const item = this.sendQueue[requestID];
-      const {
-        buffer, success, fail
-      } = item;
-      this.send(buffer, BigInt(requestID), success, fail);
-      delete this.sendQueue[requestID];
+      const sendOptions = queue[requestID];
+      this.send(sendOptions);
+      delete queue[requestID];
     });
   }
 
@@ -125,7 +147,7 @@ class SocketHelper extends EventEmitterClass {
     this.connecting = false;
     this.emit(onOpenMark, {});
     this.emit(CONNECT_READY, {});
-    this.sendNotCom();
+    this.sendNotComplete(this.unSendQueue);
   }
 
   onMessage = (event) => {

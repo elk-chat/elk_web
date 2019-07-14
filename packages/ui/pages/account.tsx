@@ -8,7 +8,7 @@ interface AccountProps {
 
 export default class Account extends React.Component<AccountProps> {
   render() {
-    const { userInfo } = this.props;
+    const { userInfo, logout } = this.props;
     const { avatar, UserName } = userInfo;
 
     return (
@@ -18,6 +18,11 @@ export default class Account extends React.Component<AccountProps> {
             {UserName[0]}
           </Avatar>
           {UserName}
+        </div>
+        <div className="action-group">
+          <div className="action-item" onClick={e => logout()}>
+            注销
+          </div>
         </div>
       </div>
     );

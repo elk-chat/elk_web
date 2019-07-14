@@ -3,11 +3,16 @@ import { Call, EventEmitter } from 'basic-helper';
 
 import { ApplyLogin, ON_CONNECT_CLOSE } from '@little-chat/sdk';
 import initHeartBeat from './heartbeat';
-import { getStorage, setStorage } from '../lib/storage';
+import {
+  parseToObj
+} from '../lib/storage';
 import { USER_INFO_STORAGE } from '../constant';
 
-const LAST_USER_ID = 'LAST_USER_ID';
-const lastUserID = localStorage.getItem(LAST_USER_ID);
+let lastUserInfo = localStorage.getItem(USER_INFO_STORAGE);
+
+if (lastUserInfo) {
+  lastUserInfo = parseToObj(lastUserInfo);
+}
 
 let stopHeartbeat = () => {};
 const handleConnectClose = () => {
@@ -16,16 +21,22 @@ const handleConnectClose = () => {
 };
 EventEmitter.on(ON_CONNECT_CLOSE, handleConnectClose);
 
-const defaultAuthStore = Object.assign({}, {
+const defaultAuthStore = {
   userInfo: {},
   username: '',
   loginResDesc: '',
+  Token: '',
   logging: false,
   logouting: false,
   isLogin: false,
-}, lastUserID ? getStorage(USER_INFO_STORAGE, lastUserID) : {});
+};
 
-const authStore = createStore(defaultAuthStore);
+const runtimeState = Object.assign({}, defaultAuthStore, lastUserInfo ? {
+  ...lastUserInfo,
+  isLogin: true
+} : {});
+
+const authStore = createStore(runtimeState);
 
 async function onLoginSuccess(store, resData) {
   const userInfo = resData;
@@ -39,15 +50,12 @@ async function onLoginSuccess(store, resData) {
   };
   const emitEvent = 'LOGIN_SUCCESS';
   const emitData = { userInfo };
-  const { UserID } = resData;
 
   stopHeartbeat = initHeartBeat();
 
-  localStorage.setItem(LAST_USER_ID, UserID);
-
-  setStorage(USER_INFO_STORAGE, {
+  localStorage.setItem(USER_INFO_STORAGE, JSON.stringify({
     userInfo,
-  }, UserID);
+  }));
 
   store.setState(nextLoginInfo);
 
@@ -55,27 +63,25 @@ async function onLoginSuccess(store, resData) {
 }
 
 function clearPrevLoginData() {
-  sessionStorage.clear();
-}
-
-function getPrevLoginData() {
-  const res = sessionStorage.getItem('PREV_LOGIN_DATA');
-  let result = null;
-  if (res) {
-    try {
-      result = JSON.parse(res);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  return result;
+  localStorage.removeItem(USER_INFO_STORAGE);
 }
 
 const authActions = store => ({
   async autoLogin() {
-    const prevLoginData = getPrevLoginData();
-    if (prevLoginData) {
-      onLoginSuccess(store, prevLoginData);
+    console.log(runtimeState);
+    if (!runtimeState.userInfo.Token) {
+      store.setState({
+        isLogin: false
+      });
+    } else {
+      try {
+        const loginRes = await ApplyLogin({
+          Token: runtimeState.userInfo.Token
+        });
+        onLoginSuccess(store, { ...loginRes });
+      } catch (error) {
+        console.log(error);
+      }
     }
   },
   async applyLogin(state, form, callback) {

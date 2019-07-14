@@ -56,7 +56,6 @@ const mapStateToProps = (state) => {
 };
 
 class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
-
   /** 默认跳转的路由 */
   // defaultPath = CONTACT;
   defaultPath = CHAT;

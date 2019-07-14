@@ -127,6 +127,7 @@ message User {
   int64 UserID = 1;
   string UserName = 2;
   int64 AvatarFileID = 3;
+  string Token = 4;
 }
 
 message UserRegisterReq {
@@ -141,7 +142,8 @@ message UserRegisterResp {
 message UserLoginReq {
   string UserName = 1;
   string Password = 2;
-  string ClientApplication = 3;
+  string Token = 3;
+  string ClientApplication = 4;
 }
 
 message UserLoginResp {

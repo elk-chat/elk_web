@@ -1,14 +1,20 @@
 import SDK from '../lib/sdk';
-import { WSSend, setHeaderSSID } from '..';
+import { GetWS, WSSend, setHeaderSSID } from '..';
 
 const {
   UserLoginReq, UserRegisterReq, HeartbeatReq
 } = SDK.kproto;
 
 export async function ApplyLogin(form: SDK.kproto.IUserLoginReq) {
-  const res = await WSSend<typeof UserLoginReq, SDK.kproto.IUserLoginResp>(UserLoginReq, 'UserLoginReq', form);
-  /** 成功后设置 sessionID */
-  if (res.SessionID) setHeaderSSID(res.SessionID);
+  const res = await WSSend<typeof UserLoginReq, SDK.kproto.IUserLoginResp>(UserLoginReq, 'UserLoginReq', form, false);
+  if (res.SessionID) {
+    /**
+     * 1. 成功后设置 sessionID
+     * 2. 设置 websocket 的权限
+     */
+    setHeaderSSID(res.SessionID);
+    GetWS().setPermissions(true);
+  }
   const result = Object.assign({}, res, {
     UserName: form.UserName,
     ...res.User
@@ -20,7 +26,7 @@ export async function ApplyLogin(form: SDK.kproto.IUserLoginReq) {
  * 请求注册
  */
 export async function ApplyRegister(form: SDK.kproto.IUserRegisterReq) {
-  const res = await WSSend<typeof UserRegisterReq, SDK.kproto.IUserRegisterResp>(UserRegisterReq, 'UserRegisterReq', form);
+  const res = await WSSend<typeof UserRegisterReq, SDK.kproto.IUserRegisterResp>(UserRegisterReq, 'UserRegisterReq', form, false);
   return res;
 }
 

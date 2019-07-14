@@ -16,6 +16,7 @@ class LoginFilter extends React.PureComponent<{}, {}> {
 
   componentDidMount() {
     Call(window.__removeLoading);
+    this.props.autoLogin();
   }
 
   render() {

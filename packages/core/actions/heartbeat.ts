@@ -1,6 +1,6 @@
 import { HeartBeat } from "@little-chat/sdk";
 
-const heartbeatFreq = 20 * 1000;
+const heartbeatFreq = 30 * 1000;
 
 let timer;
 

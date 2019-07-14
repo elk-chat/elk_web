@@ -38,6 +38,7 @@ const COMMON_HEADER: HeaderStruct = {
 };
 
 export function setHeaderSSID(SessionID) {
+  console.log(SessionID);
   COMMON_HEADER.SessionID = BigInt(SessionID);
 }
 

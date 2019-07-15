@@ -37,13 +37,16 @@ const Editor: React.RefForwardingComponent<EditorProps> = React.forwardRef((prop
         const ModalID = ShowModal({
           type: 'side',
           position: 'bottom',
+          needHeader: false,
           children: (
             <div className="more-options">
-              <div className="item">
-                <Icon n="images" onClick={(e) => {
-                  document.querySelector('#imageFiles').click();
-                  CloseModal(ModalID);
-                }}/>
+              <div className="item-wrapper">
+                <div className="item">
+                  <Icon n="images" onClick={(e) => {
+                    document.querySelector('#imageFiles').click();
+                    CloseModal(ModalID);
+                  }}/>
+                </div>
               </div>
             </div>
           )

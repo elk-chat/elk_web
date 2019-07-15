@@ -117,7 +117,7 @@ class SocketHelper extends EventEmitterClass {
       /**
        * 如果还没 onOpen 打开的，放入待发送队列中
        */
-      console.error('尚未连接');
+      // console.error('尚未连接');
       this.unSendQueue[requestID.toString()] = sendOptions;
       this.initWS();
     } else if (this.socket) {

@@ -78,7 +78,6 @@ const Navigator: React.SFC<NavigatorProps> = (props) => {
           const currConfig = navRoutersConfig[Com] || {};
           const { component } = currConfig;
           const C = component;
-          const { RightBtns } = C;
           const isActive = activeComponentName === Com;
           return C ? (
             <div
@@ -88,7 +87,7 @@ const Navigator: React.SFC<NavigatorProps> = (props) => {
                 {...props}
                 passProps={props}
                 back
-                RightBtns={RightBtns}
+                RightBtns={C.RightBtns}
                 title={Title} />
               <div className="navigator-content">
                 <C {...props} {...currRouterConfig.params} />

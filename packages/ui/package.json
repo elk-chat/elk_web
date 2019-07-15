@@ -14,7 +14,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-transition-group": "^4.0.1",
-    "ukelli-ui": "^2.17.14",
+    "ukelli-ui": "^2.17.15",
     "unistore": "^3.4.1"
   },
   "author": "Alex"

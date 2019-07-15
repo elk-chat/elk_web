@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 
-import { AuthState } from '@little-chat/core/types';
 import * as ChatActions from '@little-chat/core/actions';
 import {
   RouterMultiple, RouterHelperProps, RouterState,
@@ -47,11 +46,11 @@ const getTotalUnreadCount = (unreadInfo) => {
 const mapStateToProps = (state) => {
   const { chatContentData, selectedChat, unreadInfo } = state;
   const totalUnreadCount = getTotalUnreadCount(unreadInfo);
+  const chatID = selectedChat.ChatID || '';
   return {
     ...state,
     totalUnreadCount,
-    currChatContentData: chatContentData[selectedChat.ChatID]
-    // selectedChat: chatListObjData[selectedChatID]
+    currChatContentData: chatContentData[chatID.toString()]
   };
 };
 

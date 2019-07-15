@@ -311,7 +311,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         UpdateMessage, MessageID
       } = currMsg;
 
-
       let timeElem;
       let msgUnit;
       let isMe;
@@ -330,7 +329,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
               message = (
                 <Image FileID={FileID}
                   onLoad={(e) => {
-                    // this.scrollToBottom(this.scrollContent);
+                    this.scrollToBottom(this.scrollContent);
                   }}/>
               );
               break;
@@ -392,7 +391,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
       const itemElem = (
         <div
-          className={bubbleClass} key={MessageID}>
+          className={bubbleClass} key={MessageID.toString()}>
           {timeElem}
           <div className={`msg-item ${MsgTypeClass[currMsg.MessageType]}`}>
             {msgUnit}

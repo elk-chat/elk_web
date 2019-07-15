@@ -1,7 +1,13 @@
 // import React from "react";
 // import createChatStore from '@little-chat/core/store';
 // import { Provider } from 'react-redux';
+import Long from 'long';
+import protobuf from 'protobufjs';
+
 import ChatApp from './auth-connection';
+
+protobuf.util.Long = Long;
+protobuf.configure();
 
 export default ChatApp;
 

@@ -76,7 +76,7 @@ export default class SearchContact extends React.Component<SearchContactProps> {
                         onClick={(e) => {
                           Call(onAction, item);
                         }}
-                        key={UserID}>
+                        key={UserID.toString()}>
                         {UserName}
                       </ActionComponent>
                     );

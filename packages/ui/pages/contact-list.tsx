@@ -15,7 +15,7 @@ interface ContactProps extends UserInfo {
   selectContact: typeof selectContact;
 }
 
-export default class Contacts extends React.PureComponent<ContactProps, {}> {
+export default class Contacts extends React.Component<ContactProps, {}> {
   static RightBtns = props => (
     <div className="p20">
       <DropdownWrapper
@@ -67,12 +67,17 @@ export default class Contacts extends React.PureComponent<ContactProps, {}> {
             const { UserName, UserID } = item;
             const isMe = UserName === myName;
             const contactAvatar = item.Avatar;
+            const _UserID = UserID.toString();
+
             return !isMe && (
               <Link
-                key={UserID}
+                key={_UserID}
                 Com="ContactDetail"
                 Title={UserName}
-                params={item}
+                params={{
+                  UserName,
+                  UserID: _UserID
+                }}
                 onClick={() => {
                   this.props.selectContact(item);
                 }}>

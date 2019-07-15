@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider as UnistoreProvider, connect as connectUnistore } from 'unistore/react';
 import createChatStore from '@little-chat/core/store';
 import { Call } from "basic-helper";
@@ -8,12 +8,11 @@ import { authStore, authActions } from '@little-chat/core/actions/auth-action';
 import AuthSelector from './auth';
 import ChatApp from './app';
 
+const isMobile = /Android|iOS|iPhone/.test(navigator.userAgent);
 
-class LoginFilter extends React.PureComponent<{}, {}> {
-  static defaultProps = {
-    isMobile: /Android|iOS|iPhone/.test(navigator.userAgent),
-  }
+let chatStore = null;
 
+class LoginFilter extends React.PureComponent {
   componentDidMount() {
     Call(window.__removeLoading);
     this.props.autoLogin();
@@ -21,7 +20,7 @@ class LoginFilter extends React.PureComponent<{}, {}> {
 
   render() {
     const {
-      isLogin, applyLogin, isMobile = true, ...other
+      isLogin, applyLogin = true, ...other
     } = this.props;
     return (
       <div className={`little-chat-app ${isMobile ? 'mobile' : 'pc'}`}>
@@ -32,13 +31,12 @@ class LoginFilter extends React.PureComponent<{}, {}> {
             {...other}>
             {
               () => {
-                const chatStore = createChatStore({});
+                if (!chatStore) chatStore = createChatStore({});
                 return (
                   <ReduxProvider store={chatStore}>
                     <ChatApp
                       dispatch={chatStore.dispatch}
-                      {...this.props}
-                      {...this.state} />
+                      {...this.props} />
                   </ReduxProvider>
                 );
               }

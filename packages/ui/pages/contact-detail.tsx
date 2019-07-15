@@ -48,7 +48,7 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
   peerContactToChat = async (UserID) => {
     try {
       const { Chat } = await InitPeerChat({
-        PeerID: +UserID
+        PeerID: UserID
       });
       this.connectChat = Chat;
     } catch (e) {
@@ -93,8 +93,8 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
               <div
                 className="action-item"
                 onClick={(e) => {
-                  const chatEntity = chatListData.obj[this.connectChat.ChatID];
-                  console.log(chatListData.obj, this.connectChat.ChatID);
+                  const chatID = this.connectChat.ChatID || '';
+                  const chatEntity = chatListData.obj[chatID.toString()];
                   if (chatEntity) {
                     this.props.selectChat(chatEntity);
                     onNavigate({

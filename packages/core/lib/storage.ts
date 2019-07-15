@@ -22,7 +22,7 @@ function userIDFilter(userID) {
   if (userID) {
     UserID = userID;
   } else {
-    UserID = authStore.getState().userInfo.UserID;
+    UserID = authStore.getState().userInfo.UserID || '';
   }
   return UserID;
 }

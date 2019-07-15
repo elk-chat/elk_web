@@ -22,10 +22,11 @@ const handleConnectClose = () => {
 EventEmitter.on(ON_CONNECT_CLOSE, handleConnectClose);
 
 const defaultAuthStore = {
+  Token: '',
+  UserID: '',
   userInfo: {},
   username: '',
   loginResDesc: '',
-  Token: '',
   logging: false,
   logouting: false,
   isLogin: false,
@@ -40,9 +41,12 @@ const authStore = createStore(runtimeState);
 
 async function onLoginSuccess(store, resData) {
   const userInfo = resData;
+  userInfo.UserID = userInfo.UserID.toString();
+  const { UserID, UserName } = userInfo;
   const nextLoginInfo = {
+    UserID,
     userInfo,
-    username: userInfo.UserName,
+    username: UserName,
     loginResDesc: '登陆成功',
     logging: false,
     logouting: false,

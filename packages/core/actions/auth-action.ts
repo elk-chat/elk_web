@@ -68,7 +68,6 @@ function clearPrevLoginData() {
 
 const authActions = store => ({
   async autoLogin() {
-    console.log(runtimeState);
     if (!runtimeState.userInfo.Token) {
       store.setState({
         isLogin: false
@@ -81,6 +80,9 @@ const authActions = store => ({
         onLoginSuccess(store, { ...loginRes });
       } catch (error) {
         console.log(error);
+        store.setState({
+          isLogin: false
+        });
       }
     }
   },

@@ -139,7 +139,7 @@ export function* getChatMembers(Chats) {
   const getMemberInfoList: SDK.kproto.IChatGetMembersResp[] = [];
   const currState = authStore.getState();
   const { contactData, userInfo } = currState;
-  const myID = userInfo.UserID;
+  const myID = userInfo.UserID.toString();
   const nextChats = [...Chats];
   /** 这里主要为了查找 Chat 的 UserName */
   Chats.forEach((chat, idx) => {
@@ -160,7 +160,7 @@ export function* getChatMembers(Chats) {
                 UserID: +contactID
               }).then((fullUserRes) => {
                 const { User } = fullUserRes;
-                nextChats[idx].Title = User.UserName;
+                nextChats[idx].Title = nextChats[idx].Title || User.UserName;
                 resolve();
               });
             } else {
@@ -206,7 +206,7 @@ export function* addChat(action) {
       Title
     });
     const addMemberRes = yield call(AddMemberToChat, {
-      ChatID: createRes.Chat.ID,
+      ChatID: createRes.Chat.ChatID,
       UserID
     });
     yield put({ type: ADDED_CHAT, addMemberRes });

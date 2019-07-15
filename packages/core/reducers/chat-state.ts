@@ -85,7 +85,7 @@ export function unreadInfo(
     case SELECT_CHAT:
       const { chatEntity } = action;
       nextState = Object.assign({}, state);
-      nextState[chatEntity.ChatID] = 0;
+      nextState[chatEntity.ChatID.toString()] = 0;
       // nextState = Object.assign({}, state);
       // if (!countUnread) nextState[chatID] = (+nextState[chatID] || 0) + chatContent.length;
       return nextState;

@@ -53,28 +53,15 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   static RightBtns = (props) => {
     const { selectedChat } = props;
     return (
-      <span className="add-btn action" onClick={(e) => {
-        // console.log(props)
-        // props.applyAddChat();
-        const ModalID = ShowModal({
-          width: '90%',
-          marginTop: '40px',
-          title: '添加成员',
-          needMinBtn: false,
-          needMaxBtn: false,
-          children: (
-            <SearchUser {...props} onAction={({ UserID }) => {
-              AddMemberToChat({
-                ChatID: selectedChat.ChatID,
-                UserID
-              });
-              CloseModal(ModalID);
-            }} />
-          )
-        });
-      }}>
-        <Icon n="plus" />
-      </span>
+      <Link
+        Com="ChatDetail"
+        Title="聊天详情"
+        className="add-btn action"
+        params={{
+          ChatID: selectedChat.ChatID.toString()
+        }}>
+        <Icon n="ellipsis-h" />
+      </Link>
     );
   }
 
@@ -283,13 +270,14 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     if (_msg === '') return;
     const { selectedChat, currChatContentData } = this.props;
 
-    const sendMsgData = {
+    const sendMsgData = Object.assign({}, {
       ChatID: selectedChat.ChatID,
       ContentType: contentType,
-      Message: msg,
-      FileID: msg,
+      Message: _msg,
       lastState: currChatContentData.lastState
-    };
+    }, contentType === ContentType.Image ? {
+      FileID: _msg,
+    } : null);
 
     this.props.applySendMsg(sendMsgData);
 

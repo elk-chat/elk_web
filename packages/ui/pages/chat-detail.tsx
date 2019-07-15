@@ -20,9 +20,10 @@ const formOptions = [
 
 const ChatDetail: React.SFC<ChatDetailProps> = (props) => {
   const { applyAddChat } = props;
+  console.log(props)
   return (
     <div className="add-chat-panel">
-      <FormLayout
+      {/* <FormLayout
         formOptions={formOptions}
         showInputTitle={false}
         btnConfig={[
@@ -32,7 +33,7 @@ const ChatDetail: React.SFC<ChatDetailProps> = (props) => {
               applyAddChat(formRef.value);
             }
           }
-        ]} />
+        ]} /> */}
     </div>
   );
 };

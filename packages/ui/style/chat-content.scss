@@ -245,9 +245,17 @@ $headerH: 40px;
 
 .more-options {
   display: flex;
-  .item {
-    padding: 15px 0;
+  padding: 10px;
+  flex-wrap: wrap;
+  .item-wrapper {
     flex-basis: 25%;
+    padding: 10px;
+  }
+  .item {
+    padding: 15px;
     text-align: center;
+    background-color: #f7f7f7;
+    border-radius: 5px;
+    margin: 2%;
   }
 }

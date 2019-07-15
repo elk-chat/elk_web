@@ -7,6 +7,7 @@ import { HeaderStruct, DecodedDataStruct } from '../struct';
 const HeaderByteLen = {
   Len: 4,
   Sig: 4,
+  ApplicationID: 4,
   AuthKeyID: 8,
   SessionID: 8,
   RequestID: 8,
@@ -15,7 +16,8 @@ const HeaderByteLen = {
 
 const HBYTEOFFSET_LEN = 0;
 const HBYTEOFFSET_SIG = HeaderByteLen.Len + HBYTEOFFSET_LEN;
-const HBYTEOFFSET_AUTHKEYID = HeaderByteLen.Sig + HBYTEOFFSET_SIG;
+const HBYTEOFFSET_APP_ID = HeaderByteLen.ApplicationID + HBYTEOFFSET_SIG;
+const HBYTEOFFSET_AUTHKEYID = HeaderByteLen.Sig + HBYTEOFFSET_APP_ID;
 const HBYTEOFFSET_SESSIONID = HeaderByteLen.AuthKeyID + HBYTEOFFSET_AUTHKEYID;
 const HBYTEOFFSET_REQUESTID = HeaderByteLen.SessionID + HBYTEOFFSET_SESSIONID;
 const HBYTEOFFSET_RESPONSEID = HeaderByteLen.RequestID + HBYTEOFFSET_REQUESTID;
@@ -31,6 +33,7 @@ const headerBufferLen = (() => {
 const COMMON_HEADER: HeaderStruct = {
   Len: 0,
   Sig: 0,
+  ApplicationID: 999,
   AuthKeyID: BigInt(0),
   SessionID: BigInt(0),
   RequestID: BigInt(0),
@@ -38,7 +41,6 @@ const COMMON_HEADER: HeaderStruct = {
 };
 
 export function setHeaderSSID(SessionID) {
-  console.log(SessionID);
   COMMON_HEADER.SessionID = BigInt(SessionID);
 }
 
@@ -67,6 +69,7 @@ function encodeData(method: string, dataBuf: Uint8Array, RequestID: BigInt) {
 
   view.setUint32(HBYTEOFFSET_LEN, header.Len, true);
   view.setUint32(HBYTEOFFSET_SIG, header.Sig, true);
+  view.setUint32(HBYTEOFFSET_APP_ID, header.ApplicationID, true);
   view.setBigUint64(HBYTEOFFSET_AUTHKEYID, BigInt(header.AuthKeyID), true);
   view.setBigUint64(HBYTEOFFSET_SESSIONID, BigInt(header.SessionID), true);
   view.setBigUint64(HBYTEOFFSET_REQUESTID, BigInt(header.RequestID), true);
@@ -92,6 +95,7 @@ function decodeData(buffer: ArrayBuffer): DecodedDataStruct {
   const headerBufMapper = {
     Len: view.getUint32(HBYTEOFFSET_LEN, true),
     Sig: view.getUint32(HBYTEOFFSET_SIG, true),
+    ApplicationID: view.getUint32(HBYTEOFFSET_APP_ID, true),
     AuthKeyID: view.getBigUint64(HBYTEOFFSET_AUTHKEYID, true),
     SessionID: view.getBigUint64(HBYTEOFFSET_SESSIONID, true),
     RequestID: view.getBigUint64(HBYTEOFFSET_REQUESTID, true),

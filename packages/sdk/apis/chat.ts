@@ -1,6 +1,10 @@
 import SDK from '../lib/sdk';
 import { WSSend } from '..';
 
+interface CreateChatAndAddMemberOptions extends SDK.kproto.IChatCreateReq {
+  UserIDs: string[];
+}
+
 const {
   ChatSendMessageReq, ChatGetChatsReq, ChatCreateReq, ChatAddMemberReq,
   ChatSyncChatStatesReq, StateAck, ChatReadMessageReq, ChatGetMembersReq
@@ -34,7 +38,7 @@ export async function ReadMsg(options: SDK.kproto.IChatReadMessageReq) {
  * 创建聊天
  */
 export async function CreateChat(options: SDK.kproto.IChatCreateReq) {
-  const res = await WSSend(ChatCreateReq, 'ChatCreateReq', options);
+  const res = await WSSend<typeof ChatCreateReq, SDK.kproto.IChatCreateResp>(ChatCreateReq, 'ChatCreateReq', options);
   return res;
 }
 
@@ -44,6 +48,34 @@ export async function CreateChat(options: SDK.kproto.IChatCreateReq) {
 export async function AddMemberToChat(options: SDK.kproto.IChatAddMemberReq) {
   const res = await WSSend(ChatAddMemberReq, 'ChatAddMemberReq', options);
   return res;
+}
+
+/**
+ * 向对应的聊天添加人员
+ */
+export async function CreateChatAndAddMember(options: CreateChatAndAddMemberOptions) {
+  const { Title, UserIDs } = options;
+  const createRes = await CreateChat({
+    Title
+  });
+  const { ChatID } = createRes.Chat;
+  const sendQueue = [];
+  UserIDs.forEach((UserID) => {
+    const promise = new Promise(async (resolve, reject) => {
+      try {
+        const res = await AddMemberToChat({
+          ChatID,
+          UserID
+        });
+        resolve(res);
+      } catch (e) {
+        reject(e);
+      }
+    });
+    sendQueue.push(promise);
+  });
+  return Promise.all(sendQueue);
+  // return res;
 }
 
 /**

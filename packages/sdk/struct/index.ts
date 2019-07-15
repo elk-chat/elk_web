@@ -3,6 +3,7 @@ import SDK from '../lib/sdk';
 export interface HeaderStruct {
   Len: number;
   Sig: number;
+  ApplicationID: number;
   AuthKeyID: BigInt;
   SessionID: BigInt;
   RequestID: BigInt;

@@ -5,6 +5,7 @@ import ContactDetail from '../pages/contact-detail';
 import LinkLoader from '../pages/link-loader';
 import Moment from '../pages/moment';
 import SearchContact from '../pages/search-contact';
+import ChatDetail from '../pages/chat-detail';
 
 const navRoutersConfig = {
   Setting: {
@@ -30,6 +31,10 @@ const navRoutersConfig = {
   SearchContact: {
     title: "搜索联系人",
     component: SearchContact
+  },
+  ChatDetail: {
+    title: "聊天详情",
+    component: ChatDetail
   },
 };
 

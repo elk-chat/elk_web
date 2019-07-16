@@ -51,7 +51,7 @@ export default class RegisterPanel extends Component<{}, {}> {
     }
     const isSuccess = !res.Code;
     if (isSuccess) {
-      this.toast.show(`注册成功，将在 ${this.autoLoginTime} 秒后自动登陆`, 'success');
+      this.toast.show(`注册成功，正在自动登陆，请稍后`, 'success');
       setTimeout(() => {
         this.props.applyLogin(form);
       }, this.autoLoginTime * 1000);

@@ -1,13 +1,14 @@
+import JSBI from 'jsbi';
 import SDK from '../lib/sdk';
 
 export interface HeaderStruct {
   Len: number;
   Sig: number;
   ApplicationID: number;
-  AuthKeyID: BigInt;
-  SessionID: BigInt;
-  RequestID: BigInt;
-  ResponseID: BigInt;
+  AuthKeyID: typeof JSBI.BigInt;
+  SessionID: typeof JSBI.BigInt;
+  RequestID: typeof JSBI.BigInt;
+  ResponseID: typeof JSBI.BigInt;
 }
 
 export interface DecodedDataStruct extends HeaderStruct {

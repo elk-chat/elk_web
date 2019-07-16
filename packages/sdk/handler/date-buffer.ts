@@ -1,8 +1,9 @@
-// import JSBI from 'jsbi';
+import JSBI from 'jsbi';
 import getSigMapper from './method-sig';
 import { HeaderStruct, DecodedDataStruct } from '../struct';
+import '../bigint-buffer';
 
-// const { BigInt } = JSBI;
+const { BigInt } = JSBI;
 
 const HeaderByteLen = {
   Len: 4,
@@ -34,10 +35,10 @@ const COMMON_HEADER: HeaderStruct = {
   Len: 0,
   Sig: 0,
   ApplicationID: 999,
-  AuthKeyID: BigInt(0),
-  SessionID: BigInt(0),
-  RequestID: BigInt(0),
-  ResponseID: BigInt(0)
+  AuthKeyID: BigInt(10),
+  SessionID: BigInt(10),
+  RequestID: BigInt(10),
+  ResponseID: BigInt(10)
 };
 
 export function setHeaderSSID(SessionID) {
@@ -52,10 +53,10 @@ export function setHeaderSSID(SessionID) {
  *
  * @param {string} method
  * @param {Uint8Array} dataBuf
- * @param {BigInt} RequestID
+ * @param {Long} RequestID
  * @returns
  */
-function encodeData(method: string, dataBuf: Uint8Array, RequestID: BigInt) {
+function encodeData(method: string, dataBuf: Uint8Array, RequestID: typeof BigInt) {
   const sig = getSigMapper(method);
   const totalLen = headerBufferLen + dataBuf.length;
   const header = Object.assign({}, COMMON_HEADER, {
@@ -65,15 +66,15 @@ function encodeData(method: string, dataBuf: Uint8Array, RequestID: BigInt) {
   });
   const buffer = new ArrayBuffer(totalLen);
   const uint8 = new Uint8Array(buffer);
-  const view = new DataView(buffer);
+  const dataView = new DataView(buffer);
 
-  view.setUint32(HBYTEOFFSET_LEN, header.Len, true);
-  view.setUint32(HBYTEOFFSET_SIG, header.Sig, true);
-  view.setUint32(HBYTEOFFSET_APP_ID, header.ApplicationID, true);
-  view.setBigUint64(HBYTEOFFSET_AUTHKEYID, BigInt(header.AuthKeyID), true);
-  view.setBigUint64(HBYTEOFFSET_SESSIONID, BigInt(header.SessionID), true);
-  view.setBigUint64(HBYTEOFFSET_REQUESTID, BigInt(header.RequestID), true);
-  view.setBigUint64(HBYTEOFFSET_RESPONSEID, BigInt(header.ResponseID), true);
+  dataView.setUint32(HBYTEOFFSET_LEN, header.Len, true);
+  dataView.setUint32(HBYTEOFFSET_SIG, header.Sig, true);
+  dataView.setUint32(HBYTEOFFSET_APP_ID, header.ApplicationID, true);
+  dataView.setUint64(HBYTEOFFSET_AUTHKEYID, header.AuthKeyID, true);
+  dataView.setUint64(HBYTEOFFSET_SESSIONID, header.SessionID, true);
+  dataView.setUint64(HBYTEOFFSET_REQUESTID, header.RequestID, true);
+  dataView.setUint64(HBYTEOFFSET_RESPONSEID, header.ResponseID, true);
 
   /** 合并 protobuf 的数据 */
   uint8.set(dataBuf, headerBufferLen);
@@ -90,16 +91,16 @@ function encodeData(method: string, dataBuf: Uint8Array, RequestID: BigInt) {
  * @returns {DecodedDataStruct}
  */
 function decodeData(buffer: ArrayBuffer): DecodedDataStruct {
-  const view = new DataView(buffer);
+  const dataView = new DataView(buffer);
 
   const headerBufMapper = {
-    Len: view.getUint32(HBYTEOFFSET_LEN, true),
-    Sig: view.getUint32(HBYTEOFFSET_SIG, true),
-    ApplicationID: view.getUint32(HBYTEOFFSET_APP_ID, true),
-    AuthKeyID: view.getBigUint64(HBYTEOFFSET_AUTHKEYID, true),
-    SessionID: view.getBigUint64(HBYTEOFFSET_SESSIONID, true),
-    RequestID: view.getBigUint64(HBYTEOFFSET_REQUESTID, true),
-    ResponseID: view.getBigUint64(HBYTEOFFSET_RESPONSEID, true),
+    Len: dataView.getUint32(HBYTEOFFSET_LEN, true),
+    Sig: dataView.getUint32(HBYTEOFFSET_SIG, true),
+    ApplicationID: dataView.getUint32(HBYTEOFFSET_APP_ID, true),
+    AuthKeyID: dataView.getUint64(HBYTEOFFSET_AUTHKEYID, true),
+    SessionID: dataView.getUint64(HBYTEOFFSET_SESSIONID, true),
+    RequestID: dataView.getUint64(HBYTEOFFSET_REQUESTID, true),
+    ResponseID: dataView.getUint64(HBYTEOFFSET_RESPONSEID, true),
   };
   const dataBuf = buffer.slice(headerBufferLen);
 

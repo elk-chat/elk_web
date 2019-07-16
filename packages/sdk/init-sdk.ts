@@ -1,6 +1,9 @@
+import JSBI from 'jsbi';
 import { UUID } from 'basic-helper';
 import SocketHelper from './socket';
 import { encodeData } from './handler/date-buffer';
+
+const { BigInt } = JSBI;
 
 interface Params {
   apiHost: string;

@@ -1,3 +1,4 @@
+import JSBI from 'jsbi';
 import { EventEmitter, EventEmitterClass, Call } from 'basic-helper';
 import { decodeData, encodeData, messageResHandler } from '../handler';
 import { RECEIVE_STATE_UPDATE, CONNECT_READY } from '../constant';
@@ -19,7 +20,7 @@ interface SocketParams {
 interface SendOptions {
   apiName: string;
   bufData: Uint8Array;
-  requestID: BigInt;
+  requestID: typeof JSBI.BigInt;
   success: Function;
   fail: Function;
   needAuth: boolean;
@@ -158,7 +159,7 @@ class SocketHelper extends EventEmitterClass {
     const decodedData = decodeData(data);
     const { RequestID } = decodedData;
     const finalData = messageResHandler(decodedData);
-    if (RequestID === BigInt(0)) {
+    if (+(RequestID.toString()) === 0) {
       /** 来自推送的消息 */
       EventEmitter.emit(RECEIVE_STATE_UPDATE, finalData.Data);
     } else {

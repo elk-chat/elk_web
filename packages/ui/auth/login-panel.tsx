@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { FormGenerator } from 'ukelli-ui/core/form-generator';
 import { TipPanel } from 'ukelli-ui/core/tip-panel';
 import { Button } from 'ukelli-ui/core/button';
+import { Toast } from 'ukelli-ui/core/toast';
 import { Call } from 'basic-helper/call';
 import { tuple } from 'basic-helper/utils/type';
 import { loginFormOptions } from './form-options';
@@ -40,6 +41,8 @@ export default class LoginPanel extends Component<LoginPanelProps> {
     }}>Little Chat</h2>
   };
 
+  toast;
+
   formHelper!: {
     value: any;
   }
@@ -60,7 +63,7 @@ export default class LoginPanel extends Component<LoginPanelProps> {
 
   render() {
     const {
-      logging, applyLogin, msg, loginFail,
+      logging, applyLogin, loginResDesc,
       autoLoging, logo, btnGColor
     } = this.props;
     const submitable = !autoLoging && !logging;
@@ -84,17 +87,23 @@ export default class LoginPanel extends Component<LoginPanelProps> {
         <div className="login-layout">
           {Call(logo)}
           {
-            loginFail && (
-              <TipPanel text={msg} type="error" />
+            loginResDesc && (
+              <TipPanel text={loginResDesc} type="error" />
             )
           }
+          <Toast ref={(e) => { this.toast = e; }} />
           <FormGenerator
             showInputTitle={false}
             formOptions={loginFormOptions}
             ref={this.saveForm}>
             <Button
               onClick={() => {
-                applyLogin(this.formHelper.value);
+                const checkRes = this.formHelper.checkForm();
+                if (checkRes.isPass) {
+                  applyLogin(this.formHelper.value);
+                } else {
+                  this.toast.show(`请输入${checkRes.desc}`, 'error');
+                }
               }}
               disabled={!submitable}
               className="res login-btn"

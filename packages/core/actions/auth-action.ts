@@ -96,17 +96,20 @@ const authActions = store => ({
       logging: true,
       loginResDesc: '',
     });
-    const loginRes = await ApplyLogin(form);
-    if (!loginRes.Code) isPass = true;
-    const isLogin = isPass;
-    if (isLogin) {
-      Call(callback, form);
-      onLoginSuccess(store, { ...form, ...loginRes });
-    } else {
+    try {
+      const loginRes = await ApplyLogin(form);
+      if (!loginRes.Code) isPass = true;
+      const isLogin = isPass;
+      if (isLogin) {
+        Call(callback, form);
+        onLoginSuccess(store, { ...form, ...loginRes });
+      }
+    } catch (res) {
       store.setState({
         logging: false,
-        loginResDesc: loginRes ? loginRes.Message : '请求失败'
+        loginResDesc: res ? res.Message : '登陆失败'
       });
+      clearPrevLoginData();
     }
   },
   async logout() {

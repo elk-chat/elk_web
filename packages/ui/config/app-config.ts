@@ -1,6 +1,6 @@
 const NavRouterMark = "N";
 
-const APP_VERSION = '3';
+const APP_VERSION = '4';
 const APP_VERSION_STORAGE = 'APP_VERSION_STORAGE';
 
 const appVersion = localStorage.getItem(APP_VERSION_STORAGE);

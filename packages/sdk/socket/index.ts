@@ -103,6 +103,11 @@ class SocketHelper extends EventEmitterClass {
     };
   }
 
+  clearQueue = () => {
+    this.reqQueue = {};
+    this.permissionsQueue = {};
+  }
+
   getReqQueue = requestID => this.reqQueue[requestID.toString()] || {}
 
   send = (sendOptions: SendOptions) => {
@@ -173,15 +178,17 @@ class SocketHelper extends EventEmitterClass {
   }
 
   onErr = (e) => {
-    this.connected = false;
     console.log(e, 'onErr');
+    this.connected = false;
+    this.clearQueue();
   }
 
   onClose = (e) => {
+    console.log(e, 'onClose');
     this.connected = false;
     this.socket = null;
     this.isClosed = true;
-    console.log(e, 'onClose');
+    this.clearQueue();
   }
 }
 

@@ -264,7 +264,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         _msg = msg.trim();
         break;
       case ContentType.Image:
-
+        _msg = msg;
         break;
     }
     if (_msg === '') return;

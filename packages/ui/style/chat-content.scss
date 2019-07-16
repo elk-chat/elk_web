@@ -249,10 +249,16 @@ $headerH: 40px;
   flex-wrap: wrap;
   .item-wrapper {
     flex-basis: 25%;
-    padding: 10px;
+    padding: 6px 10px;
+    text-align: center;
+    .text {
+      color: #999;
+      margin-top: 3px;
+      display: inline-block;
+    }
   }
   .item {
-    padding: 15px;
+    padding: 10px 15px;
     text-align: center;
     background-color: #f7f7f7;
     border-radius: 5px;

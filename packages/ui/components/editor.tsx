@@ -40,13 +40,14 @@ const Editor: React.RefForwardingComponent<EditorProps> = React.forwardRef((prop
           needHeader: false,
           children: (
             <div className="more-options">
-              <div className="item-wrapper">
+              <div className="item-wrapper" onClick={(e) => {
+                document.querySelector('#imageFiles').click();
+                CloseModal(ModalID);
+              }}>
                 <div className="item">
-                  <Icon n="images" onClick={(e) => {
-                    document.querySelector('#imageFiles').click();
-                    CloseModal(ModalID);
-                  }}/>
+                  <Icon n="images"/>
                 </div>
+                <span className="text">图片</span>
               </div>
             </div>
           )

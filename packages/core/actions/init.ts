@@ -8,10 +8,8 @@ import {
   RECEIVE_STATE_UPDATE
 } from "@little-chat/sdk";
 import { authStore } from './auth-action';
-import {
-  MessageType
-} from '../types';
-
+import { MessageType } from '../types';
+import { getStore as getChatStore } from '../store';
 import { receiveChatMessage, getChatList } from './chat-actions';
 import { fetchContacts } from './contact-actions';
 
@@ -35,9 +33,11 @@ function* initSaga({ dispatch }) {
       case MessageType.SendMessage:
         /** 如果发送者是自己，则不需要计入 unread count */
         const { userInfo } = authStore.getState();
+        const { selectedChat } = getChatStore().getState();
         const myName = userInfo.UserName;
+        const isInChating = !!selectedChat.ChatID || (nextState.ChatID.toString() === (selectedChat.ChatID || '').toString());
         const isMyMsg = nextState.UpdateMessage.UpdateMessageChatSendMessage.SenderName === myName;
-        dispatch(receiveChatMessage([nextState], nextState.ChatID, !isMyMsg));
+        dispatch(receiveChatMessage([nextState], nextState.ChatID, !isMyMsg && !isInChating));
         break;
     }
   }

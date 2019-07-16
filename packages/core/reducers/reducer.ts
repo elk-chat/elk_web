@@ -6,7 +6,7 @@ import { combineReducers } from "redux";
 
 import {
   chatListData, chatContentData, selectedChat,
-  // unreadInfo
+  unreadInfo
 } from './chat-state';
 import {
   contactData, selectedContact
@@ -16,7 +16,7 @@ const rootReducers = combineReducers({
   selectedContact,
   contactData,
   selectedChat,
-  // unreadInfo,
+  unreadInfo,
   chatListData,
   chatContentData,
   // authState,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShowModal } from 'ukelli-ui/core/modal';
+import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { DownloadFile, GetFileState } from '@little-chat/sdk';
 import { Call } from 'basic-helper';
 
@@ -24,16 +24,18 @@ export default (props) => {
   }, [FileID]);
   return (
     <div id={ID} onClick={(e) => {
-      ShowModal({
+      const ModalID = ShowModal({
         width: '100%',
         animation: false,
-        template: modalFunc => (
+        modalLayoutDOM: (
           <div className="fill"
             style={{
               zIndex: 999,
-              backgroundColor: 'rgba(0,0,0,0.7)'
+              backgroundColor: 'rgba(0,0,0,0.7)',
+              position: 'fixed',
+              pointerEvents: 'all'
             }}>
-            <span onClick={e => modalFunc.onCloseModal()} className="close-btn">x</span>
+            <span onClick={e => CloseModal(ModalID)} className="close-btn">x</span>
             <ImageViwer src={imgSrc} ID={`img_${ID}`} />
           </div>
         )

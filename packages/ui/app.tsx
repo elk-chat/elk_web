@@ -45,11 +45,11 @@ const getTotalUnreadCount = (unreadInfo) => {
 
 const mapStateToProps = (state) => {
   const { chatContentData, selectedChat, unreadInfo } = state;
-  const totalUnreadCount = getTotalUnreadCount(unreadInfo);
+  // const totalUnreadCount = getTotalUnreadCount(unreadInfo);
   const chatID = selectedChat.ChatID || '';
   return {
     ...state,
-    totalUnreadCount,
+    // totalUnreadCount,
     currChatContentData: chatContentData[chatID.toString()]
   };
 };
@@ -60,6 +60,11 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
   defaultPath = CHAT;
 
   isNative = false;
+
+  state = {
+    ...this.state,
+    unreadInfo: {}
+  }
 
   componentDidMount() {
     const { dispatch } = this.props;

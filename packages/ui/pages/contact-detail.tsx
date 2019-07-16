@@ -120,7 +120,7 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
                   position: 'top',
                   children: (
                     <div className="sure-add-panel p20">
-                      <h4>将要添加用户 ${UserName}</h4>
+                      <h4>将要添加用户 {UserName}</h4>
                       <Button text="添加" onClick={(e) => {
                         this.addToContact(UserID, () => {
                           CloseModal(ModalID);

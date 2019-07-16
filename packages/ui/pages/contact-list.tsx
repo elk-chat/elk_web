@@ -33,7 +33,7 @@ export default class Contacts extends React.Component<ContactProps, {}> {
                   route: 'N',
                   params: {
                     Com: 'SearchContact',
-                    Title: '搜索联系人'
+                    Title: '搜索联系人',
                   }
                 });
               }

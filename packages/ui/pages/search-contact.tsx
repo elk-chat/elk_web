@@ -67,16 +67,20 @@ export default class SearchContact extends React.Component<SearchContactProps> {
                 {
                   searchRes.map((item) => {
                     const { UserName, UserID } = item;
+                    const userID = UserID.toString();
                     return (
                       <ActionComponent
                         Com="ContactDetail"
                         Title={UserName}
-                        params={item}
+                        params={{
+                          UserName,
+                          UserID: userID
+                        }}
                         className="list-item"
                         onClick={(e) => {
                           Call(onAction, item);
                         }}
-                        key={UserID.toString()}>
+                        key={userID}>
                         {UserName}
                       </ActionComponent>
                     );

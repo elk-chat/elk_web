@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { FormGenerator } from 'ukelli-ui/core/form-generator';
 import { TipPanel } from 'ukelli-ui/core/tip-panel';
 import { Button } from 'ukelli-ui/core/button';
+import { Toast } from 'ukelli-ui/core/toast';
 import { Call } from 'basic-helper/call';
 import { tuple } from 'basic-helper/utils/type';
 import { ApplyRegister } from '@little-chat/sdk';
@@ -25,6 +26,10 @@ export default class RegisterPanel extends Component<{}, {}> {
     loading: false
   }
 
+  toast;
+
+  autoLoginTime = 2;
+
   formHelper!: {
     value: any;
   }
@@ -44,6 +49,15 @@ export default class RegisterPanel extends Component<{}, {}> {
       // console.log(e);
       res = e;
     }
+    const isSuccess = !res.Code;
+    if (isSuccess) {
+      this.toast.show(`注册成功，将在 ${this.autoLoginTime} 秒后自动登陆`, 'success');
+      setTimeout(() => {
+        this.props.applyLogin(form);
+      }, this.autoLoginTime * 1000);
+    } else {
+      this.toast.show(res.Message, 'error');
+    }
     this.setState({
       registerRes: res,
       loading: false,
@@ -51,7 +65,7 @@ export default class RegisterPanel extends Component<{}, {}> {
   }
 
   render() {
-    const { loading, registerRes } = this.state;
+    const { loading } = this.state;
     const submitable = !loading;
     let btnTxt;
     switch (true) {
@@ -67,22 +81,23 @@ export default class RegisterPanel extends Component<{}, {}> {
         style={{
           // backgroundImage: `url(/img/login_bg.jpg)`
         }}>
+        <Toast ref={(e) => { this.toast = e; }} />
         <div className="login-layout">
           <h2 className="title" style={{
             fontFamily: 'cursive'
           }}>Register in Little Chat</h2>
-          {
-            !!registerRes.Code && (
-              <TipPanel text={registerRes.Message} type="error" />
-            )
-          }
           <FormGenerator
             showInputTitle={false}
             formOptions={registeFormOptions}
             ref={this.saveForm}>
             <Button
               onClick={() => {
-                this.applyRegister(this.formHelper.value);
+                const checkRes = this.formHelper.checkForm();
+                if (checkRes.isPass) {
+                  this.applyRegister(this.formHelper.value);
+                } else {
+                  this.toast.show(`请输入${checkRes.desc}`, 'error');
+                }
               }}
               disabled={!submitable}
               className="res login-btn"

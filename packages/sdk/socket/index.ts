@@ -48,6 +48,8 @@ class SocketHelper extends EventEmitterClass {
 
   connecting: boolean = false;
 
+  isClosed: boolean = true;
+
   permissions: boolean = false;
 
   reqQueue: {} = {};
@@ -119,7 +121,7 @@ class SocketHelper extends EventEmitterClass {
        */
       // console.error('尚未连接');
       this.unSendQueue[requestID.toString()] = sendOptions;
-      this.initWS();
+      if (!this.isClosed) this.initWS();
     } else if (this.socket) {
       const buffer = encodeData(apiName, bufData, requestID);
       const wrapData = this.before(buffer);
@@ -148,6 +150,7 @@ class SocketHelper extends EventEmitterClass {
     this.emit(onOpenMark, {});
     this.emit(CONNECT_READY, {});
     this.sendNotComplete(this.unSendQueue);
+    this.isClosed = false;
   }
 
   onMessage = (event) => {
@@ -176,6 +179,7 @@ class SocketHelper extends EventEmitterClass {
   onClose = (e) => {
     this.connected = false;
     this.socket = null;
+    this.isClosed = true;
     console.log(e, 'onClose');
   }
 }

@@ -26,19 +26,24 @@ export function init(dispatch) {
  */
 function* initSaga({ dispatch }) {
   function handleStateUpdate(nextState) {
+    let mark;
     switch (nextState.MessageType) {
       case MessageType.AddMember:
-
+        mark = 'UpdateMessageChatAddMember';
+        // dispatch(receiveChatMessage([nextState], nextState.ChatID, false));
         break;
       case MessageType.SendMessage:
-        /** 如果发送者是自己，则不需要计入 unread count */
-        const { userInfo } = authStore.getState();
-        const { selectedChat } = getChatStore().getState();
-        const myName = userInfo.UserName;
-        const isInChating = !!selectedChat.ChatID || (nextState.ChatID.toString() === (selectedChat.ChatID || '').toString());
-        const isMyMsg = nextState.UpdateMessage.UpdateMessageChatSendMessage.SenderName === myName;
-        dispatch(receiveChatMessage([nextState], nextState.ChatID, !isMyMsg && !isInChating));
+        mark = 'UpdateMessageChatSendMessage';
         break;
+    }
+    if (mark) {
+      /** 如果发送者是自己，则不需要计入 unread count */
+      const { userInfo } = authStore.getState();
+      const { selectedChat } = getChatStore().getState();
+      const myName = userInfo.UserName;
+      const isInChating = !!selectedChat.ChatID || (nextState.ChatID.toString() === (selectedChat.ChatID || '').toString());
+      const isMyMsg = nextState.UpdateMessage[mark].SenderName === myName;
+      dispatch(receiveChatMessage([nextState], nextState.ChatID, !isMyMsg && !isInChating));
     }
   }
   yield EventEmitter.on(RECEIVE_STATE_UPDATE, handleStateUpdate);

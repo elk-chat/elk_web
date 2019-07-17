@@ -29,42 +29,35 @@ interface ChatListProps extends UserInfo {
 
 export default class ChatList extends React.Component<ChatListProps, {}> {
   static RightBtns = props => (
-    <div className="p20">
-      <DropdownWrapper
-        position="right"
-        needAction={false}
-        outside
-        overlay={({ hide }) => (
-          <Menus data={[
-            {
-              text: '发起群聊',
-              id: '1',
-              action: () => {
-                const ModalID = ShowModal({
-                  width: '90%',
-                  marginTop: '40px',
-                  title: '发起群聊',
-                  needMinBtn: false,
-                  needMaxBtn: false,
-                  children: (
-                    <AddChatPanel {...props} onSuccess={e => CloseModal(ModalID)} />
-                  )
-                });
-                // props.onNavigate({
-                //   type: 'PUSH',
-                //   route: 'N',
-                //   params: {
-                //     Com: 'AddChatPanel',
-                //     Title: '添加群聊'
-                //   }
-                // });
-              }
+    <DropdownWrapper
+      position="right"
+      className="p20"
+      needAction={false}
+      outside
+      overlay={({ hide }) => (
+        <Menus data={[
+          {
+            text: '发起群聊',
+            id: '1',
+            action: () => {
+              const ModalID = ShowModal({
+                width: '90%',
+                marginTop: '40px',
+                title: '发起群聊',
+                type: 'side',
+                position: 'bottom',
+                needMinBtn: false,
+                needMaxBtn: false,
+                children: (
+                  <AddChatPanel {...props} onSuccess={e => CloseModal(ModalID)} />
+                )
+              });
             }
-          ]} />
-        )}>
-        <Icon n="plus" />
-      </DropdownWrapper>
-    </div>
+          }
+        ]} />
+      )}>
+      <Icon n="plus" />
+    </DropdownWrapper>
   )
 
   componentDidMount() {

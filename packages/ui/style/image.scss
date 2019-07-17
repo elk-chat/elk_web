@@ -1,3 +1,16 @@
 .section-mark {
   // pointer-events: none;
 }
+
+.img-prev {
+  .close-btn {
+    right: 0;
+    position: absolute;
+    z-index: 1111;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 20px;
+    color: $themeColor;
+  }
+}

@@ -17,32 +17,30 @@ interface ContactProps extends UserInfo {
 
 export default class Contacts extends React.Component<ContactProps, {}> {
   static RightBtns = props => (
-    <div className="p20">
-      <DropdownWrapper
-        position="right"
-        needAction={false}
-        outside
-        overlay={({ hide }) => (
-          <Menus data={[
-            {
-              text: '添加联系人',
-              id: '1',
-              action: () => {
-                props.onNavigate({
-                  type: 'PUSH',
-                  route: 'N',
-                  params: {
-                    Com: 'SearchContact',
-                    Title: '搜索联系人',
-                  }
-                });
-              }
+    <DropdownWrapper className="p20"
+      position="right"
+      needAction={false}
+      outside
+      overlay={({ hide }) => (
+        <Menus data={[
+          {
+            text: '添加联系人',
+            id: '1',
+            action: () => {
+              props.onNavigate({
+                type: 'PUSH',
+                route: 'N',
+                params: {
+                  Com: 'SearchContact',
+                  Title: '搜索联系人',
+                }
+              });
             }
-          ]} />
-        )}>
-        <Icon n="plus" />
-      </DropdownWrapper>
-    </div>
+          }
+        ]} />
+      )}>
+      <Icon n="plus" />
+    </DropdownWrapper>
   )
 
   contactFilter = () => {

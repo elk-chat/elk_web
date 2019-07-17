@@ -3,15 +3,11 @@ import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { DownloadFile, GetFileState } from '@little-chat/sdk';
 import { Call } from 'basic-helper';
 
-const ImageViwer = ({ src, ID, onTap }) => (
+const ImageViwer = ({ src, ID }) => (
   <img className="img" alt="" src={src} onLoad={(e) => {
     if (!window.PinchZoom) return;
     const img = document.querySelector(`#${ID}`);
-    const pinch = new PinchZoom.default(img, {
-      onDragEnd: () => {
-        Call(onTap);
-      }
-    });
+    const pinch = new PinchZoom.default(img);
   }} id={ID} />
 );
 
@@ -34,14 +30,15 @@ export default (props) => {
         clickBgToClose: true,
         modalLayoutDOM: (
           <div
-            className="fill"
+            className="fill img-prev"
             style={{
               zIndex: 999,
               backgroundColor: 'rgba(0,0,0,0.7)',
               // position: 'fixed',
               pointerEvents: 'all'
             }}>
-            <ImageViwer src={imgSrc} ID={`img_${ID}`} onTap={e => CloseModal(ModalID)} />
+            <span className="close-btn" onClick={e => CloseModal(ModalID)}>x</span>
+            <ImageViwer src={imgSrc} ID={`img_${ID}`}/>
           </div>
         )
       });

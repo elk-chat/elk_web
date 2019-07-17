@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CreateChatAndAddMember } from '@little-chat/sdk';
+import { CreateChatAndAddMember, AddMemberToChat } from '@little-chat/sdk';
 // import { FormLayout } from 'ukelli-ui/core/form-generator';
 import { Checkbox } from 'ukelli-ui/core/selector';
 import { Button } from 'ukelli-ui/core/button';
@@ -7,26 +7,19 @@ import { Input } from 'ukelli-ui/core/form-control';
 
 interface AddChatPanelProps {
   applyAddChat: Function;
+  /** 过滤掉的联系人 */
+  exclude?: string[];
+  /** 点击按钮的回调，如果没有，则调用 CreateChatAndAddMember */
+  action?: Function;
+  /** 是否需要输入标题 */
+  needInput?: boolean;
 }
 
-// const formOptions = [
-//   {
-//     title: '用户ID',
-//     ref: 'UserID',
-//     type: 'input',
-//   },
-//   {
-//     title: 'Chat 名称',
-//     ref: 'Title',
-//     type: 'input',
-//   },
-// ];
-
-const getValuesForCheckbox = (contactDataList, myName) => {
+const getValuesForCheckbox = (contactDataList, exclude: string[]) => {
   const res = {};
   contactDataList.forEach((item) => {
     const { UserID, UserName } = item;
-    if (UserName !== myName) res[UserID.toString()] = UserName;
+    if (exclude.indexOf(UserName) === -1) res[UserID.toString()] = UserName;
   });
   return res;
 };
@@ -37,17 +30,21 @@ let checkboxRef;
 let inputRef;
 
 const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
-  const { applyAddChat, contactData, userInfo } = props;
+  const {
+    applyAddChat, contactData, userInfo, exclude = [], action, needInput = true
+  } = props;
   const contactDataList = contactData.array;
 
-  const checkboxValues = getValuesForCheckbox(contactDataList, userInfo.UserName);
+  const checkboxValues = getValuesForCheckbox(contactDataList, [userInfo.UserName, ...exclude]);
 
   return (
     <div className="add-chat-panel p20">
-      <input
-        className="form-control mb20"
-        placeholder="群名称"
-        ref={(e) => { inputRef = e; }} />
+      {
+        needInput && <input
+          className="form-control mb20"
+          placeholder="群名称"
+          ref={(e) => { inputRef = e; }} />
+      }
       <div className="mb20">
         <Checkbox
           values={checkboxValues}
@@ -56,15 +53,19 @@ const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
           ref={(e) => { checkboxRef = e; }} />
       </div>
       <Button text="确定" onClick={(e) => {
-        CreateChatAndAddMember({
-          Title: inputRef.value,
-          UserIDs: checkboxRef.value
-        }).then((res) => {
-          console.log(res);
-          props.onSuccess();
-        }).catch((e) => {
-          console.log(e);
-        });
+        if (action) {
+          action(checkboxRef.value);
+        } else {
+          CreateChatAndAddMember({
+            Title: inputRef.value,
+            UserIDs: checkboxRef.value
+          }).then((res) => {
+            props.onSuccess();
+            props.applyFetchChatList();
+          }).catch((e) => {
+            console.log(e);
+          });
+        }
       }} />
       {/* {
         contactDataList.map(contact => {

@@ -32,6 +32,7 @@ $blurLV: 3px;
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  border-bottom: 1px solid #EEE;
   .bg {
     @include fill;
     // position: absolute;
@@ -57,7 +58,7 @@ $blurLV: 3px;
     display: flex;
     align-items: center;
     .action {
-      padding: 0 10px;
+      padding: 10px 10px;
     }
   }
 }

@@ -431,9 +431,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
     const textPanel = (
       <Editor
-        didMount={(e) => {
-          const { offsetHeight } = this.editorPanel.current;
-          this.setMsgPanelPadding(offsetHeight);
+        didMount={(editorDOM) => {
+          if (editorDOM) this.setMsgPanelPadding(editorDOM.offsetHeight);
         }}
         onPaste={e => this.onPasteInput(e)}
         onFocus={e => this.scrollToBottom(this.scrollContent)}

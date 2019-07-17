@@ -10,7 +10,9 @@ import {
 import { authStore } from './auth-action';
 import { MessageType } from '../types';
 import { getStore as getChatStore } from '../store';
-import { receiveChatMessage, getChatList } from './chat-actions';
+import {
+  receiveChatMessage, getChatList, applyFetchChatList, applySyncChatMessage
+} from './chat-actions';
 import { fetchContacts } from './contact-actions';
 
 export const INIT = "INIT";
@@ -39,11 +41,19 @@ function* initSaga({ dispatch }) {
     if (mark) {
       /** 如果发送者是自己，则不需要计入 unread count */
       const { userInfo } = authStore.getState();
-      const { selectedChat } = getChatStore().getState();
+      const { selectedChat, chatContentData } = getChatStore().getState();
+      const selectedChatID = selectedChat.ChatID;
+      const currStateChatID = nextState.ChatID;
       const myName = userInfo.UserName;
-      const isInChating = !!selectedChat.ChatID || (nextState.ChatID.toString() === (selectedChat.ChatID || '').toString());
+      const isInChating = !!selectedChatID || (currStateChatID.toString() === (selectedChatID || '').toString());
       const isMyMsg = nextState.UpdateMessage[mark].SenderName === myName;
+      const currChatContent = chatContentData[currStateChatID] || {};
+      if (!currChatContent.lastState) dispatch(applyFetchChatList());
       dispatch(receiveChatMessage([nextState], nextState.ChatID, !isMyMsg && !isInChating));
+      // dispatch(applySyncChatMessage({
+      //   ChatID: currStateChatID,
+      //   State: currChatContent.lastState
+      // }));
     }
   }
   yield EventEmitter.on(RECEIVE_STATE_UPDATE, handleStateUpdate);

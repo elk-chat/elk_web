@@ -4,7 +4,7 @@ import {
 
 import ChatList from '../pages/chat-list';
 import ContactList from '../pages/contact-list';
-import Discover from '../pages/discover';
+// import Discover from '../pages/discover';
 import Account from '../pages/account';
 
 const pageRoutersConfig = [
@@ -20,12 +20,12 @@ const pageRoutersConfig = [
     title: '联系人',
     component: ContactList
   },
-  {
-    path: DISCOVER,
-    exact: true,
-    title: '发现',
-    component: Discover
-  },
+  // {
+  //   path: DISCOVER,
+  //   exact: true,
+  //   title: '发现',
+  //   component: Discover
+  // },
   {
     path: ACCOUNT,
     header: false,

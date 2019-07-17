@@ -30,11 +30,11 @@ const getTabRouteConfig = (params: RouteParams): RouteEntity[] => {
       text: "联系人",
       icon: [<PureIcon n="far fa-address-book" />, <PureIcon n="fas fa-address-book" />]
     },
-    {
-      path: DISCOVER,
-      text: "发现",
-      icon: [<PureIcon n="far fa-compass" />, <PureIcon n="fas fa-compass" />]
-    },
+    // {
+    //   path: DISCOVER,
+    //   text: "发现",
+    //   icon: [<PureIcon n="far fa-compass" />, <PureIcon n="fas fa-compass" />]
+    // },
     {
       path: ACCOUNT,
       text: "我的",

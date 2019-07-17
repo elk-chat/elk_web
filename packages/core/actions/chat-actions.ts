@@ -20,13 +20,13 @@ import {
 } from "@little-chat/sdk";
 
 import SDK from "@little-chat/sdk/lib/sdk";
+import array2obj from '@little-chat/utils/array2obj';
 
 import { authStore } from './auth-action';
 
 import {
   ChatActions, ChatItemEntity, MessageType, ChatType
 } from '../types';
-import array2obj from '../lib/array2obj';
 
 export const SELECT_CHAT = "SELECT_CHAT";
 export function selectChat(chatEntity: ChatItemEntity) {
@@ -143,35 +143,26 @@ export function* getChatMembers(Chats) {
   const nextChats = [...Chats];
   /** 这里主要为了查找 Chat 的 UserName */
   Chats.forEach((chat, idx) => {
-    if (chat.ChatType === ChatType.OneToOne) {
-      /** 如果是一对一聊天 */
-      const { ChatID } = chat;
-      const func = (resolve: typeof Promise.resolve, reject: typeof Promise.reject) => {
-        GetChatMembers({
-          ChatID,
+    const { ChatID } = chat;
+    const isOneByOneChat = chat.ChatType === ChatType.OneToOne;
+    const func = (resolve: typeof Promise.resolve, reject: typeof Promise.reject) => {
+      GetChatMembers({
+        ChatID,
+      }, isOneByOneChat ? myID : undefined)
+        .then((usersData) => {
+          if (isOneByOneChat) {
+            const currUser = usersData[0];
+            /** 如果是一对一聊天, 则把对方的用户名赋予该 Chat 的 Title */
+            if (currUser) nextChats[idx].Title = currUser.UserName;
+          }
+          nextChats[idx].Users = usersData;
+          resolve();
         })
-          .then((getChatMembersRes) => {
-            const { Members } = getChatMembersRes;
-            const memberObj = array2obj(Members, 'UserID');
-            delete memberObj[myID];
-            const contactID = Object.keys(memberObj)[0];
-            if (contactID) {
-              GetFullUser({
-                UserID: +contactID
-              }).then((fullUserRes) => {
-                const { User } = fullUserRes;
-                nextChats[idx].Title = nextChats[idx].Title || User.UserName;
-                resolve();
-              });
-            } else {
-              resolve();
-            }
-          }).catch((e) => {
-            reject(e);
-          });
-      };
-      getMemberInfoList.push(new Promise<SDK.kproto.IChatGetMembersResp>(func));
-    }
+        .catch((e) => {
+          reject(e);
+        });
+    };
+    getMemberInfoList.push(new Promise<SDK.kproto.IChatGetMembersResp>(func));
   });
   yield Promise.all(getMemberInfoList);
 

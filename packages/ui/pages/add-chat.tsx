@@ -36,8 +36,9 @@ const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
   const contactDataList = contactData.array;
 
   const checkboxValues = getValuesForCheckbox(contactDataList, [userInfo.UserName, ...exclude]);
+  const hasOptions = Object.keys(checkboxValues).length > 0;
 
-  return (
+  return hasOptions ? (
     <div className="add-chat-panel p20">
       {
         needInput && <input
@@ -67,26 +68,8 @@ const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
           });
         }
       }} />
-      {/* {
-        contactDataList.map(contact => {
-          return (
-
-          )
-        })
-      } */}
-      {/* <FormLayout
-        formOptions={formOptions}
-        showInputTitle={false}
-        btnConfig={[
-          {
-            text: '确定',
-            action: (formRef) => {
-              applyAddChat(formRef.value);
-            }
-          }
-        ]} /> */}
     </div>
-  );
+  ) : <div className="p20">没有更多联系人了</div>;
 };
 
 export default AddChatPanel;

@@ -22,7 +22,7 @@ const ChatDetail: React.SFC<ChatDetailProps> = (props) => {
     <div className="chat-detail-page">
       <div className="group-users">
         {
-          Array.isArray(Users) && Users.map((user) => {
+          (Array.isArray(Users) && Users.length > 0) ? Users.map((user) => {
             const { UserID, UserName } = user;
             const userID = UserID.toString();
             return (
@@ -31,7 +31,9 @@ const ChatDetail: React.SFC<ChatDetailProps> = (props) => {
                 <div className="name">{UserName}</div>
               </span>
             );
-          })
+          }) : (
+            <span>没有更多联系人了</span>
+          )
         }
         <span className="user-item" onClick={(e) => {
           const ModalID = ShowModal({

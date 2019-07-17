@@ -91,7 +91,7 @@ export default class Contacts extends React.Component<ContactProps, {}> {
         }
       </div>
     ) : (
-      <div>
+      <div className="p20">
         还没有联系人，添加一个试试
       </div>
     );

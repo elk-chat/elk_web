@@ -13,7 +13,7 @@ if (appVersion !== APP_VERSION) {
 localStorage.setItem(APP_VERSION_STORAGE, APP_VERSION);
 
 window.onerror = (event) => {
-  alert(JSON.stringify(event));
+  if (process.env.NODE_ENV === 'production') alert(JSON.stringify(event));
 };
 
 export {

@@ -1,5 +1,7 @@
+import array2obj from '@little-chat/utils/array2obj';
+import Long from 'long';
 import SDK from '../lib/sdk';
-import { WSSend } from '..';
+import { WSSend, GetFullUser } from '..';
 
 interface CreateChatAndAddMemberOptions extends SDK.kproto.IChatCreateReq {
   UserIDs: string[];
@@ -50,6 +52,33 @@ export async function AddMemberToChat(options: SDK.kproto.IChatAddMemberReq) {
   return res;
 }
 
+interface AddMembersToChatParams {
+  ChatID: Long;
+  UserIDs: Long[];
+}
+/**
+ * 向对应的聊天添加人员
+ */
+export function AddMembersToChat(options: AddMembersToChatParams) {
+  const { ChatID, UserIDs } = options;
+  const addQueue: typeof Promise[] = [];
+  UserIDs.forEach((UserID) => {
+    const promise = new Promise((resolve, reject) => {
+      WSSend(ChatAddMemberReq, 'ChatAddMemberReq', {
+        ChatID, UserID
+      })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+    addQueue.push(promise);
+  });
+  return Promise.all(addQueue);
+}
+
 /**
  * 向对应的聊天添加人员
  */
@@ -59,7 +88,7 @@ export async function CreateChatAndAddMember(options: CreateChatAndAddMemberOpti
     Title
   });
   const { ChatID } = createRes.Chat;
-  const sendQueue = [];
+  const sendQueue: typeof Promise[] = [];
   UserIDs.forEach((UserID) => {
     const promise = new Promise(async (resolve, reject) => {
       try {
@@ -89,9 +118,50 @@ export async function GetChatList() {
 /**
  * 获取 Chat 中的联系人信息
  */
-export async function GetChatMembers(options: SDK.kproto.IChatGetMembersReq) {
-  const res = await WSSend(ChatGetMembersReq, 'ChatGetMembersReq', options);
+export async function GetChatMembersOnly(options: SDK.kproto.IChatGetMembersReq) {
+  const res = await WSSend<typeof ChatGetMembersReq, SDK.kproto.IChatGetMembersResp>(ChatGetMembersReq, 'ChatGetMembersReq', options);
   return res;
+}
+
+/**
+ * 获取 Chat 中的联系人信息
+ */
+export function GetChatMembers(options: SDK.kproto.IChatGetMembersReq, myID?) {
+  return new Promise<SDK.kproto.IChatGetMembersResp[]>((resolve, reject) => {
+    const resData = {};
+    const getUserQueue = [];
+    GetChatMembersOnly(options)
+      .then((chatMemberRes) => {
+        const { Members } = chatMemberRes;
+        const memberObj = array2obj(Members, 'UserID');
+        if (myID) delete memberObj[myID];
+        const contactIDs = Object.keys(memberObj);
+        contactIDs.forEach((contactID) => {
+          const currQueue = new Promise((rs, rj) => {
+            GetFullUser({
+              UserID: new Long(+contactID)
+            })
+              .then((fullUserRes) => {
+                const { User } = fullUserRes;
+                resData[contactID] = User;
+                // nextChats[idx].Title = nextChats[idx].Title || User.UserName;
+                rs();
+              })
+              .catch((e) => {
+                console.log(e);
+              });
+          });
+          getUserQueue.push(currQueue);
+        });
+        Promise.all(getUserQueue)
+          .then(() => {
+          // console.log(resData);
+            resolve(Object.values(resData));
+          });
+      }).catch((e) => {
+        reject(e);
+      });
+  });
 }
 
 /**

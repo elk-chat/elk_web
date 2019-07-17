@@ -1,4 +1,4 @@
-import array2obj from './array2obj';
+import array2obj from '@little-chat/utils/array2obj';
 
 export default function merge(source, target, key, toString = true) {
   const sourceObj = array2obj(source, key);

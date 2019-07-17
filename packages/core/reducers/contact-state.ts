@@ -1,3 +1,4 @@
+import array2obj from '@little-chat/utils/array2obj';
 import {
   SELECT_CONTACT, RECEIVE_CONTACTS
 } from "../actions";
@@ -5,7 +6,6 @@ import {
   ContactEntity, ContactList, ContactState,
   ContactActions, ActionType
 } from '../types';
-import array2obj from "../lib/array2obj";
 
 // import { FakeContactData } from './fake-data';
 

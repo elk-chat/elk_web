@@ -1,4 +1,5 @@
 // import { HasValue } from 'basic-helper';
+import array2obj from '@little-chat/utils/array2obj';
 import {
   SELECT_CHAT, RECEIVE_CHAT_LIST, RECEIVE_CHAT_MESSAGE, READ_MSG
 } from "../actions";
@@ -7,7 +8,6 @@ import {
   ChatItemEntity, ChatListEntity, ActionType
 } from '../types';
 // import { FakeChatList, getFakeChatContent } from './fake-data';
-import array2obj from '../lib/array2obj';
 import { getStorage, setStorage } from '../lib/storage';
 import mergeChatContent from '../lib/merge-chat-content';
 import merge from '../lib/merge';

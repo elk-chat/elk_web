@@ -1,4 +1,3 @@
-
 syntax = "proto3";
 
 package kproto;
@@ -148,7 +147,8 @@ message UserLoginReq {
 
 message UserLoginResp {
   uint64 SessionID = 1;
-  User User = 2;
+  string Token  = 2;
+  User User = 3;
 }
 
 message UserLogoutReq {

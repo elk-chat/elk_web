@@ -5,10 +5,10 @@ import {
   put, takeLatest, call
 } from 'redux-saga/effects';
 import { Call } from 'basic-helper';
+import array2obj from '@little-chat/utils/array2obj';
 import {
   ContactEntity, ContactActions
 } from '../types';
-import array2obj from '../lib/array2obj';
 
 export const SELECT_CONTACT = 'SELECT_CONTACT';
 export const selectContact = (conctactEntity: ContactEntity): ContactActions => ({

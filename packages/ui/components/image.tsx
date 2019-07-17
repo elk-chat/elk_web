@@ -27,15 +27,16 @@ export default (props) => {
       const ModalID = ShowModal({
         width: '100%',
         animation: false,
+        clickBgToClose: true,
         modalLayoutDOM: (
-          <div className="fill"
+          <div 
+            className="fill"
             style={{
               zIndex: 999,
               backgroundColor: 'rgba(0,0,0,0.7)',
-              position: 'fixed',
+              // position: 'fixed',
               pointerEvents: 'all'
             }}>
-            <span onClick={e => CloseModal(ModalID)} className="close-btn">x</span>
             <ImageViwer src={imgSrc} ID={`img_${ID}`} />
           </div>
         )

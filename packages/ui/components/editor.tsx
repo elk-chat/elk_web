@@ -13,17 +13,19 @@ interface EditorProps {
   didMount?: Function;
 }
 
+const editorID = 'editorPanel';
+
 const Editor: React.RefForwardingComponent<EditorProps> = React.forwardRef((props, ref) => {
   const {
     onPaste, onFocus, onInput, onKeyPress, onClickSendBtn, onSelectedImg,
     didMount
   } = props;
-  const [showMoreOptions, setMoreOptions] = React.useState(false);
+  // const [showMoreOptions, setMoreOptions] = React.useState(false);
   React.useEffect(() => {
-    Call(didMount);
-  }, [didMount]);
+    Call(didMount, document.querySelector(`#${editorID}`));
+  }, []);
   return (
-    <div className={`editor-panel${showMoreOptions ? ' show-more' : ''}`}>
+    <div className="editor-panel" id={editorID}>
       <div
         contentEditable
         ref={ref}

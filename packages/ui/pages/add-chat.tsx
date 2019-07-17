@@ -22,11 +22,11 @@ interface AddChatPanelProps {
 //   },
 // ];
 
-const getValuesForCheckbox = (contactDataList) => {
+const getValuesForCheckbox = (contactDataList, myName) => {
   const res = {};
   contactDataList.forEach((item) => {
     const { UserID, UserName } = item;
-    res[UserID.toString()] = UserName;
+    if (UserName !== myName) res[UserID.toString()] = UserName;
   });
   return res;
 };
@@ -37,28 +37,34 @@ let checkboxRef;
 let inputRef;
 
 const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
-  const { applyAddChat, contactData } = props;
+  const { applyAddChat, contactData, userInfo } = props;
   const contactDataList = contactData.array;
 
-  const checkboxValues = getValuesForCheckbox(contactDataList);
+  const checkboxValues = getValuesForCheckbox(contactDataList, userInfo.UserName);
 
   return (
     <div className="add-chat-panel p20">
       <input
-        className="form-control"
+        className="form-control mb20"
         placeholder="群名称"
         ref={(e) => { inputRef = e; }} />
-      <Checkbox
-        values={checkboxValues}
-        isNum
-        onChange={(e) => {}}
-        ref={(e) => { checkboxRef = e; }} />
-      <Button text="确定" onClick={async (e) => {
-        const res = await CreateChatAndAddMember({
+      <div className="mb20">
+        <Checkbox
+          values={checkboxValues}
+          isNum
+          onChange={(e) => {}}
+          ref={(e) => { checkboxRef = e; }} />
+      </div>
+      <Button text="确定" onClick={(e) => {
+        CreateChatAndAddMember({
           Title: inputRef.value,
           UserIDs: checkboxRef.value
+        }).then((res) => {
+          console.log(res);
+          props.onSuccess();
+        }).catch((e) => {
+          console.log(e);
         });
-        console.log(res);
       }} />
       {/* {
         contactDataList.map(contact => {

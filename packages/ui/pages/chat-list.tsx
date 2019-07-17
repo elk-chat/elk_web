@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar } from 'ukelli-ui/core/avatar';
 import { Icon } from 'ukelli-ui/core/icon';
-import { ShowModal } from 'ukelli-ui/core/modal';
+import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { DropdownWrapper } from 'ukelli-ui/core/selector';
 import { Menus } from 'ukelli-ui/core/menu';
 
@@ -40,14 +40,14 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
               text: '发起群聊',
               id: '1',
               action: () => {
-                ShowModal({
+                const ModalID = ShowModal({
                   width: '90%',
                   marginTop: '40px',
                   title: '发起群聊',
                   needMinBtn: false,
                   needMaxBtn: false,
                   children: (
-                    <AddChatPanel {...props} />
+                    <AddChatPanel {...props} onSuccess={e => CloseModal(ModalID)} />
                   )
                 });
                 // props.onNavigate({

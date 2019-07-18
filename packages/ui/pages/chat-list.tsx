@@ -8,7 +8,7 @@ import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 import getLastItem from '@little-chat/utils/get-last-item';
 
 import {
-  UserInfo, ChatItemEntity, ChatListEntity, ChatType, FEContentType
+  UserInfo, ChatItemEntity, ChatListEntity, ChatType, FEContentType, FEMessageType
 } from '@little-chat/core/types';
 // import { selectChat } from '@little-chat/core/actions';
 import { Link } from 'react-multiple-router';
@@ -27,18 +27,25 @@ interface ChatListProps extends UserInfo {
 const msgFilter = (ChatEntity) => {
   let str = '';
   if (!ChatEntity) return '「暂无内容」';
-  switch (ChatEntity.ContentType) {
-    case FEContentType.Text:
-      str = ChatEntity.Message;
+  switch (ChatEntity.MessageType) {
+    case FEMessageType.AddMember:
+      str = `${ChatEntity.AddedMemeberName}加入了聊天`;
       break;
-    case FEContentType.Image:
-      str = '「图片」';
+    case FEMessageType.SendMessage:
+      switch (ChatEntity.ContentType) {
+        case FEContentType.Text:
+          str = ChatEntity.Message;
+          break;
+        case FEContentType.Image:
+          str = '「图片」';
+          break;
+      }
       break;
   }
   return str;
 };
 
-export default class ChatList extends React.Component<ChatListProps, {}> {
+export default class ChatList extends React.PureComponent<ChatListProps, {}> {
   static RightBtns = props => (
     <DropdownWrapper
       position="right"

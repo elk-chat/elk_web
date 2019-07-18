@@ -54,7 +54,7 @@ export function SyncChatMessages(options: SyncChatMessagesParams) {
           },
           Condition: {
             ChatID,
-            MessageTypes: FEMessageType.SendMessage
+            MessageTypes: [FEMessageType.SendMessage]
           }
         })
           .then(({ StateUpdates }) => {

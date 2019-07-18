@@ -8,7 +8,7 @@ import {
   RECEIVE_STATE_UPDATE
 } from "@little-chat/sdk";
 import { authStore } from './auth-action';
-import { MessageType } from '../types';
+import { FEMessageType } from '../types';
 import { getStore as getChatStore } from '../store';
 import {
   receiveChatMessage, getChatList, applyFetchChatList, applySyncChatMessage
@@ -30,11 +30,11 @@ function* initSaga({ dispatch }) {
   function handleStateUpdate(nextState) {
     let mark;
     switch (nextState.MessageType) {
-      case MessageType.AddMember:
+      case FEMessageType.AddMember:
         mark = 'UpdateMessageChatAddMember';
         // dispatch(receiveChatMessage([nextState], nextState.ChatID, false));
         break;
-      case MessageType.SendMessage:
+      case FEMessageType.SendMessage:
         mark = 'UpdateMessageChatSendMessage';
         break;
     }
@@ -60,15 +60,16 @@ function* initSaga({ dispatch }) {
 }
 
 export const SYNC_CONTACTS_AND_CHATS = "SYNC_CONTACTS_AND_CHATS";
-export function syncContactsAndChats() {
+export function syncContactsAndChats(callback) {
   return {
-    type: SYNC_CONTACTS_AND_CHATS
+    type: SYNC_CONTACTS_AND_CHATS,
+    callback
   };
 }
 
-function* getInitChatData() {
+function* getInitChatData({ callback }) {
   yield fetchContacts();
-  yield getChatList();
+  yield getChatList(callback);
 }
 
 export function* watchInitActions() {

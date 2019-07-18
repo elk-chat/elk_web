@@ -12,7 +12,7 @@ function mergeChatContent(
     obj[`${item.State}`] = item;
   });
   res = Object.values(obj);
-  res.sort((f, s) => f.State - s.State);
+  res.sort((f, s) => +f.State.toString() - +s.State.toString());
   return res;
 }
 

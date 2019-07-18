@@ -6,13 +6,14 @@ import { combineReducers } from "redux";
 
 import {
   chatListData, chatContentData, selectedChat,
-  unreadInfo
+  unreadInfo, lastMsgInfo
 } from './chat-state';
 import {
   contactData, selectedContact
 } from './contact-state';
 
 const rootReducers = combineReducers({
+  lastMsgInfo,
   selectedContact,
   contactData,
   selectedChat,

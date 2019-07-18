@@ -1,6 +1,6 @@
 import * as ChatSDK from '@little-chat/sdk/lib';
 
-export enum ContentType {
+export enum FEContentType {
   Other = 0,
   Text = 1,
   Image = 2,
@@ -9,7 +9,7 @@ export enum ContentType {
   Geo = 5,
 }
 
-export enum MessageType {
+export enum FEMessageType {
   SendMessage = 1,
   AddMember = 2,
 }
@@ -63,6 +63,10 @@ export interface ChatContentState {
 
 export interface UnreadState {
   [chatID: string]: number;
+}
+
+export interface LastMsgInfo {
+  [chatID: string]: ChatContentItem;
 }
 
 export interface ContactList {

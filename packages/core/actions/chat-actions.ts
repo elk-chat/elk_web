@@ -7,25 +7,23 @@
  */
 
 import {
-  EventEmitter
+  EventEmitter, Call
 } from 'basic-helper';
 import {
-  put, takeLatest, call
+  put, takeLatest, call, takeEvery
 } from 'redux-saga/effects';
 
 import {
   SendMsg, GetChatList, CreateChat, AddMemberToChat,
-  SyncChatMessage, GetFullUser,
+  SyncChatMessage, SyncChatMessages, GetFullUser,
   MsgStateAck, ReadMsg, GetChatMembers
 } from "@little-chat/sdk";
-
 import SDK from "@little-chat/sdk/lib/sdk";
-import array2obj from '@little-chat/utils/array2obj';
 
 import { authStore } from './auth-action';
 
 import {
-  ChatActions, ChatItemEntity, MessageType, ChatType
+  ChatActions, ChatItemEntity, ChatType
 } from '../types';
 
 export const SELECT_CHAT = "SELECT_CHAT";
@@ -79,6 +77,17 @@ export function applySyncChatMessage(payload: SDK.kproto.IChatSyncChatStatesReq)
     payload
   };
 }
+
+export const APPLY_SYNC_CHAT_MESSAGES = 'APPLY_SYNC_CHAT_MESSAGES';
+export function applySyncChatMessages(payload: {
+  ChatIDs: []; Limit: number;
+}) {
+  return {
+    type: APPLY_SYNC_CHAT_MESSAGES,
+    payload
+  };
+}
+
 export const RECEIVE_CHAT_MESSAGE = "RECEIVE_CHAT_MESSAGE";
 export function receiveChatMessage(chatContent, chatID, countUnread: boolean) {
   EventEmitter.emit(RECEIVE_CHAT_MESSAGE, chatContent);
@@ -93,10 +102,19 @@ export function receiveChatMessage(chatContent, chatID, countUnread: boolean) {
     });
   }
   return {
+    lastMsg,
     chatID,
     chatContent,
     countUnread,
     type: RECEIVE_CHAT_MESSAGE,
+  };
+}
+
+export const RECEIVE_CHAT_MESSAGES = "RECEIVE_CHAT_MESSAGES";
+export function receiveChatMessages(chatContents) {
+  return {
+    chatContents,
+    type: RECEIVE_CHAT_MESSAGES,
   };
 }
 
@@ -122,12 +140,25 @@ export const SYNC_CHAT_MESSAGE_FAIL = "SYNC_CHAT_MESSAGE_FAIL";
 /**
  * 同步 Chat 的通讯内容
  */
-export function* syncChatMessage(action) {
+export function* syncChatMessage(action: {
+  payload: SDK.kproto.IChatSyncChatStatesReq;
+}) {
   const { payload } = action;
   yield put({ type: SYNCING_CHAT_MESSAGE });
   try {
     const { StateUpdates } = yield call(SyncChatMessage, payload);
     yield put(receiveChatMessage(StateUpdates, payload.ChatID, false));
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export const SYNCING_CHAT_MESSAGES = 'SYNCING_CHAT_MESSAGES';
+export function* syncChatMessages({ payload }) {
+  yield put({ type: SYNCING_CHAT_MESSAGES });
+  try {
+    const msgsData = yield call(SyncChatMessages, payload);
+    yield put(receiveChatMessages(msgsData));
   } catch (e) {
     console.log(e);
   }
@@ -171,12 +202,13 @@ export function* getChatMembers(Chats) {
 /**
  * 获取 Chat 列表
  */
-export function* getChatList() {
+export function* getChatList(callback) {
   yield put({ type: FETCHING_CHAT_LIST });
   try {
     const { Chats } = yield call(GetChatList);
     yield put({ type: RECEIVE_CHAT_LIST, chatList: Chats });
     yield* getChatMembers(Chats);
+    Call(callback);
   } catch (res) {
     console.log(res);
   }
@@ -218,6 +250,7 @@ export function* watchChatActions() {
   yield takeLatest(APPLY_SEND_MSG, sendMsgReq);
   yield takeLatest(APPLY_FETCH_CHAT_LIST, getChatList);
   yield takeLatest(APPLY_ADD_CHAT, addChat);
-  yield takeLatest(APPLY_SYNC_CHAT_MESSAGE, syncChatMessage);
+  yield takeLatest(APPLY_SYNC_CHAT_MESSAGES, syncChatMessages);
+  yield takeEvery(APPLY_SYNC_CHAT_MESSAGE, syncChatMessage);
   // yield takeLatest(READ_MSG, readMsgArk);
 }

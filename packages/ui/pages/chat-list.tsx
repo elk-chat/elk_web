@@ -5,7 +5,6 @@ import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { DropdownWrapper } from 'ukelli-ui/core/selector';
 import { Menus } from 'ukelli-ui/core/menu';
 import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
-import getLastItem from '@little-chat/utils/get-last-item';
 
 import {
   UserInfo, ChatItemEntity, ChatListEntity, ChatType, FEContentType, FEMessageType
@@ -103,7 +102,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
         if (!FLastInfo || !SLastInfo || SLastInfo.length < 1 || FLastInfo.length < 1) {
           return 1;
         }
-        return +getLastItem(SLastInfo).ActionTime.toString() - +getLastItem(FLastInfo).ActionTime.toString();
+        return +SLastInfo.ActionTime.toString() - +FLastInfo.ActionTime.toString();
       });
     return nextLit;
   }
@@ -125,7 +124,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
             } = item;
             const chatID = ChatID.toString();
             const unreadCount = unreadInfo[chatID];
-            const currLastMsg = chatContentFilter((lastMsgInfo[chatID] || [])[0]);
+            const currLastMsg = chatContentFilter(lastMsgInfo[chatID]);
 
             return Title && (
               <NavLink

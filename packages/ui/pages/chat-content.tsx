@@ -80,6 +80,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   textContent!: HTMLDivElement | null;
 
+  editorDOM!: HTMLDivElement | null;
+
   msgPanel!: HTMLInputElement | null;
 
   editorPanel!: React.RefObject<HTMLDivElement>;
@@ -110,6 +112,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   componentWillUnmount() {
     EventEmitter.rm(RECEIVE_CHAT_MESSAGE, this.handleScroll);
+    this.props.selectChat({
+      ChatID: ''
+    });
   }
 
   handleScroll = () => {
@@ -283,7 +288,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     this.props.applySendMsg(sendMsgData);
 
     this.setTextContent('');
-    if (this.editorPanel) this.setMsgPanelPadding(this.editorPanel.current.offsetHeight);
+    if (this.editorPanel) this.setMsgPanelPadding(this.editorDOM.offsetHeight);
   }
 
   renderChatMsgs() {
@@ -432,12 +437,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const textPanel = (
       <Editor
         didMount={(editorDOM) => {
+          this.editorDOM = editorDOM;
           if (editorDOM) this.setMsgPanelPadding(editorDOM.offsetHeight);
         }}
         onPaste={e => this.onPasteInput(e)}
         onFocus={e => this.scrollToBottom(this.scrollContent)}
         onInput={(e) => {
-          const { offsetHeight } = this.editorPanel.current;
+          const { offsetHeight } = this.editorDOM;
           this.setMsgPanelPadding(offsetHeight);
         }}
         onClickSendBtn={(e) => {

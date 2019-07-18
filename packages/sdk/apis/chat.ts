@@ -16,8 +16,51 @@ const {
  * 同步聊天消息
  */
 export async function SyncChatMessage(options: SDK.kproto.IChatSyncChatStatesReq) {
-  const res = await WSSend(ChatSyncChatStatesReq, 'ChatSyncChatStatesReq', options);
+  const res = await WSSend<typeof ChatSyncChatStatesReq, SDK.kproto.IChatSyncChatStatesResp>(ChatSyncChatStatesReq, 'ChatSyncChatStatesReq', options);
   return res;
+}
+
+interface SyncChatMessagesParams {
+  ChatIDs: Long[];
+  Limit: number;
+}
+/**
+ * 同步多个 Chat 的聊天消息
+ */
+export function SyncChatMessages(options: SyncChatMessagesParams) {
+  return new Promise((resolve, reject) => {
+    const { ChatIDs, Limit = 1 } = options;
+    const addQueue: typeof Promise[] = [];
+    const resData = {};
+    const sliceStartIndex = -1;
+    ChatIDs.forEach((ChatID) => {
+      const promise = new Promise((rs, rj) => {
+        SyncChatMessage({
+          ChatID,
+          State: undefined,
+          // Limit
+        })
+          .then((res) => {
+            const resLen = res.StateUpdates.length;
+            resData[ChatID.toString()] = res.StateUpdates.slice(resLen - 1, resLen);
+            rs(res.StateUpdates);
+          })
+          .catch((e) => {
+            rj(e);
+          });
+      });
+      addQueue.push(promise);
+    });
+    Promise.all(addQueue)
+      .then(() => {
+        resolve(resData);
+      })
+      .catch((e) => {
+        reject(e);
+      });
+  });
+  // const res = await WSSend(ChatSyncChatStatesReq, 'ChatSyncChatStatesReq', options);
+  // return res;
 }
 
 /**

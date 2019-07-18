@@ -8,7 +8,7 @@ import {
 } from "../actions";
 import {
   ChatActions, ChatContentState, ChatContentItem, UnreadState,
-  ChatItemEntity, ChatListEntity, ActionType, LastMsgInfo
+  ChatItemEntity, ChatListEntity, ActionType, LastMsgInfo, FEMessageType
 } from '../types';
 // import { FakeChatList, getFakeChatContent } from './fake-data';
 import { getStorage, setStorage } from '../lib/storage';
@@ -98,7 +98,9 @@ export function lastMsgInfo(
       const { chatContent, chatID } = action;
       nextState = Object.assign({}, state);
       const lastItem = getLastItem(chatContent);
-      if (lastItem) nextState[chatID] = [lastItem];
+      if (lastItem && lastItem.MessageType === FEMessageType.SendMessage) {
+        nextState[chatID] = lastItem;
+      }
       setStorage('lastMsgInfo', nextState);
       return nextState;
     default:

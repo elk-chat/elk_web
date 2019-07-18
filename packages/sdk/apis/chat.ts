@@ -1,15 +1,23 @@
 import array2obj from '@little-chat/utils/array2obj';
 import Long from 'long';
+import { FEMessageType } from '@little-chat/core/types';
 import SDK from '../lib/sdk';
 import { WSSend, GetFullUser } from '..';
+import getLastItem from '@little-chat/utils/get-last-item';
 
 interface CreateChatAndAddMemberOptions extends SDK.kproto.IChatCreateReq {
   UserIDs: string[];
 }
 
+interface SyncChatMessagesParams {
+  ChatIDs: Long[];
+  Limit: number;
+}
+
 const {
   ChatSendMessageReq, ChatGetChatsReq, ChatCreateReq, ChatAddMemberReq,
-  ChatSyncChatStatesReq, StateAck, ChatReadMessageReq, ChatGetMembersReq
+  ChatSyncChatStatesReq, StateAck, ChatReadMessageReq, ChatGetMembersReq,
+  UserGetChatUserStatesReq, ChatGetChatStatesReq
 } = SDK.kproto;
 
 /**
@@ -20,10 +28,15 @@ export async function SyncChatMessage(options: SDK.kproto.IChatSyncChatStatesReq
   return res;
 }
 
-interface SyncChatMessagesParams {
-  ChatIDs: Long[];
-  Limit: number;
+/**
+ * 同步聊天消息
+ */
+export async function GetChatState(options: SDK.kproto.IChatGetChatStatesReq) {
+  const res = await WSSend<typeof ChatGetChatStatesReq, SDK.kproto.IChatGetChatStatesResp>(ChatGetChatStatesReq, 'ChatGetChatStatesReq', options);
+  return res;
 }
+
+
 /**
  * 同步多个 Chat 的聊天消息
  */
@@ -32,18 +45,21 @@ export function SyncChatMessages(options: SyncChatMessagesParams) {
     const { ChatIDs, Limit = 1 } = options;
     const addQueue: typeof Promise[] = [];
     const resData = {};
-    const sliceStartIndex = -1;
     ChatIDs.forEach((ChatID) => {
       const promise = new Promise((rs, rj) => {
-        SyncChatMessage({
-          ChatID,
-          State: undefined,
-          // Limit
+        GetChatState({
+          Paging: {
+            PageSize: Limit,
+            PageIndex: 0
+          },
+          Condition: {
+            ChatID,
+            MessageTypes: FEMessageType.SendMessage
+          }
         })
-          .then((res) => {
-            const resLen = res.StateUpdates.length;
-            resData[ChatID.toString()] = res.StateUpdates.slice(resLen - 1, resLen);
-            rs(res.StateUpdates);
+          .then(({ StateUpdates }) => {
+            resData[ChatID.toString()] = getLastItem(StateUpdates);
+            rs(StateUpdates);
           })
           .catch((e) => {
             rj(e);
@@ -92,6 +108,14 @@ export async function CreateChat(options: SDK.kproto.IChatCreateReq) {
  */
 export async function AddMemberToChat(options: SDK.kproto.IChatAddMemberReq) {
   const res = await WSSend(ChatAddMemberReq, 'ChatAddMemberReq', options);
+  return res;
+}
+
+/**
+ * 向对应的聊天添加人员
+ */
+export async function CheckMsgReadState(options: SDK.kproto.IUserGetChatUserStatesReq) {
+  const res = await WSSend(UserGetChatUserStatesReq, 'UserGetChatUserStatesReq', options);
   return res;
 }
 

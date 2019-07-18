@@ -4,9 +4,11 @@ import { Icon } from 'ukelli-ui/core/icon';
 import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { DropdownWrapper } from 'ukelli-ui/core/selector';
 import { Menus } from 'ukelli-ui/core/menu';
+import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
+import getLastItem from '@little-chat/utils/get-last-item';
 
 import {
-  UserInfo, ChatItemEntity, ChatListEntity, ChatType
+  UserInfo, ChatItemEntity, ChatListEntity, ChatType, FEContentType
 } from '@little-chat/core/types';
 // import { selectChat } from '@little-chat/core/actions';
 import { Link } from 'react-multiple-router';
@@ -16,16 +18,25 @@ import {
   CONTACT
 } from '../config/path-mapper';
 
-// interface ChatEntity extends ChatItemEntity {
-//   Title: string;
-//   ID: string;
-// }
-
 interface ChatListProps extends UserInfo {
   chatListData: ChatListEntity;
   selectChat: Function;
   syncContactsAndChats: Function;
 }
+
+const msgFilter = (ChatEntity) => {
+  let str = '';
+  if (!ChatEntity) return '「暂无内容」';
+  switch (ChatEntity.ContentType) {
+    case FEContentType.Text:
+      str = ChatEntity.Message;
+      break;
+    case FEContentType.Image:
+      str = '「图片」';
+      break;
+  }
+  return str;
+};
 
 export default class ChatList extends React.Component<ChatListProps, {}> {
   static RightBtns = props => (
@@ -61,16 +72,39 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
   )
 
   componentDidMount() {
-    this.props.syncContactsAndChats();
+    this.props.syncContactsAndChats(() => {
+      const { chatListData, applySyncChatMessages } = this.props;
+      applySyncChatMessages({
+        ChatIDs: Object.keys(chatListData.obj),
+        Limit: 1
+      });
+    });
   }
 
   /**
    * 过滤掉 ChatType 为联系人的数据
    */
-  chatListFilter = chatList => [...chatList].filter(item => item.ChatType !== ChatType.Contact)
+  chatListFilter = (chatList) => {
+    const { lastMsgInfo } = this.props;
+    const nextLit = [...chatList]
+      .filter(item => item.ChatType !== ChatType.Contact)
+      .sort((f, s) => {
+        const FChatID = f.ChatID;
+        const SChatID = s.ChatID;
+        const FLastInfo = lastMsgInfo[FChatID];
+        const SLastInfo = lastMsgInfo[SChatID];
+        if (!FLastInfo || !SLastInfo || SLastInfo.length < 1 || FLastInfo.length < 1) {
+          return 1;
+        }
+        return +getLastItem(SLastInfo).ActionTime.toString() - +getLastItem(FLastInfo).ActionTime.toString();
+      });
+    return nextLit;
+  }
 
   render() {
-    const { chatListData, unreadInfo } = this.props;
+    const {
+      chatListData, unreadInfo, lastMsgInfo, chatContentData
+    } = this.props;
     const chatList = this.chatListFilter(chatListData.array);
     const hasChat = chatList.length > 0;
     // console.log(chatList);
@@ -84,6 +118,7 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
             } = item;
             const chatID = ChatID.toString();
             const unreadCount = unreadInfo[chatID];
+            const currLastMsg = chatContentFilter((lastMsgInfo[chatID] || [])[0]);
 
             return Title && (
               <NavLink
@@ -102,7 +137,7 @@ export default class ChatList extends React.Component<ChatListProps, {}> {
                     {Title}
                   </div>
                   <div className="last-msg">
-                    {LastMsg}
+                    {msgFilter(currLastMsg)}
                   </div>
                 </div>
               </NavLink>

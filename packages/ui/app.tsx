@@ -2,12 +2,6 @@ import React, { Component } from "react";
 
 import * as ChatActions from '@little-chat/core/actions';
 import {
-  RECEIVE_STATE_UPDATE
-} from "@little-chat/sdk";
-import {
-  MessageType
-} from "@little-chat/core/types";
-import {
   RouterMultiple, RouterHelperProps, RouterState,
 } from 'react-multiple-router';
 import { connect } from 'react-redux';
@@ -67,44 +61,11 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
 
   isNative = false;
 
-  // state = {
-  //   ...this.state,
-  //   unreadInfo: {}
-  // }
-
   componentDidMount() {
     const { dispatch } = this.props;
     this.props.init(dispatch);
     this.initRoute();
-
-    // EventEmitter.on(RECEIVE_STATE_UPDATE, this.handleReceiveMsg);
   }
-
-  // componentWillUnmount() {
-  //   EventEmitter.rm(RECEIVE_STATE_UPDATE, this.handleReceiveMsg);
-  // }
-
-  // handleReceiveMsg = (res) => {
-  //   switch (res.MessageType) {
-  //     case MessageType.AddMember:
-
-  //       break;
-  //     case MessageType.SendMessage:
-  //       /** 如果发送者是自己，则不需要计入 unread count */
-  //       const { userInfo, selectedChat } = this.props;
-  //       const chatID = selectedChat.ChatID.toString();
-  //       const myName = userInfo.UserName;
-  //       const isMyMsg = res.UpdateMessage.UpdateMessageChatSendMessage.SenderName === myName;
-  //       if (!isMyMsg) {
-  //         const nextUnreadInfo = Object.assign({}, this.state.unreadInfo);
-  //         nextUnreadInfo[chatID] = (+nextState[chatIDStr] || 0) + chatContent.length;
-  //         this.setState({
-  //           unreadInfo: nextUnreadInfo
-  //         });
-  //       }
-  //       break;
-  //   }
-  // }
 
   getProps = () => ({
     ...this.props,

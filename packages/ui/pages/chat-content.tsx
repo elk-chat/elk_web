@@ -6,8 +6,8 @@ import { Avatar } from 'ukelli-ui/core/avatar';
 import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { Icon } from 'ukelli-ui/core/icon';
 import {
-  ChatItemEntity, ChatContentState, UserInfo, ContentType,
-  MessageType, ChatContentStateInfo
+  ChatItemEntity, ChatContentState, UserInfo, FEContentType,
+  FEMessageType, ChatContentStateInfo
 } from '@little-chat/core/types';
 import {
   selectContact, applySendMsg, applySyncChatMessage, readMsg,
@@ -16,6 +16,7 @@ import {
 import {
   UploadFile, GetFileState, AddMemberToChat
 } from '@little-chat/sdk';
+import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 import Link from '../components/nav-link';
 import Editor from '../components/editor';
 import Image from '../components/image';
@@ -247,23 +248,23 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const uint8 = new Uint8Array(buffer);
     const { File } = await UploadFile({
       ChatID: selectedChat.ChatID,
-      ContentType: ContentType.Image,
+      ContentType: FEContentType.Image,
       FileName: fileInfo.name,
       Caption: '',
       Width: fileInfo.width,
       Height: fileInfo.height,
       Data: uint8,
     });
-    this.onSendMsg(File.FileID, ContentType.Image);
+    this.onSendMsg(File.FileID, FEContentType.Image);
   }
 
-  onSendMsg = (msg, contentType: ContentType = ContentType.Text) => {
+  onSendMsg = (msg, contentType: FEContentType = FEContentType.Text) => {
     let _msg;
     switch (contentType) {
-      case ContentType.Text:
+      case FEContentType.Text:
         _msg = msg.trim();
         break;
-      case ContentType.Image:
+      case FEContentType.Image:
         _msg = msg;
         break;
     }
@@ -275,7 +276,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       ContentType: contentType,
       Message: _msg,
       lastState: currChatContentData.lastState
-    }, contentType === ContentType.Image ? {
+    }, contentType === FEContentType.Image ? {
       FileID: _msg,
     } : null);
 
@@ -295,9 +296,11 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const { data } = currChatContentData;
 
     return data.map((currMsg, idx) => {
+      const currMsgRes = chatContentFilter(currMsg);
       const {
-        UpdateMessage, MessageID
-      } = currMsg;
+        UpdateMessage, MessageID, Message, SenderName, FileID, ActionTime,
+        AddedMemeberName
+      } = currMsgRes;
 
       let timeElem;
       let msgUnit;
@@ -305,15 +308,12 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       let actionTime;
 
       switch (currMsg.MessageType) {
-        case MessageType.SendMessage:
-          const {
-            Message, SenderName, ActionTime, FileID
-          } = UpdateMessage.UpdateMessageChatSendMessage;
+        case FEMessageType.SendMessage:
           let message;
           actionTime = ActionTime;
           isMe = SenderName === myName;
-          switch (UpdateMessage.UpdateMessageChatSendMessage.ContentType) {
-            case ContentType.Image:
+          switch (currMsgRes.ContentType) {
+            case FEContentType.Image:
               message = (
                 <Image FileID={FileID}
                   onLoad={(e) => {
@@ -321,7 +321,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
                   }}/>
               );
               break;
-            case ContentType.Text:
+            case FEContentType.Text:
               message = Message;
               break;
           }
@@ -350,8 +350,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
             </React.Fragment>
           );
           break;
-        case MessageType.AddMember:
-          const { AddedMemeberName, ActionTime } = UpdateMessage.UpdateMessageChatAddMember;
+        case FEMessageType.AddMember:
+          // const { AddedMemeberName, ActionTime } = UpdateMessage.UpdateMessageChatAddMember;
           actionTime = ActionTime;
           msgUnit = (
             <span className="msg">{AddedMemeberName} 加入了聊天</span>
@@ -441,7 +441,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           this.setMsgPanelPadding(offsetHeight);
         }}
         onClickSendBtn={(e) => {
-          this.onSendMsg(this.editorPanel.current.innerHTML, ContentType.Text);
+          this.onSendMsg(this.editorPanel.current.innerHTML, FEContentType.Text);
         }}
         onSelectedImg={this.addFileFromInput}
         onKeyPress={(e) => {
@@ -450,7 +450,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
             e.preventDefault();
             let val = e.target.innerHTML;
             val = val.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
-            this.onSendMsg(val, ContentType.Text);
+            this.onSendMsg(val, FEContentType.Text);
           }
         }}
         ref={this.editorPanel} />

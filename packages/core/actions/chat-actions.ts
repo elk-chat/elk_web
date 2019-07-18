@@ -240,7 +240,7 @@ export function* addChat(action) {
 
 export function* readMsgArk(action) {
   try {
-    // yield call(ReadMsg, action.payload);
+    yield call(ReadMsg, action.payload);
   } catch (e) {
     console.log(e);
   }
@@ -252,5 +252,5 @@ export function* watchChatActions() {
   yield takeLatest(APPLY_ADD_CHAT, addChat);
   yield takeLatest(APPLY_SYNC_CHAT_MESSAGES, syncChatMessages);
   yield takeEvery(APPLY_SYNC_CHAT_MESSAGE, syncChatMessage);
-  // yield takeLatest(READ_MSG, readMsgArk);
+  yield takeLatest(READ_MSG, readMsgArk);
 }

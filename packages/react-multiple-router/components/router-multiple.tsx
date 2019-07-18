@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { getUrlParams, UrlParamsRes } from 'uke-request/url-resolve';
-import { RemoveArrayItem, IsObj } from 'basic-helper';
+import { RemoveArrayItem, Call } from 'basic-helper';
 
 import {
   history, wrapPushUrl, pushToHistory, replaceHistory,
@@ -88,6 +88,14 @@ class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends C
   };
 
   handleHistory = (location, action) => {
+    switch (action) {
+      case 'POP':
+        Call(this.handlePop);
+        break;
+      case 'PUSH':
+        Call(this.handlePush);
+        break;
+    }
     const { hash, state = {} } = location;
     // const activeRoute = resolvePath(hash)[0];
     const activeRoute = getAllUrlParams()[getRouteKey()];

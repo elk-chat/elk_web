@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Icon } from 'ukelli-ui/core/icon';
+import { Call } from "basic-helper";
 
 interface HeadBarProps {
   /** title */
@@ -11,6 +12,8 @@ interface HeadBarProps {
   RightBtns?: (passProps: {}) => React.ElementType;
   /** onNavigate */
   onNavigate: Function;
+  /** 回退的回调 */
+  onBack?: Function;
 }
 
 const NavHeader: React.SFC<HeadBarProps> = (props) => {
@@ -27,7 +30,9 @@ const NavHeader: React.SFC<HeadBarProps> = (props) => {
         back && (
           <Icon n="chevron-left"
             classNames={['back-btn']}
-            onClick={e => onNavigate({ type: 'GO_BACK' })} />
+            onClick={(e) => {
+              onNavigate({ type: 'GO_BACK' });
+            }} />
         )
       }
       {

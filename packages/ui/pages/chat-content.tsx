@@ -288,7 +288,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     this.props.applySendMsg(sendMsgData);
 
     this.setTextContent('');
-    if (this.editorPanel) this.setMsgPanelPadding(this.editorDOM.offsetHeight);
+    if (this.editorDOM) this.setMsgPanelPadding(this.editorDOM.offsetHeight);
   }
 
   renderChatMsgs() {

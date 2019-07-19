@@ -17,8 +17,8 @@ const editorID = 'editorPanel';
 
 const Editor: React.RefForwardingComponent<EditorProps> = React.forwardRef((props, ref) => {
   const {
-    onPaste, onFocus, onInput, onKeyPress, onClickSendBtn, onSelectedImg,
-    didMount
+    onPaste, onFocus, onInput, onKeyPress, onClickSendBtn,
+    onSelectedImg, didMount
   } = props;
   // const [showMoreOptions, setMoreOptions] = React.useState(false);
   React.useEffect(() => {

@@ -434,40 +434,36 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       </div>
     );
 
-    const textPanel = (
-      <Editor
-        didMount={(editorDOM) => {
-          this.editorDOM = editorDOM;
-          if (editorDOM) this.setMsgPanelPadding(editorDOM.offsetHeight);
-        }}
-        onPaste={e => this.onPasteInput(e)}
-        onFocus={e => this.scrollToBottom(this.scrollContent)}
-        onInput={(e) => {
-          const { offsetHeight } = this.editorDOM;
-          this.setMsgPanelPadding(offsetHeight);
-        }}
-        onClickSendBtn={(e) => {
-          this.onSendMsg(this.editorPanel.current.innerHTML, FEContentType.Text);
-        }}
-        onSelectedImg={this.addFileFromInput}
-        onKeyPress={(e) => {
-          // TODO: 实现 command + enter 换行
-          if (e.charCode === 13) {
-            e.preventDefault();
-            let val = e.target.innerHTML;
-            val = val.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
-            this.onSendMsg(val, FEContentType.Text);
-          }
-        }}
-        ref={this.editorPanel} />
-    );
-
     return (
       <section className="chat-panel-container">
         <div className="scroll-content" ref={this.scrollToBottom}>
           {chatPanelContainer}
         </div>
-        {textPanel}
+        <Editor
+          didMount={(editorDOM) => {
+            this.editorDOM = editorDOM;
+            if (editorDOM) this.setMsgPanelPadding(editorDOM.offsetHeight);
+          }}
+          onPaste={e => this.onPasteInput(e)}
+          onFocus={e => this.scrollToBottom(this.scrollContent)}
+          onInput={(e) => {
+            const { offsetHeight } = this.editorDOM;
+            this.setMsgPanelPadding(offsetHeight);
+          }}
+          onClickSendBtn={(e) => {
+            this.onSendMsg(this.editorPanel.current.innerHTML, FEContentType.Text);
+          }}
+          onSelectedImg={this.addFileFromInput}
+          onKeyPress={(e) => {
+          // TODO: 实现 command + enter 换行
+            if (e.charCode === 13) {
+              e.preventDefault();
+              let val = e.target.innerHTML;
+              val = val.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
+              this.onSendMsg(val, FEContentType.Text);
+            }
+          }}
+          ref={this.editorPanel} />
       </section>
     );
   }

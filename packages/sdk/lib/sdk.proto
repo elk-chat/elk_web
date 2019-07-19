@@ -27,13 +27,6 @@ message StateAck {
   uint64 State = 3;
 }
 
-// // 已读消息
-// message StateReadAck {
-//   int64 ChatID = 1;
-//   uint64 MessageID = 2;
-//   uint64 StateRead = 3;
-// }
-
 // todo : 改为数组形式批量更新, 减少消息数量, 提高效率
 message StateUpdate {
   int64 ChatID = 1;
@@ -126,7 +119,6 @@ message User {
   int64 UserID = 1;
   string UserName = 2;
   int64 AvatarFileID = 3;
-  string Token = 4;
 }
 
 message UserRegisterReq {
@@ -146,6 +138,16 @@ message UserLoginReq {
 }
 
 message UserLoginResp {
+  uint64 SessionID = 1;
+  string Token  = 2;
+  User User = 3;
+}
+
+message BotLoginReq {
+  string BotToken = 1;
+}
+
+message BotLoginResp {
   uint64 SessionID = 1;
   string Token  = 2;
   User User = 3;
@@ -201,12 +203,12 @@ message ChatUserState {
   uint64 StateRead = 4;
 }
 
-message UserGetChatUserStatesReq {
+message UserGetChatUserStateReq {
   int64 ChatID = 1;
 }
 
-message UserGetChatUserStatesResp {
-  repeated ChatUserState States = 1;
+message UserGetChatUserStateResp {
+  ChatUserState State = 1;
 }
 
 message UserSetOptionReq {
@@ -347,6 +349,7 @@ message ChatSetTypingResp {
 message ChatSyncChatStatesReq {
   int64 ChatID = 1;
   uint64 State = 2;
+  uint32 Limit = 3;
 }
 
 message ChatSyncChatStatesResp {

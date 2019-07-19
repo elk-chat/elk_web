@@ -178,13 +178,13 @@ class SocketHelper extends EventEmitterClass {
   }
 
   onErr = (e) => {
-    console.log(e, 'onErr');
+    console.log('onErr');
     /** 如果发生错误，则主动关闭 websocket 链接 */
     this.socket && this.socket.close();
   }
 
   onClose = (e) => {
-    console.log(e, 'onClose');
+    console.log('onClose');
     this.handleException(e);
   }
 

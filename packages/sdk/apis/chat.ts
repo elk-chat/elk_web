@@ -1,9 +1,9 @@
 import array2obj from '@little-chat/utils/array2obj';
 import Long from 'long';
 import { FEMessageType } from '@little-chat/core/types';
+import getLastItem from '@little-chat/utils/get-last-item';
 import SDK from '../lib/sdk';
 import { WSSend, GetFullUser } from '..';
-import getLastItem from '@little-chat/utils/get-last-item';
 
 interface CreateChatAndAddMemberOptions extends SDK.kproto.IChatCreateReq {
   UserIDs: string[];
@@ -17,7 +17,7 @@ interface SyncChatMessagesParams {
 const {
   ChatSendMessageReq, ChatGetChatsReq, ChatCreateReq, ChatAddMemberReq,
   ChatSyncChatStatesReq, StateAck, ChatReadMessageReq, ChatGetMembersReq,
-  UserGetChatUserStatesReq, ChatGetChatStatesReq
+  UserGetChatUserStateReq, ChatGetChatStatesReq
 } = SDK.kproto;
 
 /**
@@ -35,7 +35,6 @@ export async function GetChatState(options: SDK.kproto.IChatGetChatStatesReq) {
   const res = await WSSend<typeof ChatGetChatStatesReq, SDK.kproto.IChatGetChatStatesResp>(ChatGetChatStatesReq, 'ChatGetChatStatesReq', options);
   return res;
 }
-
 
 /**
  * 同步多个 Chat 的聊天消息
@@ -107,15 +106,15 @@ export async function CreateChat(options: SDK.kproto.IChatCreateReq) {
  * 向对应的聊天添加人员
  */
 export async function AddMemberToChat(options: SDK.kproto.IChatAddMemberReq) {
-  const res = await WSSend(ChatAddMemberReq, 'ChatAddMemberReq', options);
+  const res = await WSSend<typeof ChatAddMemberReq, SDK.kproto.IChatAddMemberResp>(ChatAddMemberReq, 'ChatAddMemberReq', options);
   return res;
 }
 
 /**
- * 向对应的聊天添加人员
+ * 查看 Chat 的已读消息
  */
-export async function CheckMsgReadState(options: SDK.kproto.IUserGetChatUserStatesReq) {
-  const res = await WSSend(UserGetChatUserStatesReq, 'UserGetChatUserStatesReq', options);
+export async function CheckMsgReadState(options: SDK.kproto.IUserGetChatUserStateReq) {
+  const res = await WSSend<typeof UserGetChatUserStateReq, SDK.kproto.IUserGetChatUserStatesResp>(UserGetChatUserStateReq, 'UserGetChatUserStateReq', options);
   return res;
 }
 
@@ -235,6 +234,6 @@ export function GetChatMembers(options: SDK.kproto.IChatGetMembersReq, myID?) {
  * 发送消息
  */
 export async function SendMsg(msgData: SDK.kproto.IChatSendMessageReq) {
-  const res = await WSSend(ChatSendMessageReq, 'ChatSendMessageReq', msgData);
+  const res = await WSSend<typeof ChatSendMessageReq, SDK.kproto.IChatSendMessageResp>(ChatSendMessageReq, 'ChatSendMessageReq', msgData);
   return res;
 }

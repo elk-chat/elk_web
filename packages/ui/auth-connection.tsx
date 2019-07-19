@@ -1,20 +1,58 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Provider as UnistoreProvider, connect as connectUnistore } from 'unistore/react';
 import createChatStore from '@little-chat/core/store';
-import { Call } from "basic-helper";
+import { Call, EventEmitter } from "basic-helper";
 import { Provider as ReduxProvider } from 'react-redux';
+import {
+  CheckConnectState, InitSDK, CloseWS, SESSION_TIMEOUT
+} from '@little-chat/sdk';
 
 import { authStore, authActions } from '@little-chat/core/actions/auth-action';
 import AuthSelector from './auth';
 import ChatApp from './app';
 
+interface LoginFilterProps {
+}
+
 const isMobile = /Android|iOS|iPhone/.test(navigator.userAgent);
 
 let chatStore = null;
 
-class LoginFilter extends React.PureComponent {
+class LoginFilter extends React.PureComponent<LoginFilterProps> {
   componentDidMount() {
+    const { autoLogin } = this.props;
     Call(window.__removeLoading);
+    autoLogin();
+    document.addEventListener("visibilitychange", this.handleVisibilityChange);
+    EventEmitter.on(SESSION_TIMEOUT, this.reconnect);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("visibilitychange", this.handleVisibilityChange);
+    EventEmitter.rm(SESSION_TIMEOUT, this.reconnect);
+  }
+
+  /**
+   * 检测页面激活的状态的改变
+   * 1. 如果页面不激活，则主动断开 websocket，并且在下一次激活页面时重新链接 websocket
+   * 2. 如果页面激活了，检查是否正常链接
+   *   2-1. 如果已断开链接，再调用自动登陆
+   */
+  handleVisibilityChange = () => {
+    const isVisibility = !document.hidden;
+    if (isVisibility) {
+      const isConnecting = CheckConnectState();
+      if (!isConnecting) {
+        this.reconnect();
+      }
+    } else {
+      CloseWS();
+    }
+  }
+
+  reconnect = () => {
+    CloseWS();
+    InitSDK();
     this.props.autoLogin();
   }
 
@@ -58,8 +96,8 @@ const LoginFilterWithStore = connectUnistore(selector, authActions)(userStore =>
 ));
 
 
-export default () => (
+export default props => (
   <UnistoreProvider store={authStore}>
-    <LoginFilterWithStore/>
+    <LoginFilterWithStore {...props} />
   </UnistoreProvider>
 );

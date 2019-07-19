@@ -1,23 +1,24 @@
 import JSBI from 'jsbi';
 import { UUID } from 'basic-helper';
 import SocketHelper from './socket';
+import failResHandler from './handler/error-res-handler';
 // import { encodeData } from './handler/date-buffer';
-
-const { BigInt } = JSBI;
 
 interface Params {
   apiHost: string;
 }
 interface Api {
-  create: ({}) => {};
-  encode: ({}) => ({
+  create: (data) => {};
+  encode: (data) => ({
     finish: () => Uint8Array;
   });
   decode: (Uint8Array) => {};
   toObject: (any) => {};
 }
 
-let $WS: SocketHelper;
+const { BigInt } = JSBI;
+let $WS;
+let prevWSParams;
 
 function GetWS() {
   if (!$WS) console.error('请先调用 InitSDK');
@@ -40,6 +41,7 @@ function WSSend<T extends Api, S>(api: T, apiName: string, data?, needAuth = tru
         resolve(res);
       },
       fail: (res) => {
+        failResHandler(res);
         reject(res);
       },
       needAuth
@@ -47,7 +49,9 @@ function WSSend<T extends Api, S>(api: T, apiName: string, data?, needAuth = tru
   });
 }
 
-function InitSDK(params: Params) {
+function InitSDK(params: Params = prevWSParams) {
+  /** 保存上一个参数 */
+  if (params) prevWSParams = params;
   const { apiHost } = params;
   $WS = new SocketHelper({
     apiHost
@@ -55,6 +59,26 @@ function InitSDK(params: Params) {
   return $WS;
 }
 
+/**
+ * 检查是否正常链接
+ */
+function CheckConnectState() {
+  let isConnecting = false;
+  if (!$WS) return isConnecting;
+  isConnecting = $WS.connected;
+  return isConnecting;
+}
+
+/**
+ * 关闭 websocket 链接
+ */
+function CloseWS() {
+  if ($WS) {
+    if ($WS.socket) $WS.socket.close();
+    $WS = null;
+  }
+}
+
 export {
-  InitSDK, GetWS, WSSend
+  InitSDK, GetWS, WSSend, CheckConnectState, CloseWS
 };

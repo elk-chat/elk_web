@@ -1,7 +1,7 @@
 import JSBI from 'jsbi';
 import { EventEmitter, EventEmitterClass, Call } from 'basic-helper';
 import { decodeData, encodeData, messageResHandler } from '../handler';
-import { RECEIVE_STATE_UPDATE, CONNECT_READY } from '../constant';
+import { RECEIVE_STATE_UPDATE, CONNECT_READY, ON_CONNECT_CLOSE } from '../constant';
 
 interface SocketParams {
   /** 链接的 apiHost */
@@ -139,7 +139,7 @@ class SocketHelper extends EventEmitterClass {
   /**
    * 在 onopen 的时候发送在未 open 时候发送请求
    */
-  sendNotComplete = (queue) => {
+  sendNotComplete = (queue: UnSendEntity) => {
     const unSendList = Object.keys(queue);
     if (unSendList.length === 0) return;
     unSendList.forEach((requestID) => {
@@ -179,16 +179,22 @@ class SocketHelper extends EventEmitterClass {
 
   onErr = (e) => {
     console.log(e, 'onErr');
-    this.connected = false;
-    this.clearQueue();
+    /** 如果发生错误，则主动关闭 websocket 链接 */
+    this.socket && this.socket.close();
   }
 
   onClose = (e) => {
     console.log(e, 'onClose');
+    this.handleException(e);
+  }
+
+  handleException = (event) => {
     this.connected = false;
+    this.permissions = false;
     this.socket = null;
     this.isClosed = true;
     this.clearQueue();
+    EventEmitter.emit(ON_CONNECT_CLOSE, event);
   }
 }
 

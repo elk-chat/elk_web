@@ -5,6 +5,7 @@ const heartbeatFreq = 30 * 1000;
 let timer;
 
 const initHeartBeat = () => {
+  if (timer) clearInterval(timer);
   timer = setInterval(() => {
     HeartBeat({});
   }, heartbeatFreq);

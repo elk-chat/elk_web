@@ -4,7 +4,7 @@ import {
 } from 'basic-helper';
 import { Avatar } from 'ukelli-ui/core/avatar';
 import { Icon } from 'ukelli-ui/core/icon';
-import { VariableSizeList as List } from 'react-window';
+// import { VariableSizeList as List } from 'react-window';
 import {
   ChatItemEntity, ChatContentState, UserInfo, FEContentType,
   FEMessageType, ChatContentStateInfo

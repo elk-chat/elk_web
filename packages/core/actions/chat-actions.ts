@@ -47,14 +47,6 @@ export function applySendMsg(payload: SDK.kproto.IChatSendMessageReq) {
   };
 }
 
-export const READ_MSG = "READ_MSG";
-export function readMsg(payload: SDK.kproto.IChatReadMessageReq) {
-  return {
-    type: READ_MSG,
-    payload
-  };
-}
-
 export const APPLY_FETCH_CHAT_LIST = 'APPLY_FETCH_CHAT_LIST';
 export function applyFetchChatList() {
   return {
@@ -238,19 +230,10 @@ export function* addChat(action) {
   }
 }
 
-export function* readMsgArk(action) {
-  try {
-    yield call(ReadMsg, action.payload);
-  } catch (e) {
-    console.log(e);
-  }
-}
-
 export function* watchChatActions() {
   yield takeLatest(APPLY_SEND_MSG, sendMsgReq);
   yield takeLatest(APPLY_FETCH_CHAT_LIST, getChatList);
   yield takeLatest(APPLY_ADD_CHAT, addChat);
   yield takeLatest(APPLY_SYNC_CHAT_MESSAGES, syncChatMessages);
   yield takeEvery(APPLY_SYNC_CHAT_MESSAGE, syncChatMessage);
-  yield takeLatest(READ_MSG, readMsgArk);
 }

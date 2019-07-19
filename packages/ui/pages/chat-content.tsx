@@ -1,40 +1,46 @@
 import React from 'react';
 import {
-  HasValue, DateFormat, UUID, EventEmitter
+  HasValue, DateFormat, UUID, EventEmitter, DebounceClass
 } from 'basic-helper';
 import { Avatar } from 'ukelli-ui/core/avatar';
-import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { Icon } from 'ukelli-ui/core/icon';
+import { VariableSizeList as List } from 'react-window';
 import {
   ChatItemEntity, ChatContentState, UserInfo, FEContentType,
   FEMessageType, ChatContentStateInfo
 } from '@little-chat/core/types';
 import {
-  selectContact, applySendMsg, applySyncChatMessage, readMsg,
+  selectContact, applySendMsg, applySyncChatMessage,
   RECEIVE_CHAT_MESSAGE
 } from '@little-chat/core/actions';
 import {
-  UploadFile, GetFileState, AddMemberToChat
+  UploadFile, ReadMsg, CheckMsgReadState
 } from '@little-chat/sdk';
 import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 import Link from '../components/nav-link';
 import Editor from '../components/editor';
 import Image from '../components/image';
 import ImageReader from '../utils/image-reader';
-import AddMember from './add-member';
-import SearchUser from './search-contact';
 
 interface ChatContentProps {
   applySendMsg: typeof applySendMsg;
   selectContact: typeof selectContact;
   applySyncChatMessage: typeof applySyncChatMessage;
   onQueryHistory: Function;
-  readMsg: typeof readMsg;
   selectedChat: ChatItemEntity;
   chatContentData: ChatContentState;
   currChatContentData: ChatContentStateInfo;
   userInfo: UserInfo;
 }
+
+interface State {
+  page: number;
+  limit: number;
+  msgPanelHeight: number;
+  showDragArea: boolean;
+}
+
+const debounce = new DebounceClass();
 
 const timeDisplayDelay = 5 * 60;
 
@@ -43,12 +49,6 @@ const MsgTypeClass = {
   1: 'send-msg',
   2: 'add-member',
 };
-
-interface State {
-  page: number;
-  limit: number;
-  showDragArea: boolean;
-}
 
 export default class ChatContent extends React.PureComponent<ChatContentProps, State> {
   static RightBtns = (props) => {
@@ -80,15 +80,23 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   textContent!: HTMLDivElement | null;
 
+  msgPanelContainer!: HTMLDivElement | null;
+
   editorDOM!: HTMLDivElement | null;
 
   msgPanel!: HTMLInputElement | null;
 
   editorPanel!: React.RefObject<HTMLDivElement>;
 
+  prevPadding!: number;
+
   msgPanelHeight!: number;
 
-  prevPadding!: number;
+  readState!: {};
+
+  msgHeightInfo: {
+    [chatIdx: string]: number;
+  } = {};
 
   constructor(props: ChatContentProps) {
     super(props);
@@ -96,6 +104,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     this.state = {
       page: 0,
       limit: 12,
+      msgPanelHeight: 0,
       showDragArea: false,
     };
     EventEmitter.on(RECEIVE_CHAT_MESSAGE, this.handleScroll);
@@ -104,9 +113,16 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   componentDidMount() {
     const { currChatContentData, selectedChat } = this.props;
+    const { ChatID } = selectedChat;
     this.props.applySyncChatMessage({
-      ChatID: selectedChat.ChatID,
+      ChatID,
       State: currChatContentData.lastState
+    });
+    CheckMsgReadState({
+      ChatID
+    }).then((res) => {
+      const { States } = res;
+      this.readState = States;
     });
   }
 
@@ -119,7 +135,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   handleScroll = () => {
     // console.log('123')
-    this.scrollToBottom(this.scrollContent);
+    debounce.exec(() => this.scrollToBottom(this.scrollContent), 300);
   }
 
   toggleDragArea = (isShow: boolean) => {
@@ -210,13 +226,17 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const { selectedChat, currChatContentData } = this.props;
     const { lastData, lastState } = currChatContentData;
     const { MessageID } = lastData;
-    // console.log(this.props)
-    this.props.readMsg({
-      ChatID: selectedChat.ChatID,
-      MessageID,
-      MessageType: lastData.MessageType,
-      StateRead: lastState
-    });
+    if (this.readState) {
+      const readState = this.readState.StateRead.toString();
+      if (readState < lastState) {
+        ReadMsg({
+          ChatID: selectedChat.ChatID,
+          MessageID,
+          MessageType: lastData.MessageType,
+          StateRead: lastState
+        });
+      }
+    }
   }
 
   scrollToBottom = (e: HTMLDivElement | null) => {
@@ -291,7 +311,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     if (this.editorDOM) this.setMsgPanelPadding(this.editorDOM.offsetHeight);
   }
 
-  renderChatMsgs() {
+  getChatMsgs = () => {
     const {
       currChatContentData, userInfo, selectedChat
     } = this.props;
@@ -300,10 +320,11 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     let prevTime = 0;
     const { data } = currChatContentData;
 
-    return data.map((currMsg, idx) => {
+    const msgRow = [];
+    data.forEach((currMsg, idx) => {
       const currMsgRes = chatContentFilter(currMsg);
       const {
-        UpdateMessage, MessageID, Message, SenderName, FileID, ActionTime,
+        MessageID, Message, SenderName, FileID, ActionTime,
         AddedMemeberName
       } = currMsgRes;
 
@@ -363,7 +384,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           );
           break;
         default:
-          return '';
+          return;
       }
 
       const timeout = actionTime - prevTime > timeDisplayDelay;
@@ -392,8 +413,28 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         </div>
       );
 
-      return itemElem;
+      msgRow.push(itemElem);
     });
+
+    return msgRow;
+  }
+
+  renderChatMsgs() {
+    const { msgPanelHeight } = this.state;
+    const msgRow = this.getChatMsgs();
+    return msgRow;
+    // return msgPanelHeight && (
+    //   <List
+    //     height={msgPanelHeight}
+    //     itemCount={msgRow.length}
+    //     itemSize={(idx) => {
+    //       return this.msgHeightInfo[idx] || 44;
+    //     }}>
+    //     {
+    //       ({ index }) => msgRow[index]
+    //     }
+    //   </List>
+    // );
   }
 
   saveMsgPanel = (e) => { this.msgPanel = e; };
@@ -422,11 +463,40 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     }
   }
 
+  editorFocus = e => this.scrollToBottom(this.scrollContent)
+
+  editorDidMount = (editorDOM) => {
+    this.editorDOM = editorDOM;
+    if (editorDOM) this.setMsgPanelPadding(editorDOM.offsetHeight);
+  }
+
+  editorInout = (e) => {
+    const { offsetHeight } = this.editorDOM;
+    this.setMsgPanelPadding(offsetHeight);
+  }
+
+  editorKeyPress = (e) => {
+    // TODO: 实现 command + enter 换行
+    if (e.charCode === 13) {
+      e.preventDefault();
+      let val = e.target.innerHTML;
+      val = val.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
+      this.onSendMsg(val, FEContentType.Text);
+    }
+  }
+
+  editorClickToSend = (e) => {
+    this.onSendMsg(this.editorPanel.current.innerHTML, FEContentType.Text);
+  }
+
   render() {
     // const { selectedChat } = this.props;
     const chatPanelContainer = (
       <div className="msg-panel-container" ref={(e) => {
-        if (e) this.msgPanelHeight = e.offsetHeight;
+        this.msgPanelContainer = e;
+        if (e) {
+          this.msgPanelHeight = e.offsetHeight;
+        }
       }}>
         <div className="msg-panel" ref={this.saveMsgPanel}>
           {this.renderChatMsgs()}
@@ -440,29 +510,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           {chatPanelContainer}
         </div>
         <Editor
-          didMount={(editorDOM) => {
-            this.editorDOM = editorDOM;
-            if (editorDOM) this.setMsgPanelPadding(editorDOM.offsetHeight);
-          }}
-          onPaste={e => this.onPasteInput(e)}
-          onFocus={e => this.scrollToBottom(this.scrollContent)}
-          onInput={(e) => {
-            const { offsetHeight } = this.editorDOM;
-            this.setMsgPanelPadding(offsetHeight);
-          }}
-          onClickSendBtn={(e) => {
-            this.onSendMsg(this.editorPanel.current.innerHTML, FEContentType.Text);
-          }}
+          didMount={this.editorDidMount}
+          onPaste={this.onPasteInput}
+          onFocus={this.editorFocus}
+          onInput={this.editorInout}
+          onClickSendBtn={this.editorClickToSend}
           onSelectedImg={this.addFileFromInput}
-          onKeyPress={(e) => {
-          // TODO: 实现 command + enter 换行
-            if (e.charCode === 13) {
-              e.preventDefault();
-              let val = e.target.innerHTML;
-              val = val.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
-              this.onSendMsg(val, FEContentType.Text);
-            }
-          }}
+          onKeyPress={this.editorKeyPress}
           ref={this.editorPanel} />
       </section>
     );

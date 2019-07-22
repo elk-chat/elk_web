@@ -16,7 +16,7 @@ interface LoginFilterProps {
 
 const isMobile = /Android|iOS|iPhone/.test(navigator.userAgent);
 
-let chatStore = null;
+let chatStore;
 
 class LoginFilter extends React.PureComponent<LoginFilterProps> {
   componentDidMount() {

@@ -40,4 +40,4 @@ packages/sdk/lib/sdk.js
 
 dist
 
-#.config.js
+.config.js

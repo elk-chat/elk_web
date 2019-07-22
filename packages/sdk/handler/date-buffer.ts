@@ -34,7 +34,7 @@ const headerBufferLen = (() => {
 const COMMON_HEADER: HeaderStruct = {
   Len: 0,
   Sig: 0,
-  ApplicationID: 999,
+  ApplicationID: 1,
   AuthKeyID: BigInt(10),
   SessionID: BigInt(10),
   RequestID: BigInt(10),

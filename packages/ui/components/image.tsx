@@ -13,6 +13,7 @@ const ImageViwer = ({ src, ID }) => (
 
 export default (props) => {
   const { FileID, onLoad } = props;
+  if (!FileID) return null;
   const [imgSrc, setImg] = React.useState('');
   const ID = FileID.toString();
   React.useEffect(() => {

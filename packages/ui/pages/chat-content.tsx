@@ -4,6 +4,7 @@ import {
 } from 'basic-helper';
 import { Avatar } from 'ukelli-ui/core/avatar';
 import { Icon } from 'ukelli-ui/core/icon';
+import setDOMById from 'ukelli-ui/core/set-dom';
 // import { VariableSizeList as List } from 'react-window';
 import {
   ChatItemEntity, ChatContentState, UserInfo, FEContentType,
@@ -50,6 +51,67 @@ const MsgTypeClass = {
   2: 'add-member',
 };
 
+const getImgInfoFormPaste = blob => new Promise<{
+  height: number;
+  width: number;
+}>((resolve, reject) => {
+  if (!blob) {
+    reject(new Error('need blob'));
+  } else {
+    const imgPrevContainer = setDOMById('IMG_PREV_CONTAINER');
+    const reader = new FileReader();
+    reader.onload = (loadEvent: ProgressEvent) => {
+      const base64Data = loadEvent.target.result;
+      const img = document.createElement('img');
+      img.onload = (event) => {
+        setTimeout(() => {
+          resolve({
+            height: img.offsetHeight,
+            width: img.offsetWidth,
+          });
+          imgPrevContainer.removeChild(img);
+        }, 50);
+        // resolve(event);
+      };
+      img.src = base64Data;
+      img.style.opacity = '0';
+      imgPrevContainer.appendChild(img);
+    };
+    reader.readAsDataURL(blob);
+  }
+});
+
+const getImgToBuffer = blob => new Promise<Uint8Array>((resolve, reject) => {
+  if (!blob) {
+    reject(new Error('need blob'));
+  } else {
+    const reader = new FileReader();
+    reader.onload = (loadEvent: ProgressEvent) => {
+      const imageBuffer = loadEvent.target.result;
+      resolve(imageBuffer);
+    };
+    reader.readAsArrayBuffer(blob);
+  }
+});
+
+const getImgInfo = (items: DataTransferItemList) => new Promise((resolve, reject) => {
+  const fileNameItem = items[0];
+  const imgItem = items[1];
+  const blob = imgItem.getAsFile();
+  fileNameItem.getAsString((fileName) => {
+    Promise.all([getImgToBuffer(blob), getImgInfoFormPaste(blob)])
+      .then(([buffer, imgInfo]) => {
+        resolve({
+          buffer,
+          fileInfo: {
+            ...imgInfo,
+            name: fileName,
+          }
+        });
+      });
+  });
+});
+
 export default class ChatContent extends React.PureComponent<ChatContentProps, State> {
   static RightBtns = (props) => {
     const { selectedChat } = props;
@@ -70,7 +132,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   page: number = 0;
 
-  planningImgList: string[] = [];
+  planningImgList = [];
 
   scrollContent!: HTMLDivElement | null;
 
@@ -148,30 +210,21 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   }
 
-  handlePasteImg = (items) => {
-    for (let index = 0; index < items.length; index++) {
-      const item = items[index];
-      if (item.kind === 'file') {
-        const blob = item.getAsFile();
-        const reader = new FileReader();
-        reader.onload = (loadEvent: ProgressEvent) => {
-          const base64Data: string = loadEvent.target.result;
-          const img = this.convertBase64ToImg(base64Data);
-          this.addImgToPanel(img);
-          this.toggleDragArea(true);
-          this.planningImgList.push(base64Data);
-          // console.log(event.target.result)
-        }; // data url!
-        blob && reader.readAsDataURL(blob);
-      }
-    }
+  handlePasteImg = (items: DataTransferItemList) => {
+    getImgInfo(items).then(({ buffer, fileInfo }) => {
+      this.uploadFile({
+        buffer,
+        fileInfo
+      });
+    });
   }
 
-  onPasteInput = (event: React.ClipboardEvent<HTMLElement>) => {
+  editorPaste = (event: React.ClipboardEvent<HTMLElement>) => {
     event.preventDefault();
     const { items } = event.clipboardData || event.originalEvent.clipboardData;
+
     switch (true) {
-      case items.length > 2:
+      case items.length >= 2:
         this.handlePasteImg(items);
         break;
       default:
@@ -180,14 +233,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         this.setTextContent(nextText);
         break;
     }
-  }
-
-  convertBase64ToImg = (base64Data: string) => {
-    const img = document.createElement('img');
-    img.src = base64Data;
-    img.classList.add('preview');
-
-    return img;
   }
 
   addImgToPanel(img) {
@@ -268,7 +313,15 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     // });
   }
 
-  uploadFile = async ({ fileInfo, buffer }) => {
+  uploadFile = async (uploadParams: {
+    fileInfo: {
+      name: string;
+      width: number;
+      height: number;
+    };
+    buffer: Uint8Array;
+  }) => {
+    const { fileInfo, buffer } = uploadParams;
     const { selectedChat } = this.props;
     const uint8 = new Uint8Array(buffer);
     const { File } = await UploadFile({
@@ -522,7 +575,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         </div>
         <Editor
           didMount={this.editorDidMount}
-          onPaste={this.onPasteInput}
+          onPaste={this.editorPaste}
           onFocus={this.editorFocus}
           onInput={this.editorInout}
           onClickSendBtn={this.editorClickToSend}

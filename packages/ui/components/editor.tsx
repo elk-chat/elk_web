@@ -4,18 +4,18 @@ import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { Call } from 'basic-helper';
 
 interface EditorProps {
-  onPaste: React.ClipboardEvent;
-  onFocus: React.FocusEvent;
-  onInput: React.FormEvent;
-  onKeyPress: React.KeyboardEvent;
-  onClickSendBtn: React.MouseEvent;
-  onSelectedImg: React.ChangeEvent;
+  onPaste: (event: React.ClipboardEvent<HTMLDivElement>) => void;
+  onFocus: (event: React.FocusEvent<HTMLDivElement>) => void;
+  onInput: (event: React.FormEvent<HTMLDivElement>) => void;
+  onKeyPress: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+  onClickSendBtn: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
+  onSelectedImg: (event: React.ChangeEvent<HTMLInputElement>) => void;
   didMount?: Function;
 }
 
 const editorID = 'editorPanel';
 
-const Editor: React.RefForwardingComponent<EditorProps> = React.forwardRef((props, ref) => {
+const Editor = React.forwardRef<HTMLDivElement, EditorProps>((props, ref) => {
   const {
     onPaste, onFocus, onInput, onKeyPress, onClickSendBtn,
     onSelectedImg, didMount

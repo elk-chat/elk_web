@@ -56,7 +56,7 @@ const getImgInfoFormPaste = blob => new Promise<{
   width: number;
 }>((resolve, reject) => {
   if (!blob) {
-    reject(new Error('need blob'));
+    reject('need blob');
   } else {
     const imgPrevContainer = setDOMById('IMG_PREV_CONTAINER');
     const reader = new FileReader();
@@ -83,7 +83,7 @@ const getImgInfoFormPaste = blob => new Promise<{
 
 const getImgToBuffer = blob => new Promise<Uint8Array>((resolve, reject) => {
   if (!blob) {
-    reject(new Error('need blob'));
+    reject('need blob');
   } else {
     const reader = new FileReader();
     reader.onload = (loadEvent: ProgressEvent) => {

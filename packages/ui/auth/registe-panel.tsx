@@ -10,15 +10,36 @@ import { ApplyRegister } from '@little-chat/sdk';
 import { registeFormOptions } from './form-options';
 import gradientColorFilter, { gradientColorMapper } from '../components/color';
 
+export interface RegisterPanelProps {
+  /** 是否登陆中 */
+  logging?: boolean;
+  /** 是否自动登陆中 */
+  autoLoging?: boolean;
+  /** 登陆的回调 */
+  applyLogin: Function;
+  /** 登陆的 logo */
+  logo?: Function;
+  /** didMount 回调 */
+  didMount?: Function;
+  /** 登陆框的背景图 */
+  backgroundImage?: string;
+  /** 按钮的颜色，请参考 UI 库 Button 的配色方案 */
+  btnColor?: string;
+  /** 按钮的渐变颜色 */
+  btnGColor?: btnGColor;
+}
+
 const btnGColorTypes = tuple(...Object.keys(gradientColorMapper));
 type btnGColor = (typeof btnGColorTypes)[number];
 
-export default class RegisterPanel extends Component<{}, {}> {
+export default class RegisterPanel extends Component<RegisterPanelProps, {}> {
   static defaultProps = {
     btnGColor: 'blue',
-    logo: () => <h2 className="title" style={{
-      fontFamily: 'cursive'
-    }}>Register in Little Chat</h2>
+    logo: (appName = 'Little Chat') => (
+      <h2 className="title" style={{
+        fontFamily: 'cursive'
+      }}>{appName}</h2>
+    )
   };
 
   state = {
@@ -65,6 +86,7 @@ export default class RegisterPanel extends Component<{}, {}> {
   }
 
   render() {
+    const { ClientConfig, logo } = this.props;
     const { loading } = this.state;
     const submitable = !loading;
     let btnTxt;
@@ -83,9 +105,11 @@ export default class RegisterPanel extends Component<{}, {}> {
         }}>
         <Toast ref={(e) => { this.toast = e; }} />
         <div className="login-layout">
-          <h2 className="title" style={{
-            fontFamily: 'cursive'
-          }}>Register in Little Chat</h2>
+          {
+            ClientConfig.logo && ClientConfig.logo.src ? (
+              <img src={ClientConfig.logo.src} alt="logo" style={{ maxWidth: '100%' }} />
+            ) : Call(logo, ClientConfig.appName)
+          }
           <FormGenerator
             showInputTitle={false}
             formOptions={registeFormOptions}

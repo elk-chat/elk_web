@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { FormGenerator } from 'ukelli-ui/core/form-generator';
 import { TipPanel } from 'ukelli-ui/core/tip-panel';
 import { Button } from 'ukelli-ui/core/button';
+import { Avatar } from 'ukelli-ui/core/avatar';
 import { Toast } from 'ukelli-ui/core/toast';
 import { Call } from 'basic-helper/call';
 import { tuple } from 'basic-helper/utils/type';
@@ -36,9 +37,11 @@ export default class LoginPanel extends Component<LoginPanelProps> {
     logging: false,
     autoLoging: false,
     btnGColor: 'blue',
-    logo: () => <h2 className="title" style={{
-      fontFamily: 'cursive'
-    }}>Little Chat</h2>
+    logo: (appName = 'Little Chat') => (
+      <h2 className="title" style={{
+        fontFamily: 'cursive'
+      }}>{appName}</h2>
+    )
   };
 
   toast;
@@ -63,7 +66,7 @@ export default class LoginPanel extends Component<LoginPanelProps> {
 
   render() {
     const {
-      logging, applyLogin, loginResDesc,
+      logging, applyLogin, loginResDesc, ClientConfig,
       autoLoging, logo, btnGColor
     } = this.props;
     const submitable = !autoLoging && !logging;
@@ -85,7 +88,11 @@ export default class LoginPanel extends Component<LoginPanelProps> {
           // backgroundImage: `url(/img/login_bg.jpg)`
         }}>
         <div className="login-layout">
-          {Call(logo)}
+          {
+            ClientConfig.logo && ClientConfig.logo.src ? (
+              <Avatar src={ClientConfig.logo.src} />
+            ) : Call(logo, ClientConfig.appName)
+          }
           {
             loginResDesc && (
               <TipPanel text={loginResDesc} type="error" />

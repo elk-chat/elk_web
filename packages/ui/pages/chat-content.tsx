@@ -95,21 +95,31 @@ const getImgToBuffer = blob => new Promise<Uint8Array>((resolve, reject) => {
 });
 
 const getImgInfo = (items: DataTransferItemList) => new Promise((resolve, reject) => {
-  const fileNameItem = items[0];
-  const imgItem = items[1];
-  const blob = imgItem.getAsFile();
-  fileNameItem.getAsString((fileName) => {
-    Promise.all([getImgToBuffer(blob), getImgInfoFormPaste(blob)])
-      .then(([buffer, imgInfo]) => {
-        resolve({
-          buffer,
-          fileInfo: {
-            ...imgInfo,
-            name: fileName,
-          }
+  let fileName;
+  let isImg = false;
+  for (let index = 0; index < items.length; index++) {
+    const item = items[index];
+    if (item.kind === 'string') {
+      // eslint-disable-next-line no-loop-func
+      item.getAsString((fn) => { fileName = fn; });
+    }
+    if (item.kind === 'file') {
+      isImg = true;
+      const blob = item.getAsFile();
+      Promise.all([getImgToBuffer(blob), getImgInfoFormPaste(blob)])
+        // eslint-disable-next-line no-loop-func
+        .then(([buffer, imgInfo]) => {
+          resolve({
+            buffer,
+            fileInfo: {
+              ...imgInfo,
+              name: fileName || UUID(),
+            }
+          });
         });
-      });
-  });
+    }
+  }
+  if (!isImg) reject();
 });
 
 export default class ChatContent extends React.PureComponent<ChatContentProps, State> {
@@ -210,29 +220,36 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   }
 
-  handlePasteImg = (items: DataTransferItemList) => {
+  handlePasteImg = (items: DataTransferItemList) => new Promise((resolve, reject) => {
     getImgInfo(items).then(({ buffer, fileInfo }) => {
       this.uploadFile({
         buffer,
         fileInfo
       });
-    });
-  }
+      resolve();
+    }).catch(reject);
+  })
 
   editorPaste = (event: React.ClipboardEvent<HTMLElement>) => {
+    const E = event;
     event.preventDefault();
     const { items } = event.clipboardData || event.originalEvent.clipboardData;
 
-    switch (true) {
-      case items.length >= 2:
-        this.handlePasteImg(items);
-        break;
-      default:
-        const text = event.clipboardData.getData('Text');
+    const text = E.clipboardData.getData('Text');
+
+    this.handlePasteImg(items)
+      .then()
+      .catch(() => {
         const nextText = this.getTextContent() + text;
         this.setTextContent(nextText);
-        break;
-    }
+      });
+
+    // switch (true) {
+    //   case items.length >= 2:
+    //     break;
+    //   default:
+    //     break;
+    // }
   }
 
   addImgToPanel(img) {

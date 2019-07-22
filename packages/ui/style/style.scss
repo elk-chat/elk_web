@@ -14,8 +14,10 @@
     background-color: #EEE;
     .container {
       background-color: #FFF;
-      width: 320px;
-      height: 640px;
+      width: 80vw;
+      height: 90vh;
+      max-width: 440px;
+      max-height: 640px;
       position: relative;
       margin: 20px auto;
     }

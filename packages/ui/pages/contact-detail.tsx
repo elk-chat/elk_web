@@ -6,7 +6,7 @@ import { Avatar } from 'ukelli-ui/core/avatar';
 import { Button } from 'ukelli-ui/core/button';
 import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { selectChat } from '@little-chat/core/actions';
-import { AddContact, InitPeerChat } from '@little-chat/sdk';
+import { AddContact, InitPeerChat, GetFullUser } from '@little-chat/sdk';
 import { CONTACT } from '../config/path-mapper';
 
 import Link from '../components/nav-link';
@@ -39,10 +39,20 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
   componentDidMount = async () => {
     /** 根据 props 传入的 UserID 获取用户的详细信息 */
     const { UserID } = this.props;
+    const contactDetail = await this.getContactInfo();
+    this.setState({
+      contactDetail
+    });
     const isMyContact = this.isMyContact();
     if (isMyContact) {
       this.peerContactToChat(UserID);
     }
+  }
+
+  getContactInfo = async () => {
+    const { UserID } = this.props;
+    const { User } = await GetFullUser({ UserID });
+    return User;
   }
 
   peerContactToChat = async (UserID) => {
@@ -73,9 +83,10 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
 
   render() {
     const {
-      chatListData, onNavigate, contactData, UserID, UserName = '',
+      chatListData, onNavigate, contactData,
     } = this.props;
     const { contactDetail } = this.state;
+    const { UserID, UserName = '' } = contactDetail;
     const userAvatar = contactDetail.Avatar;
     const isMyContact = this.isMyContact();
 

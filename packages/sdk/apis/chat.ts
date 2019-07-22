@@ -114,7 +114,7 @@ export async function AddMemberToChat(options: SDK.kproto.IChatAddMemberReq) {
  * 查看 Chat 的已读消息
  */
 export async function CheckMsgReadState(options: SDK.kproto.IUserGetChatUserStateReq) {
-  const res = await WSSend<typeof UserGetChatUserStateReq, SDK.kproto.IUserGetChatUserStatesResp>(UserGetChatUserStateReq, 'UserGetChatUserStateReq', options);
+  const res = await WSSend<typeof UserGetChatUserStateReq, SDK.kproto.IUserGetChatUserStateResp>(UserGetChatUserStateReq, 'UserGetChatUserStateReq', options);
   return res;
 }
 

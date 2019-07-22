@@ -9,7 +9,7 @@ const {
  * 上传文件
  */
 export async function UploadFile(options: SDK.kproto.IUtilityUploadReq) {
-  const res = await WSSend(UtilityUploadReq, 'UtilityUploadReq', options);
+  const res = await WSSend<typeof UtilityUploadReq, SDK.kproto.IUtilityUploadResp>(UtilityUploadReq, 'UtilityUploadReq', options);
   return res;
 }
 
@@ -25,6 +25,6 @@ export async function GetFileState(options: SDK.kproto.IUtilityFileStatReq) {
  * 获取文件信息
  */
 export async function DownloadFile(options: SDK.kproto.IUtilityDownloadReq) {
-  const res = await WSSend(UtilityDownloadReq, 'UtilityDownloadReq', options);
+  const res = await WSSend<typeof UtilityDownloadReq, SDK.kproto.IUtilityDownloadResp>(UtilityDownloadReq, 'UtilityDownloadReq', options);
   return res;
 }

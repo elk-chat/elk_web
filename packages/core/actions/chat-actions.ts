@@ -20,6 +20,7 @@ import {
 } from "@little-chat/sdk";
 import SDK from "@little-chat/sdk/lib/sdk";
 
+import array2obj from '@little-chat/utils/array2obj';
 import { authStore } from './auth-action';
 
 import {
@@ -179,6 +180,7 @@ export function* getChatMembers(Chats) {
             if (currUser) nextChats[idx].Title = currUser.UserName;
           }
           nextChats[idx].Users = usersData;
+          nextChats[idx].UsersRef = array2obj(usersData, 'UserName');
           resolve();
         })
         .catch((e) => {

@@ -315,6 +315,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const {
       currChatContentData, userInfo, selectedChat
     } = this.props;
+    const { UsersRef } = selectedChat;
     const isGroupChat = selectedChat.ChatType === 1;
     const myName = userInfo.UserName;
     let prevTime = 0;
@@ -343,6 +344,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
               message = (
                 <Image FileID={FileID}
                   onLoad={(e) => {
+                    this.renewMsgPanelHeight();
                     this.scrollToBottom(this.scrollContent);
                   }}/>
               );
@@ -354,7 +356,10 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           const C = isMe ? 'div' : Link;
           const propForC = isMe ? {} : {
             Com: 'ContactDetail',
-            Title: SenderName
+            Title: SenderName,
+            params: {
+              UserID: UsersRef[SenderName].UserID.toString()
+            }
           };
           msgUnit = (
             <React.Fragment>
@@ -420,7 +425,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   }
 
   renderChatMsgs() {
-    const { msgPanelHeight } = this.state;
+    // const { msgPanelHeight } = this.state;
     const msgRow = this.getChatMsgs();
     return msgRow;
     // return msgPanelHeight && (
@@ -487,6 +492,12 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   editorClickToSend = (e) => {
     this.onSendMsg(this.editorPanel.current.innerHTML, FEContentType.Text);
+  }
+
+  renewMsgPanelHeight = () => {
+    if (this.msgPanelContainer) {
+      this.msgPanelHeight = this.msgPanelContainer.offsetHeight;
+    }
   }
 
   render() {

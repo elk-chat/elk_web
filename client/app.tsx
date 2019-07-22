@@ -8,6 +8,6 @@ import config from './.config';
 InitSDK(config);
 
 ReactDOM.render(
-  <ChatApp clientConfig={config} />,
+  <ChatApp ClientConfig={config} />,
   document.getElementById("Main")
 );

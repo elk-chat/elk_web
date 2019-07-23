@@ -22,7 +22,7 @@ const {
 } = SDK.kproto;
 
 /**
- * 同步聊天消息
+ * 同步单个 Chat 的聊天消息
  */
 export async function SyncChatMessage(options: SDK.kproto.IChatSyncChatStatesReq) {
   const res = await WSSend<typeof ChatSyncChatStatesReq, SDK.kproto.IChatSyncChatStatesResp>(ChatSyncChatStatesReq, 'ChatSyncChatStatesReq', options);
@@ -30,7 +30,7 @@ export async function SyncChatMessage(options: SDK.kproto.IChatSyncChatStatesReq
 }
 
 /**
- * 同步聊天消息
+ * 通过查询条件和分页控制，查询历史聊天信息
  */
 export async function GetChatState(options: SDK.kproto.IChatGetChatStatesReq) {
   const res = await WSSend<typeof ChatGetChatStatesReq, SDK.kproto.IChatGetChatStatesResp>(ChatGetChatStatesReq, 'ChatGetChatStatesReq', options);
@@ -104,18 +104,10 @@ export async function CreateChat(options: SDK.kproto.IChatCreateReq) {
 }
 
 /**
- * 向对应的聊天添加人员
+ * 向指定的 Chat 添加成员
  */
 export async function AddMemberToChat(options: SDK.kproto.IChatAddMemberReq) {
   const res = await WSSend<typeof ChatAddMemberReq, SDK.kproto.IChatAddMemberResp>(ChatAddMemberReq, 'ChatAddMemberReq', options);
-  return res;
-}
-
-/**
- * 查看 Chat 的已读消息
- */
-export async function CheckMsgReadState(options: SDK.kproto.IUserGetChatUserStateReq) {
-  const res = await WSSend<typeof UserGetChatUserStateReq, SDK.kproto.IUserGetChatUserStateResp>(UserGetChatUserStateReq, 'UserGetChatUserStateReq', options);
   return res;
 }
 
@@ -124,7 +116,7 @@ interface AddMembersToChatParams {
   UserIDs: Long[];
 }
 /**
- * 向对应的聊天添加人员
+ * 向指定的 Chat 添加多个成员
  */
 export function AddMembersToChat(options: AddMembersToChatParams) {
   const { ChatID, UserIDs } = options;
@@ -147,7 +139,15 @@ export function AddMembersToChat(options: AddMembersToChatParams) {
 }
 
 /**
- * 向对应的聊天添加人员
+ * 查看 Chat 的已读消息
+ */
+export async function CheckMsgReadState(options: SDK.kproto.IUserGetChatUserStateReq) {
+  const res = await WSSend<typeof UserGetChatUserStateReq, SDK.kproto.IUserGetChatUserStateResp>(UserGetChatUserStateReq, 'UserGetChatUserStateReq', options);
+  return res;
+}
+
+/**
+ * 创建 Chat 并且添加成员
  */
 export async function CreateChatAndAddMember(options: CreateChatAndAddMemberOptions) {
   const { Title, UserIDs } = options;
@@ -183,7 +183,7 @@ export async function GetChatList() {
 }
 
 /**
- * 获取 Chat 中的联系人信息
+ * 获取 Chat 中的联系人信息的 User 信息，只有 UserID
  */
 export async function GetChatMembersOnly(options: SDK.kproto.IChatGetMembersReq) {
   const res = await WSSend<typeof ChatGetMembersReq, SDK.kproto.IChatGetMembersResp>(ChatGetMembersReq, 'ChatGetMembersReq', options);
@@ -191,7 +191,7 @@ export async function GetChatMembersOnly(options: SDK.kproto.IChatGetMembersReq)
 }
 
 /**
- * 获取 Chat 中的联系人信息
+ * 获取 Chat 中的联系人的所有完整信息，包括 UserName Avatar 等
  */
 export function GetChatMembers(options: SDK.kproto.IChatGetMembersReq, myID?) {
   return new Promise<SDK.kproto.IChatGetMembersResp[]>((resolve, reject) => {

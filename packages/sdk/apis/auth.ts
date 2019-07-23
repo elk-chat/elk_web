@@ -5,6 +5,9 @@ const {
   UserLoginReq, UserRegisterReq, HeartbeatReq
 } = SDK.kproto;
 
+/**
+ * 请求登录
+ */
 export async function ApplyLogin(form: SDK.kproto.IUserLoginReq) {
   const res = await WSSend<typeof UserLoginReq, SDK.kproto.IUserLoginResp>(UserLoginReq, 'UserLoginReq', form, false);
   if (res.SessionID) {

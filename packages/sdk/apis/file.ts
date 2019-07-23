@@ -22,7 +22,7 @@ export async function GetFileState(options: SDK.kproto.IUtilityFileStatReq) {
 }
 
 /**
- * 获取文件信息
+ * 下载文件
  */
 export async function DownloadFile(options: SDK.kproto.IUtilityDownloadReq) {
   const res = await WSSend<typeof UtilityDownloadReq, SDK.kproto.IUtilityDownloadResp>(UtilityDownloadReq, 'UtilityDownloadReq', options);

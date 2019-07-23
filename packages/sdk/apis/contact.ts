@@ -39,7 +39,7 @@ export async function UpdateContact(form: SDK.kproto.IContactUpdateReq) {
 }
 
 /**
- * 更新联系人信息
+ * 获取多个联系人详情信息
  */
 export async function GetFullUsers(form: SDK.kproto.IUserGetFullUsersReq) {
   const res = await WSSend(UserGetFullUsersReq, 'UserGetFullUsersReq', form);
@@ -47,7 +47,7 @@ export async function GetFullUsers(form: SDK.kproto.IUserGetFullUsersReq) {
 }
 
 /**
- * 更新联系人信息
+ * 获取某个联系人的详情信息
  */
 export async function GetFullUser(form: SDK.kproto.IUserGetFullUserReq) {
   const res = await WSSend<typeof UserGetFullUserReq, SDK.kproto.IUserGetFullUserResp>(UserGetFullUserReq, 'UserGetFullUserReq', form);
@@ -67,7 +67,7 @@ export async function SearchUser(
 }
 
 /**
- * 更新联系人信息
+ * 与联系人发起 Chat 聊天，主要用于获取与该联系人关联的 ChatID
  */
 export async function InitPeerChat(
   form: SDK.kproto.IChatInitiateReq

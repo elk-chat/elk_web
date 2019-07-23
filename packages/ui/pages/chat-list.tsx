@@ -44,6 +44,12 @@ const msgFilter = (ChatEntity) => {
   return str;
 };
 
+const avatarGroup = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const avatarSrcFilter = (chatID) => {
+  const remainder = chatID % avatarGroup.length;
+  return `/face/${avatarGroup[remainder]}.jpg`;
+};
+
 export default class ChatList extends React.PureComponent<ChatListProps, {}> {
   static RightBtns = props => (
     <DropdownWrapper
@@ -101,14 +107,17 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
         if (!FLastInfo || !SLastInfo || SLastInfo.length < 1 || FLastInfo.length < 1) {
           return 1;
         }
-        return +SLastInfo.ActionTime.toString() - +FLastInfo.ActionTime.toString();
+        if (SLastInfo.ActionTime && FLastInfo.ActionTime) {
+          return +SLastInfo.ActionTime.toString() - +FLastInfo.ActionTime.toString();
+        }
+        return 1;
       });
     return nextLit;
   }
 
   render() {
     const {
-      chatListData, unreadInfo, lastMsgInfo, chatContentData
+      chatListData, unreadInfo, lastMsgInfo, chatContentData, selectedChat,
     } = this.props;
     const chatList = this.chatListFilter(chatListData.array);
     const hasChat = chatList.length > 0;
@@ -124,6 +133,8 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
             const chatID = ChatID.toString();
             const unreadCount = unreadInfo[chatID];
             const currLastMsg = chatContentFilter(lastMsgInfo[chatID]);
+            const isActive = selectedChat.ChatID && (selectedChat.ChatID.toString() === chatID);
+            const isOneToOneChat = item.ChatType === ChatType.OneToOne;
 
             return Title && (
               <NavLink
@@ -135,8 +146,11 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
                 onClick={() => {
                   this.props.selectChat(ChatID);
                 }}
-                className="chat-item layout" key={chatID}>
-                <Avatar text={Title[0]} size={46} tip={unreadCount} />
+                isActive={isActive}
+                className="chat-item layout"
+                key={chatID}>
+                <Avatar text={Title[0]} size={46} tip={unreadCount}
+                  src={isOneToOneChat ? avatarSrcFilter(chatID) : undefined} />
                 <div className="content">
                   <div className="chat-title">
                     {Title}

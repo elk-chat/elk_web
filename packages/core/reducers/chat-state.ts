@@ -4,7 +4,6 @@ import getLastItem from '@little-chat/utils/get-last-item';
 import {
   SELECT_CHAT, RECEIVE_CHAT_LIST, RECEIVE_CHAT_MESSAGE,
   RECEIVE_CHAT_MESSAGES,
-  READ_MSG
 } from "../actions";
 import {
   ChatActions, ChatContentState, ChatContentItem, UnreadState,

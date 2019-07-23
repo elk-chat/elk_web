@@ -74,7 +74,8 @@ const authActions = store => ({
   async autoLogin() {
     if (!runtimeState.userInfo.Token) {
       store.setState({
-        isLogin: false
+        isLogin: false,
+        loginResDesc: 'Token 失效'
       });
     } else {
       try {

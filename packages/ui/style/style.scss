@@ -13,7 +13,7 @@
     $navigatorPageWidth: 70%;
 
     @include fill;
-    background-color: #e9e9e9;
+    background-color: rgba(40, 44, 52, 0.95);
     .container {
       background-color: #EEE;
       // width: 80vw;
@@ -26,6 +26,11 @@
       max-height: 768px;
       position: relative;
       box-shadow: 0 5px 10px rgba(#000, 0.1);
+      z-index: 11;
+    }
+    .bg-img {
+      opacity: 0.5;
+      // filter: blur(5px);
     }
     .main-container, .tab-bar {
       right: $navigatorPageWidth;

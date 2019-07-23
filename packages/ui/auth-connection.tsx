@@ -58,7 +58,7 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
 
   handleResize = () => {
     const isMobile = isMobileFilter();
-    console.log(isMobile)
+    console.log(isMobile);
     if (isMobile === this.state.isMobile) return;
     this.setState({
       isMobile
@@ -98,6 +98,13 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
             }
           </AuthSelector>
         </div>
+        {
+          !isMobile && (
+            <div className="bg-img fill fixbg" style={{
+              backgroundImage: 'url(/images/bg_dark.jpg)'
+            }}></div>
+          )
+        }
       </div>
     );
   }

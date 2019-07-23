@@ -129,7 +129,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
         {
           chatList.map((item, idx) => {
             const {
-              Title = '', ChatID, Users
+              Title = '', ChatID, Users = []
             } = item;
             const chatID = ChatID.toString();
             const unreadCount = unreadInfo[chatID];

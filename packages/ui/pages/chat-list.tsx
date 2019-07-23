@@ -153,7 +153,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
                 {
                   isOneToOneChat ? (
                     <ChatAvatar
-                      AvatarFileID={Users[0].AvatarFileID}
+                      AvatarFileID={Users[0] ? Users[0].AvatarFileID : ''}
                       text={Title[0]}
                       size={46}
                       tip={unreadCount} />

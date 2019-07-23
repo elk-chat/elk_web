@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   UserInfo, ContactEntity, ChatListEntity, ContactState
 } from '@little-chat/core/types';
@@ -24,6 +24,20 @@ interface ContactCacheState {
 }
 
 const CONTACT_CACHE_STATE: ContactCacheState = {};
+
+const AddConfirm = (props) => {
+  const { UserName, onSure } = props;
+  const [loading, setLoading] = useState(false);
+  return (
+    <div className="sure-add-panel p20">
+      <h4>将要添加用户 {UserName}</h4>
+      <Button text="添加" loading={loading} onClick={(e) => {
+        setLoading(true);
+        onSure();
+      }} />
+    </div>
+  );
+};
 
 export default class ContactDetail extends React.PureComponent<ContactDetailProps, {}> {
   connectChat: {
@@ -67,6 +81,8 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
   }
 
   addToContact = async (UserID, callback) => {
+    if (this.adding) return;
+    this.adding = true;
     const res = await AddContact({
       UserID
     });
@@ -130,24 +146,16 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
                   type: 'side',
                   position: 'top',
                   children: (
-                    <div className="sure-add-panel p20">
-                      <h4>将要添加用户 {UserName}</h4>
-                      <Button text="添加" onClick={(e) => {
-                        this.addToContact(UserID, () => {
-                          CloseModal(ModalID);
-                          this.props.onNavigate({
-                            type: 'PUSH',
-                            route: CONTACT
-                          });
+                    <AddConfirm UserName={UserName} onSure={(e) => {
+                      this.addToContact(UserID, () => {
+                        CloseModal(ModalID);
+                        this.props.onNavigate({
+                          type: 'PUSH',
+                          route: CONTACT
                         });
-                      }} />
-                    </div>
+                      });
+                    }} />
                   ),
-                  // onConfirm: () => {
-                  //   this.addToContact(UserID, () => {
-                  //     CloseModal(ModalID);
-                  //   });
-                  // }
                 });
               }}>
                 添加到通讯录

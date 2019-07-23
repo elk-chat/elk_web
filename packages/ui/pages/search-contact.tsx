@@ -35,6 +35,7 @@ export default class SearchContact extends React.Component<SearchContactProps> {
   ]
 
   searchContact = async (options) => {
+    if (this.state.searching) return;
     const { Users } = await SearchUser({
       Condition: options,
       Paging: {

@@ -48,7 +48,6 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
   static RightBtns = props => (
     <DropdownWrapper
       position="right"
-      className="p20"
       needAction={false}
       outside
       overlay={({ hide }) => (
@@ -73,7 +72,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
           }
         ]} />
       )}>
-      <Icon n="plus" />
+      <Icon n="plus" className={["p20"]} />
     </DropdownWrapper>
   )
 

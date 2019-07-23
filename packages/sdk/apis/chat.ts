@@ -7,6 +7,7 @@ import { WSSend, GetFullUser } from '..';
 
 interface CreateChatAndAddMemberOptions extends SDK.kproto.IChatCreateReq {
   UserIDs: string[];
+  Title: string;
 }
 
 interface SyncChatMessagesParams {

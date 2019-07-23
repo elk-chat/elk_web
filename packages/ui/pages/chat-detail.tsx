@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { Avatar } from 'ukelli-ui/core/avatar';
 import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { Icon } from 'ukelli-ui/core/icon';
-import { AddMembersToChat } from '@little-chat/sdk';
+import { AddMembersToChat, CreateChatAndAddMember } from '@little-chat/sdk';
+import { ChatType } from '@little-chat/core/types';
 import { FormLayout } from 'ukelli-ui/core/form-generator';
 import AddChatPanel from './add-chat';
 
@@ -12,12 +13,15 @@ interface ChatDetailProps {
 
 const ChatDetail: React.SFC<ChatDetailProps> = (props) => {
   const {
-    applyAddChat, selectedChat, chatListData, currChatContentData
+    applyAddChat, selectedChat, chatListData, currChatContentData, applyFetchChatList, userInfo
   } = props;
   const { ChatID } = selectedChat;
   const currChatData = chatListData.obj[ChatID.toString()];
   const { Users } = currChatData;
   const excludeUsers = Users.map(user => user.UserName);
+  const isGroupChat = selectedChat.ChatType === ChatType.Group;
+  const isOneToOneChat = selectedChat.ChatType === ChatType.OneToOne;
+
   return (
     <div className="chat-detail-page">
       <div className="group-users">
@@ -48,17 +52,33 @@ const ChatDetail: React.SFC<ChatDetailProps> = (props) => {
               <AddChatPanel
                 exclude={excludeUsers}
                 needInput={false}
-                action={(checkedVal) => {
-                  AddMembersToChat({
-                    ChatID,
-                    UserIDs: checkedVal,
-                  })
-                    .then(() => {
-                      CloseModal(ModalID);
-                      props.applyFetchChatList();
-                    });
+                action={(checkedVal, valObj) => {
+                  switch (true) {
+                    case isGroupChat:
+                      AddMembersToChat({
+                        ChatID,
+                        UserIDs: checkedVal,
+                      })
+                        .then(() => {
+                          CloseModal(ModalID);
+                          applyFetchChatList();
+                        });
+                      break;
+                    case isOneToOneChat:
+                      const maxName = 5;
+                      CreateChatAndAddMember({
+                        UserIDs: checkedVal,
+                        Title: `${userInfo.UserName},${Object.values(valObj).slice(0, maxName).join(',')}`
+                      })
+                        .then(() => {
+                          CloseModal(ModalID);
+                          applyFetchChatList();
+                        });
+                      break;
+                  }
                 }}
-                {...props} onSuccess={e => CloseModal(ModalID)} />
+                onSuccess={e => CloseModal(ModalID)}
+                {...props} />
             )
           });
         }}>

@@ -6,11 +6,12 @@ import { Button } from 'ukelli-ui/core/button';
 import { Input } from 'ukelli-ui/core/form-control';
 
 interface AddChatPanelProps {
-  applyAddChat: Function;
   /** 过滤掉的联系人 */
   exclude?: string[];
   /** 点击按钮的回调，如果没有，则调用 CreateChatAndAddMember */
-  action?: Function;
+  action?: (values: [], valuesObj: {
+    [val: string]: string;
+  }) => void;
   /** 是否需要输入标题 */
   needInput?: boolean;
 }
@@ -31,12 +32,14 @@ let inputRef;
 
 const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
   const {
-    applyAddChat, contactData, userInfo, exclude = [], action, needInput = true
+    contactData, userInfo, exclude = [], action, needInput = true
   } = props;
   const contactDataList = contactData.array;
 
   const checkboxValues = getValuesForCheckbox(contactDataList, [userInfo.UserName, ...exclude]);
   const hasOptions = Object.keys(checkboxValues).length > 0;
+
+  const [loading, setLoading] = useState(false);
 
   return hasOptions ? (
     <div className="add-chat-panel p20">
@@ -53,9 +56,10 @@ const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
           onChange={(e) => {}}
           ref={(e) => { checkboxRef = e; }} />
       </div>
-      <Button text="确定" onClick={(e) => {
+      <Button text="确定" loading={loading} onClick={(e) => {
+        setLoading(true);
         if (action) {
-          action(checkboxRef.value);
+          action(checkboxRef.value, checkboxRef.valuesObj);
         } else {
           CreateChatAndAddMember({
             Title: inputRef.value,

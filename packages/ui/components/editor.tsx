@@ -14,6 +14,7 @@ interface EditorProps {
 }
 
 const editorID = 'editorPanel';
+const inputID = 'imageFiles';
 
 const Editor = React.forwardRef<HTMLDivElement, EditorProps>((props, ref) => {
   const {
@@ -43,7 +44,7 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>((props, ref) => {
           children: (
             <div className="more-options">
               <div className="item-wrapper" onClick={(e) => {
-                document.querySelector('#imageFiles').click();
+                document.querySelector(`#${inputID}`).click();
                 CloseModal(ModalID);
               }}>
                 <div className="item">
@@ -64,13 +65,9 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>((props, ref) => {
         type="file"
         style={{
           display: 'none'
-        }} id="imageFiles"
+        }}
+        id={inputID}
         onChange={onSelectedImg} />
-      {/* <div className="more-options">
-        <div className="item">
-          <Icon n="images"/>
-        </div>
-      </div> */}
     </div>
   );
 });

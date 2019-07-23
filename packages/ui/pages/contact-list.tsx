@@ -9,6 +9,7 @@ import {
   selectContact
 } from '@little-chat/core/actions';
 import Link from '../components/nav-link';
+import ChatAvatar from '../components/avatar';
 
 interface ContactProps extends UserInfo {
   contactData: ContactState;
@@ -62,9 +63,8 @@ export default class Contacts extends React.Component<ContactProps, {}> {
         {
           contactList.map((item) => {
             // const item = contactData[contactID];
-            const { UserName, UserID } = item;
+            const { UserName, UserID, AvatarFileID } = item;
             const isMe = UserName === myName;
-            const contactAvatar = item.Avatar;
             const _UserID = UserID.toString();
 
             return !isMe && (
@@ -80,9 +80,10 @@ export default class Contacts extends React.Component<ContactProps, {}> {
                   this.props.selectContact(item);
                 }}>
                 <div className="c-item">
-                  <Avatar src={contactAvatar || null} size={30}>
-                    {contactAvatar || UserName[0]}
-                  </Avatar>
+                  <ChatAvatar
+                    AvatarFileID={AvatarFileID}
+                    text={UserName[0]}
+                    size={30} />
                   {UserName}
                 </div>
               </Link>
@@ -93,7 +94,7 @@ export default class Contacts extends React.Component<ContactProps, {}> {
     ) : (
       <div className="p20">
         <Link Com="SearchContact" Title="搜索联系人" className="link">
-        还没有联系人，添加一个试试
+          还没有联系人，添加一个试试
         </Link>
       </div>
     );

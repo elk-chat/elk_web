@@ -24,7 +24,7 @@ export default (props) => {
     });
   }, [FileID]);
   return (
-    <div id={ID} onClick={(e) => {
+    <div id={ID} className="img-wrapper" onClick={(e) => {
       const ModalID = ShowModal({
         width: '100%',
         animation: false,
@@ -44,8 +44,8 @@ export default (props) => {
         )
       });
     }}>
-      <img className="img" alt="" onLoad={(e) => {
-        Call(onLoad, e);
+      <img className="_img" alt="" onLoad={(e) => {
+        Call(onLoad, e, imgSrc);
       }} src={imgSrc} />
     </div>
   );

@@ -48,10 +48,11 @@ const mapStateToProps = (state) => {
   const { chatContentData, selectedChat, unreadInfo } = state;
   const totalUnreadCount = getTotalUnreadCount(unreadInfo);
   const chatID = selectedChat.ChatID || '';
+  const currChatContentData = chatContentData[chatID.toString()];
   return {
     ...state,
     totalUnreadCount,
-    currChatContentData: chatContentData[chatID.toString()]
+    currChatContentData
   };
 };
 

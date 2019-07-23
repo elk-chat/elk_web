@@ -40,15 +40,12 @@ const AddConfirm = (props) => {
 };
 
 export default class ContactDetail extends React.PureComponent<ContactDetailProps, {}> {
-  connectChat: {
-    ChatID: number;
-  } = {
-    ChatID: -1
-  };
-
   state = {
-    contactDetail: {}
+    contactDetail: {},
+    peerChatID: -1
   }
+
+  adding
 
   componentDidMount = async () => {
     /** 根据 props 传入的 UserID 获取用户的详细信息 */
@@ -74,7 +71,9 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
       const { Chat } = await InitPeerChat({
         PeerID: UserID
       });
-      this.connectChat = Chat;
+      this.setState({
+        peerChatID: Chat.ChatID
+      });
     } catch (e) {
       console.log(e);
     }
@@ -90,6 +89,7 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
     this.props.applyGetContacts();
     this.props.applyFetchChatList();
     callback(res);
+    adding = false;
   }
 
   isMyContact = () => {
@@ -98,13 +98,11 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
   }
 
   render() {
-    const {
-      chatListData, onNavigate, contactData,
-    } = this.props;
-    const { contactDetail } = this.state;
+    const { contactDetail, peerChatID } = this.state;
     const { UserID, UserName = '' } = contactDetail;
     const userAvatar = contactDetail.Avatar;
     const isMyContact = this.isMyContact();
+    const chatIDStr = peerChatID.toString();
 
     return (
       <div className="contact-detail">
@@ -117,26 +115,18 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
         <div className="action-group">
           {
             isMyContact ? (
-              <div
+              <Link
                 className="action-item"
+                Com="ChatContent"
+                Title={UserName}
+                params={{
+                  ChatID: chatIDStr
+                }}
                 onClick={(e) => {
-                  const chatID = this.connectChat.ChatID || '';
-                  const chatIDStr = chatID.toString();
-                  const chatEntity = chatListData.obj[chatIDStr];
-                  if (chatEntity) {
-                    this.props.selectChat(chatIDStr);
-                    onNavigate({
-                      type: 'PUSH',
-                      route: 'N',
-                      params: {
-                        Com: 'ChatContent',
-                        Title: UserName
-                      }
-                    });
-                  }
+                  this.props.selectChat(chatIDStr);
                 }}>
                 发信息
-              </div>
+              </Link>
             ) : (
               <div className="action-item" onClick={(e) => {
                 const ModalID = ShowModal({

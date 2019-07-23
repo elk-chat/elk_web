@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { getUrlParams } from 'uke-request/url-resolve';
-import { CallFunc, IsUrl } from 'basic-helper';
+import { Call, IsUrl } from 'basic-helper';
 
 import {
   getRouteKey, onNavigate
@@ -31,13 +31,16 @@ const Link: React.SFC<LinkProps> = ({
     <span
       className={className + (_isActive ? ' active' : '')}
       onClick={(e) => {
-        CallFunc(onClick)(e);
-        if (IsUrl(to)) return window.open(to);
-        return onNavigate({
-          type: 'PUSH',
-          route: to,
-          params
-        });
+        Call(onClick, e);
+        if (IsUrl(to)) {
+          window.open(to);
+        } else {
+          onNavigate({
+            type: 'PUSH',
+            route: to,
+            params
+          });
+        }
       }}>
       {children}
     </span>

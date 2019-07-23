@@ -6,6 +6,7 @@ import { AddMembersToChat, CreateChatAndAddMember } from '@little-chat/sdk';
 import { ChatType } from '@little-chat/core/types';
 import { FormLayout } from 'ukelli-ui/core/form-generator';
 import AddChatPanel from './add-chat';
+import ChatAvatar from '../components/avatar';
 
 interface ChatDetailProps {
   applyAddChat: Function;
@@ -13,9 +14,11 @@ interface ChatDetailProps {
 
 const ChatDetail: React.SFC<ChatDetailProps> = (props) => {
   const {
-    applyAddChat, selectedChat, chatListData, currChatContentData, applyFetchChatList, userInfo
+    applyAddChat, selectedChat, chatListData, currChatContentData,
+    applyFetchChatList, userInfo, ChatID
   } = props;
-  const { ChatID } = selectedChat;
+  if (!ChatID) return null;
+
   const currChatData = chatListData.obj[ChatID.toString()];
   const { Users } = currChatData;
   const excludeUsers = Users.map(user => user.UserName);
@@ -27,11 +30,14 @@ const ChatDetail: React.SFC<ChatDetailProps> = (props) => {
       <div className="group-users">
         {
           (Array.isArray(Users) && Users.length > 0) ? Users.map((user) => {
-            const { UserID, UserName } = user;
+            const { UserID, UserName, AvatarFileID } = user;
             const userID = UserID.toString();
             return (
               <span className="user-item" key={userID}>
-                <Avatar>{UserName[0]}</Avatar>
+                <ChatAvatar
+                  AvatarFileID={AvatarFileID}
+                  text={UserName[0]} />
+                {/* <Avatar>{UserName[0]}</Avatar> */}
                 <div className="name">{UserName}</div>
               </span>
             );

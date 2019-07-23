@@ -4,7 +4,6 @@ import {
 } from 'basic-helper';
 import { Avatar } from 'ukelli-ui/core/avatar';
 import { Icon } from 'ukelli-ui/core/icon';
-import setDOMById from 'ukelli-ui/core/set-dom';
 // import { VariableSizeList as List } from 'react-window';
 import {
   ChatItemEntity, ChatContentState, UserInfo, FEContentType,
@@ -21,7 +20,11 @@ import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 import Link from '../components/nav-link';
 import Editor from '../components/editor';
 import Image from '../components/image';
-import ImageReader from '../utils/image-reader';
+import {
+  ImageReader,
+  GetImgInfo,
+} from '../utils/image-reader';
+import ChatAvatar from '../components/avatar';
 
 interface ChatContentProps {
   applySendMsg: typeof applySendMsg;
@@ -51,81 +54,10 @@ const MsgTypeClass = {
   2: 'add-member',
 };
 
-const getImgInfoFormPaste = blob => new Promise<{
-  height: number;
-  width: number;
-}>((resolve, reject) => {
-  if (!blob) {
-    reject('need blob');
-  } else {
-    const imgPrevContainer = setDOMById('IMG_PREV_CONTAINER');
-    const reader = new FileReader();
-    reader.onload = (loadEvent: ProgressEvent) => {
-      const base64Data = loadEvent.target.result;
-      const img = document.createElement('img');
-      img.onload = (event) => {
-        setTimeout(() => {
-          resolve({
-            height: img.offsetHeight,
-            width: img.offsetWidth,
-          });
-          imgPrevContainer.removeChild(img);
-        }, 50);
-        // resolve(event);
-      };
-      img.src = base64Data;
-      img.style.opacity = '0';
-      imgPrevContainer.appendChild(img);
-    };
-    reader.readAsDataURL(blob);
-  }
-});
-
-const getImgToBuffer = blob => new Promise<Uint8Array>((resolve, reject) => {
-  if (!blob) {
-    reject('need blob');
-  } else {
-    const reader = new FileReader();
-    reader.onload = (loadEvent: ProgressEvent) => {
-      const imageBuffer = loadEvent.target.result;
-      resolve(imageBuffer);
-    };
-    reader.readAsArrayBuffer(blob);
-  }
-});
-
-const getImgInfo = (items: DataTransferItemList) => new Promise((resolve, reject) => {
-  let fileName;
-  let isImg = false;
-  for (let index = 0; index < items.length; index++) {
-    const item = items[index];
-    if (item.kind === 'string') {
-      // eslint-disable-next-line no-loop-func
-      item.getAsString((fn) => { fileName = fn; });
-    }
-    if (item.kind === 'file') {
-      isImg = true;
-      const blob = item.getAsFile();
-      Promise.all([getImgToBuffer(blob), getImgInfoFormPaste(blob)])
-        // eslint-disable-next-line no-loop-func
-        .then(([buffer, imgInfo]) => {
-          resolve({
-            buffer,
-            fileInfo: {
-              ...imgInfo,
-              name: fileName || UUID(),
-            }
-          });
-        });
-    }
-  }
-  if (!isImg) reject();
-});
-
 export default class ChatContent extends React.PureComponent<ChatContentProps, State> {
   static RightBtns = (props) => {
     const { selectedChat } = props;
-    return (
+    return selectedChat.ChatID && (
       <Link
         Com="ChatDetail"
         Title="聊天详情"
@@ -184,9 +116,23 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   }
 
   componentDidMount() {
-    const { currChatContentData, selectChat, ChatID } = this.props;
+    this.initData();
+  }
+
+  componentWillUnmount() {
+    EventEmitter.rm(RECEIVE_CHAT_MESSAGE, this.handleScroll);
+    this.props.selectChat('');
+  }
+
+  initData = () => {
+    const {
+      currChatContentData, selectedChat, selectChat, ChatID, applySyncChatMessage
+    } = this.props;
+    // if (selectedChat.ChatID !== ChatID) {
+    //   /** 处理由浏览器前进后退事件触发的选择 Chat */
+    // }
     selectChat(ChatID);
-    this.props.applySyncChatMessage({
+    applySyncChatMessage({
       ChatID,
       State: currChatContentData.lastState
     });
@@ -196,11 +142,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       const { States } = res;
       this.readState = States;
     });
-  }
-
-  componentWillUnmount() {
-    EventEmitter.rm(RECEIVE_CHAT_MESSAGE, this.handleScroll);
-    this.props.selectChat('');
   }
 
   handleScroll = () => {
@@ -219,7 +160,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   }
 
   handlePasteImg = (items: DataTransferItemList) => new Promise((resolve, reject) => {
-    getImgInfo(items).then(({ buffer, fileInfo }) => {
+    GetImgInfo(items).then(({ buffer, fileInfo }) => {
       this.uploadFile({
         buffer,
         fileInfo
@@ -310,14 +251,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     this.readMsg();
   }
 
-  addFileFromInput = async (e) => {
-    // console.log(e.target.files);
-    if (e.target.files.length === 0) return;
-    // console.log(e.target.files);
-    this.loadFile(e.target.files);
+  addFileFromInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target && e.target.files.length !== 0) {
+      this.loadFile(e.target.files);
+    }
   }
 
-  loadFile = async (files) => {
+  loadFile = async (files: FileList) => {
     ImageReader(files[0]).then((res) => {
       this.uploadFile(res);
     });
@@ -381,13 +321,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   getChatMsgs = () => {
     const {
-      currChatContentData, userInfo, selectedChat
+      currChatContentData = {}, userInfo, selectedChat
     } = this.props;
     const { UsersRef } = selectedChat;
     const isGroupChat = selectedChat.ChatType === 1;
     const myName = userInfo.UserName;
     let prevTime = 0;
-    const { data } = currChatContentData;
+    const { data = [] } = currChatContentData;
 
     const msgRow = [];
     data.forEach((currMsg, idx) => {
@@ -422,11 +362,12 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
               break;
           }
           const C = isMe ? 'div' : Link;
+          const currUser = UsersRef[SenderName];
           const propForC = isMe ? {} : {
             Com: 'ContactDetail',
             Title: SenderName,
             params: {
-              UserID: UsersRef[SenderName].UserID.toString()
+              UserID: currUser.UserID.toString()
             }
           };
           msgUnit = (
@@ -436,9 +377,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
                   // selectContact(contactData[selectedChat.ContactID]);
                 }}
                 {...propForC}>
-                <Avatar size={30}>
+                <ChatAvatar
+                  AvatarFileID={currUser ? currUser.AvatarFileID : ''}
+                  text={SenderName[0]}
+                  size={30} />
+                {/* <Avatar size={30}>
                   {SenderName[0]}
-                </Avatar>
+                </Avatar> */}
               </C>
               <div className="unit">
                 {
@@ -569,7 +514,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   }
 
   render() {
-    // const { selectedChat } = this.props;
+    const { currChatContentData } = this.props;
+    if (!currChatContentData) return null;
     const chatPanelContainer = (
       <div className="msg-panel-container" ref={(e) => {
         this.msgPanelContainer = e;

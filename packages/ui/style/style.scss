@@ -25,16 +25,14 @@
       max-width: 1024px;
       max-height: 768px;
       position: relative;
-      box-shadow: 0 12px 24px rgba(#000, 0.2);
+      box-shadow: 0 5px 10px rgba(#000, 0.1);
     }
     .main-container, .tab-bar {
       right: $navigatorPageWidth;
     }
-    // .main-container {
-    //   .page-item {
-    //     visibility: visible;
-    //   }
-    // }
+    .main-container {
+      border-right: 1px solid #EEE;
+    }
     .navigator-page {
       left: 100% - $navigatorPageWidth;
     }
@@ -65,4 +63,12 @@
 }
 .form-container .form-control {
   min-width: auto !important;
+}
+
+@media (min-height: 768px) {
+  .little-chat-app.pc {
+    .container {
+      margin-top: 20px;
+    }
+  }
 }

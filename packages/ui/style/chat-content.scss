@@ -112,7 +112,7 @@ $headerH: 40px;
         margin: 5px;
         word-break: break-all;
       }
-      .img {
+      ._img {
         height: auto;
         margin: 5px 0 5px;
         border-radius: 4px;
@@ -156,17 +156,19 @@ $headerH: 40px;
         .msg-item {
           flex-direction: row-reverse;
         }
-        .msg-item.img {
-          &:after {
-            content: ".";
-            display: block;
-            height: 0;
-            clear: both;
-            visibility: hidden;
-          }
-          img {
-            display: block;
-            float: right;
+        .msg-item {
+          ._img {
+            &:after {
+              content: ".";
+              display: block;
+              height: 0;
+              clear: both;
+              visibility: hidden;
+            }
+            img {
+              display: block;
+              float: right;
+            }
           }
         }
         .user-mark {
@@ -193,7 +195,8 @@ $headerH: 40px;
     bottom: 0;
     left: 0;
     right: 0;
-    box-shadow: 0 -2px 2px rgba(#000, 0.05);
+    box-shadow: 0 -2px 3px rgba(#000, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 111;
     .icon {
       width: 20px;

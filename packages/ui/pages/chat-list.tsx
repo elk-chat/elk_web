@@ -1,6 +1,6 @@
 import React from 'react';
-import { Avatar } from 'ukelli-ui/core/avatar';
 import { Icon } from 'ukelli-ui/core/icon';
+import { Avatar } from 'ukelli-ui/core/avatar';
 import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { DropdownWrapper } from 'ukelli-ui/core/selector';
 import { Menus } from 'ukelli-ui/core/menu';
@@ -16,6 +16,7 @@ import AddChatPanel from './add-chat';
 import {
   CONTACT
 } from '../config/path-mapper';
+import ChatAvatar from '../components/avatar';
 
 interface ChatListProps extends UserInfo {
   chatListData: ChatListEntity;
@@ -128,7 +129,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
         {
           chatList.map((item, idx) => {
             const {
-              Title = '', ChatID
+              Title = '', ChatID, Users
             } = item;
             const chatID = ChatID.toString();
             const unreadCount = unreadInfo[chatID];
@@ -149,8 +150,17 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
                 isActive={isActive}
                 className="chat-item layout"
                 key={chatID}>
-                <Avatar text={Title[0]} size={46} tip={unreadCount}
-                  src={isOneToOneChat ? avatarSrcFilter(chatID) : undefined} />
+                {
+                  isOneToOneChat ? (
+                    <ChatAvatar
+                      AvatarFileID={Users[0].AvatarFileID}
+                      text={Title[0]}
+                      size={46}
+                      tip={unreadCount} />
+                  ) : (
+                    <Avatar text={Title[0]} size={46} tip={unreadCount} />
+                  )
+                }
                 <div className="content">
                   <div className="chat-title">
                     {Title}

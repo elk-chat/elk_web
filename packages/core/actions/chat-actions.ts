@@ -166,7 +166,7 @@ export const RECEIVE_CHAT_LIST = 'RECEIVE_CHAT_LIST';
 export function* getChatMembers(Chats) {
   const getMemberInfoList: SDK.kproto.IChatGetMembersResp[] = [];
   const currState = authStore.getState();
-  const { contactData, userInfo } = currState;
+  const { userInfo } = currState;
   const myID = userInfo.UserID.toString();
   const nextChats = [...Chats];
   /** 这里主要为了查找 Chat 的 UserName */

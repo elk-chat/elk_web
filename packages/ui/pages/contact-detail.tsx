@@ -121,9 +121,10 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
                 className="action-item"
                 onClick={(e) => {
                   const chatID = this.connectChat.ChatID || '';
-                  const chatEntity = chatListData.obj[chatID.toString()];
+                  const chatIDStr = chatID.toString();
+                  const chatEntity = chatListData.obj[chatIDStr];
                   if (chatEntity) {
-                    this.props.selectChat(chatEntity);
+                    this.props.selectChat(chatIDStr);
                     onNavigate({
                       type: 'PUSH',
                       route: 'N',

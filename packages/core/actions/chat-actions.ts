@@ -22,13 +22,17 @@ import SDK from "@little-chat/sdk/lib/sdk";
 
 import array2obj from '@little-chat/utils/array2obj';
 import { authStore } from './auth-action';
+import { getStore } from '../store';
 
 import {
   ChatActions, ChatItemEntity, ChatType
 } from '../types';
 
 export const SELECT_CHAT = "SELECT_CHAT";
-export function selectChat(chatEntity: ChatItemEntity) {
+export function selectChat(chatID) {
+  const chatEntity = getStore().getState().chatListData.obj[chatID] || {
+    ChatID: -1
+  };
   return {
     chatEntity,
     type: SELECT_CHAT,

@@ -119,7 +119,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
         {
           chatList.map((item, idx) => {
             const {
-              Title = '', ChatID, LastMsg
+              Title = '', ChatID
             } = item;
             const chatID = ChatID.toString();
             const unreadCount = unreadInfo[chatID];
@@ -133,7 +133,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
                   ChatID,
                 }}
                 onClick={() => {
-                  this.props.selectChat(item);
+                  this.props.selectChat(ChatID);
                 }}
                 className="chat-item layout" key={chatID}>
                 <Avatar text={Title[0]} size={46} tip={unreadCount} />

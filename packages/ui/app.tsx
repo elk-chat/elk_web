@@ -29,6 +29,7 @@ export interface ChatState extends RouterState {
       params: NavParams;
     };
   };
+  activeMainRoute: string;
 }
 
 declare global {
@@ -61,6 +62,11 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
 
   isNative = false;
 
+  state = {
+    ...this.state,
+    activeMainRoute: this.defaultPath
+  }
+
   componentDidMount() {
     const { dispatch } = this.props;
     this.props.init(dispatch);
@@ -77,15 +83,24 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
     const {
       isMobile, totalUnreadCount, ...other
     } = this.props;
-    const { activeRoute, routerInfo } = this.state;
+    const { activeRoute, activeMainRoute, routerInfo } = this.state;
     return (
-      <div className="">
+      <React.Fragment>
         <RouterRender
           {...this.getProps()}
-          activeRoute={activeRoute}
+          activeRoute={isMobile ? activeRoute : activeMainRoute}
           routeConfig={pageRoutersConfig}
           navRouterMark={NavRouterMark} />
         <TabBar
+          isMobile={isMobile}
+          onChange={(path) => {
+            if (!isMobile) {
+              this.setState({
+                activeMainRoute: path
+              });
+            }
+          }}
+          activeMainRoute={activeMainRoute}
           routes={getTabRouteConfig({
             unreadCount: totalUnreadCount
           })} />
@@ -95,7 +110,7 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
           NavRouterMark={NavRouterMark}
           navRoutersConfig={navRoutersConfig}
           currRouterConfig={routerInfo[NavRouterMark]} />
-      </div>
+      </React.Fragment>
     );
   }
 }

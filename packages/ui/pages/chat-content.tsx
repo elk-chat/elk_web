@@ -184,8 +184,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   }
 
   componentDidMount() {
-    const { currChatContentData, selectedChat } = this.props;
-    const { ChatID } = selectedChat;
+    const { currChatContentData, selectChat, ChatID } = this.props;
+    selectChat(ChatID);
     this.props.applySyncChatMessage({
       ChatID,
       State: currChatContentData.lastState
@@ -200,9 +200,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   componentWillUnmount() {
     EventEmitter.rm(RECEIVE_CHAT_MESSAGE, this.handleScroll);
-    this.props.selectChat({
-      ChatID: ''
-    });
+    this.props.selectChat('');
   }
 
   handleScroll = () => {

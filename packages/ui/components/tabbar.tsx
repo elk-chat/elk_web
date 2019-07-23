@@ -20,6 +20,12 @@ interface TabBarProps {
   routes: RouteExpand[];
   /** icon */
   icon?: IconType;
+  /** isMobile */
+  isMobile?: boolean;
+  /** 激活的 route */
+  activeMainRoute?: string;
+  /** onChange */
+  onChange: (path: string) => void;
 }
 
 const iconClassName = ['default', 'active'];
@@ -44,7 +50,9 @@ const RenderIcon = ({ icons }) => icons.map((i, idx): React.ElementType => {
   return res;
 });
 
-const TabBar: React.SFC<TabBarProps> = ({ routes }) => (
+const TabBar: React.SFC<TabBarProps> = ({
+  routes, isMobile, activeMainRoute, onChange
+}) => (
   <div
     className="tab-bar">
     <div className="inner">
@@ -53,10 +61,14 @@ const TabBar: React.SFC<TabBarProps> = ({ routes }) => (
           const {
             path, text, icon, exact, unreadCount, onClick
           } = route;
-          const Com: string | typeof Link = Link;
+          const Com: string | typeof Link = isMobile ? Link : 'div';
           const obj = { to: path, exact, onClick };
+          const isActive = isMobile ? false : activeMainRoute === path;
           return (
-            <Com {...obj} key={path} className="tab-label">
+            <Com {...obj} key={path} onClick={(e) => {
+              // console.log(path)
+              onChange(path);
+            }} className={`tab-label${isActive ? ' active' : ''}`}>
               <div className="icon-wrap">
                 <RenderIcon icons={icon} />
               </div>

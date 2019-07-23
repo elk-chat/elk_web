@@ -14,21 +14,27 @@ import ChatApp from './app';
 interface LoginFilterProps {
 }
 
-const isMobile = /Android|iOS|iPhone/.test(navigator.userAgent);
+const isMobileFilter = () => /Android|iOS|iPhone/.test(navigator.userAgent);
 
 let chatStore;
 
 class LoginFilter extends React.PureComponent<LoginFilterProps> {
+  state = {
+    isMobile: isMobileFilter()
+  }
+
   componentDidMount() {
     const { autoLogin } = this.props;
     Call(window.__removeLoading);
     autoLogin();
     document.addEventListener("visibilitychange", this.handleVisibilityChange);
+    document.addEventListener("resize", this.handleResize);
     EventEmitter.on(SESSION_TIMEOUT, this.reconnect);
   }
 
   componentWillUnmount() {
     document.removeEventListener("visibilitychange", this.handleVisibilityChange);
+    document.removeEventListener("resize", this.handleResize);
     EventEmitter.rm(SESSION_TIMEOUT, this.reconnect);
   }
 
@@ -50,6 +56,15 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
     }
   }
 
+  handleResize = () => {
+    const isMobile = isMobileFilter();
+    console.log(isMobile)
+    if (isMobile === this.state.isMobile) return;
+    this.setState({
+      isMobile
+    });
+  }
+
   reconnect = () => {
     CloseWS();
     InitSDK();
@@ -60,6 +75,7 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
     const {
       isLogin, applyLogin = true, ...other
     } = this.props;
+    const { isMobile } = this.state;
     return (
       <div className={`little-chat-app ${isMobile ? 'mobile' : 'pc'}`}>
         <div className="container">
@@ -73,6 +89,7 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
                 return (
                   <ReduxProvider store={chatStore}>
                     <ChatApp
+                      isMobile={isMobile}
                       dispatch={chatStore.dispatch}
                       {...this.props} />
                   </ReduxProvider>

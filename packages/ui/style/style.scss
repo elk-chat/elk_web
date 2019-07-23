@@ -10,16 +10,30 @@
 .little-chat-app {
   // height: 100%;
   &.pc {
+    $navigatorPageWidth: 70%;
+
     @include fill;
     background-color: #EEE;
     .container {
-      background-color: #FFF;
-      width: 80vw;
-      height: 90vh;
-      max-width: 440px;
-      max-height: 640px;
+      background-color: #EEE;
+      // width: 80vw;
+      // height: 90vh;
+      // margin: 20px auto;
+      height: 100%;
+      min-width: 320px;
+      min-height: 320px;
       position: relative;
-      margin: 20px auto;
+    }
+    .main-container, .tab-bar {
+      right: $navigatorPageWidth;
+    }
+    // .main-container {
+    //   .page-item {
+    //     visibility: visible;
+    //   }
+    // }
+    .navigator-page {
+      left: 100% - $navigatorPageWidth;
     }
   }
 }

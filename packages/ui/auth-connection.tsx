@@ -9,7 +9,7 @@ import {
 
 import { authStore, authActions } from '@little-chat/core/actions/auth-action';
 import AuthSelector from './auth';
-import ChatApp from './app';
+import ChatApp from './chat-app';
 
 interface LoginFilterProps {
 }
@@ -20,8 +20,10 @@ let chatStore;
 
 class LoginFilter extends React.PureComponent<LoginFilterProps> {
   state = {
-    isMobile: isMobileFilter()
+    isMobile: isMobileFilter(),
   }
+
+  ChatAPPRef = React.createRef()
 
   componentDidMount() {
     const { autoLogin } = this.props;
@@ -58,7 +60,6 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
 
   handleResize = () => {
     const isMobile = isMobileFilter();
-    console.log(isMobile);
     if (isMobile === this.state.isMobile) return;
     this.setState({
       isMobile
@@ -66,9 +67,10 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
   }
 
   reconnect = () => {
+    const { autoLogin } = this.props;
     CloseWS();
     InitSDK();
-    this.props.autoLogin();
+    autoLogin();
   }
 
   render() {

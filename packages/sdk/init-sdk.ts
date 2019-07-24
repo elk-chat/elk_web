@@ -16,18 +16,23 @@ interface Api {
   toObject: (any) => {};
 }
 
+const SDKErrorDesc = '请先调用 InitSDK';
+
 const { BigInt } = JSBI;
 let $WS;
 let prevWSParams;
 
 function GetWS() {
-  if (!$WS) console.error('请先调用 InitSDK');
+  if (!$WS) console.error(SDKErrorDesc);
   return $WS;
 }
 
 function WSSend<T extends Api, S>(api: T, apiName: string, data?, needAuth = true): Promise<S> {
-  if (!$WS) console.error('请先调用 InitSDK');
   return new Promise((resolve, reject) => {
+    if (!$WS) {
+      console.error(SDKErrorDesc);
+      return reject(SDKErrorDesc);
+    }
     const requestID = BigInt(UUID(16));
     const msgWrite = api.create(data);
     const bufData = api.encode(msgWrite).finish();

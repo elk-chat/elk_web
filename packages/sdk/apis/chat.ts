@@ -32,7 +32,7 @@ export async function SyncChatMessage(options: SDK.kproto.IChatSyncChatStatesReq
 /**
  * 通过查询条件和分页控制，查询历史聊天信息
  */
-export async function GetChatState(options: SDK.kproto.IChatGetChatStatesReq) {
+export async function QueryChatMsgsByCondition(options: SDK.kproto.IChatGetChatStatesReq) {
   const res = await WSSend<typeof ChatGetChatStatesReq, SDK.kproto.IChatGetChatStatesResp>(ChatGetChatStatesReq, 'ChatGetChatStatesReq', options);
   return res;
 }
@@ -47,7 +47,7 @@ export function SyncChatMessages(options: SyncChatMessagesParams) {
     const resData = {};
     ChatIDs.forEach((ChatID) => {
       const promise = new Promise((rs, rj) => {
-        GetChatState({
+        QueryChatMsgsByCondition({
           Paging: {
             PageSize: Limit,
             PageIndex: 0

@@ -22,22 +22,22 @@ import SDK from "@little-chat/sdk/lib/sdk";
 
 import array2obj from '@little-chat/utils/array2obj';
 import { authStore } from './auth-action';
-import { getStore } from '../store';
+// import { getStore } from '../store';
 
 import {
   ChatActions, ChatItemEntity, ChatType
 } from '../types';
 
-export const SELECT_CHAT = "SELECT_CHAT";
-export function selectChat(chatID) {
-  const chatEntity = getStore().getState().chatListData.obj[chatID] || {
-    ChatID: -1
-  };
-  return {
-    chatEntity,
-    type: SELECT_CHAT,
-  };
-}
+// export const SELECT_CHAT = "SELECT_CHAT";
+// export function selectChat(chatID) {
+//   const chatEntity = getStore().getState().chatListData.obj[chatID] || {
+//     ChatID: -1
+//   };
+//   return {
+//     chatEntity,
+//     type: SELECT_CHAT,
+//   };
+// }
 
 export const FETCH_CHATS = "FETCH_CHATS";
 export function fetchChats() {
@@ -86,8 +86,10 @@ export function applySyncChatMessages(payload: {
 }
 
 export const RECEIVE_CHAT_MESSAGE = "RECEIVE_CHAT_MESSAGE";
-export function receiveChatMessage(chatContent, chatID, countUnread: boolean) {
-  EventEmitter.emit(RECEIVE_CHAT_MESSAGE, chatContent);
+export function receiveChatMessage(chatContent, chatID, countUnread?: boolean) {
+  EventEmitter.emit(RECEIVE_CHAT_MESSAGE, {
+    chatContent, chatID, countUnread
+  });
 
   /** 向服务端确认收到了消息 */
   const lastMsg = chatContent[chatContent.length - 1];
@@ -151,7 +153,7 @@ export function* syncChatMessage(action: {
 }
 
 export const SYNCING_CHAT_MESSAGES = 'SYNCING_CHAT_MESSAGES';
-export function* syncChatMessages({ payload }) {
+export function* syncChatMessages(payload) {
   yield put({ type: SYNCING_CHAT_MESSAGES });
   try {
     const msgsData = yield call(SyncChatMessages, payload);
@@ -169,9 +171,11 @@ export function* getChatMembers(Chats) {
   const { userInfo } = currState;
   const myID = userInfo.UserID.toString();
   const nextChats = [...Chats];
+  const chatIDs: any[] = [];
   /** 这里主要为了查找 Chat 的 UserName */
   Chats.forEach((chat, idx) => {
     const { ChatID } = chat;
+    chatIDs.push(ChatID);
     const isOneByOneChat = chat.ChatType === ChatType.OneToOne;
     const func = (resolve: typeof Promise.resolve, reject: typeof Promise.reject) => {
       GetChatMembers({
@@ -185,7 +189,7 @@ export function* getChatMembers(Chats) {
           }
           nextChats[idx].Users = usersData;
           nextChats[idx].UsersRef = array2obj(usersData, 'UserName');
-          resolve();
+          resolve(nextChats[idx]);
         })
         .catch((e) => {
           reject(e);
@@ -193,19 +197,33 @@ export function* getChatMembers(Chats) {
     };
     getMemberInfoList.push(new Promise<SDK.kproto.IChatGetMembersResp>(func));
   });
-  yield Promise.all(getMemberInfoList);
 
+  yield Promise.all(getMemberInfoList);
   yield put({ type: RECEIVE_CHAT_LIST, chatList: nextChats });
+  return {
+    nextChats, chatIDs
+  };
 }
 /**
- * 获取 Chat 列表
+ * 1. 获取 Chat 列表
+ * 2. 根据返回的 Chat 的 ChatID 并发获取 Chat 的成员信息
+ * 3. 获取已获取的 Chat 的最后一条消息
  */
 export function* getChatList(callback) {
   yield put({ type: FETCHING_CHAT_LIST });
   try {
+    // 1. 获取 Chat 列表
     const { Chats } = yield call(GetChatList);
     yield put({ type: RECEIVE_CHAT_LIST, chatList: Chats });
-    yield* getChatMembers(Chats);
+
+    // 2. 根据返回的 Chat 的 ChatID 并发获取 Chat 的成员信息
+    const { chatIDs } = yield getChatMembers(Chats);
+
+    // 3. 获取已获取的 Chat 的最后一条消息
+    yield syncChatMessages({
+      ChatIDs: chatIDs,
+      Limit: 1
+    });
     Call(callback);
   } catch (res) {
     console.log(res);

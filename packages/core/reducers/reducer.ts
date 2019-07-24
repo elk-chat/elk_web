@@ -5,8 +5,11 @@ import { combineReducers } from "redux";
 // } from './auth-state';
 
 import {
-  chatListData, chatContentData, selectedChat,
-  unreadInfo, lastMsgInfo
+  chatListData,
+  // chatContentData,
+  // selectedChat,
+  // unreadInfo,
+  lastMsgInfo
 } from './chat-state';
 import {
   contactData, selectedContact
@@ -16,10 +19,10 @@ const rootReducers = combineReducers({
   lastMsgInfo,
   selectedContact,
   contactData,
-  selectedChat,
-  unreadInfo,
+  // selectedChat,
+  // unreadInfo,
   chatListData,
-  chatContentData,
+  // chatContentData,
   // authState,
   // userInfo,
 });

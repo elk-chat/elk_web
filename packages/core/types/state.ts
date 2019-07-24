@@ -12,6 +12,7 @@ export enum FEContentType {
 export enum FEMessageType {
   SendMessage = 1,
   AddMember = 2,
+  ReadState = 3,
 }
 
 export enum ChatType {

@@ -12,6 +12,9 @@ const chatContentFilter = (ChatEntity) => {
     case FEMessageType.AddMember:
       Object.assign(res, res.UpdateMessage.UpdateMessageChatAddMember);
       break;
+    // case FEMessageType.ReadState:
+    //   Object.assign(res, res.UpdateMessage.UpdateMessageChatAddMember);
+    //   break;
   }
   return res;
 };

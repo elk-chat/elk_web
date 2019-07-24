@@ -1,1 +1,2 @@
 export const USER_INFO_STORAGE = 'USER_INFO_STORAGE';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';

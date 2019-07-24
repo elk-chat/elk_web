@@ -83,16 +83,6 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
     </DropdownWrapper>
   )
 
-  componentDidMount() {
-    this.props.syncContactsAndChats(() => {
-      const { chatListData, applySyncChatMessages } = this.props;
-      applySyncChatMessages({
-        ChatIDs: Object.keys(chatListData.obj),
-        Limit: 1
-      });
-    });
-  }
-
   /**
    * 过滤掉 ChatType 为联系人的数据
    */
@@ -118,7 +108,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
 
   render() {
     const {
-      chatListData, unreadInfo, lastMsgInfo, chatContentData, selectedChat,
+      chatListData, unreadInfo, lastMsgInfo, selectedChat,
     } = this.props;
     const chatList = this.chatListFilter(chatListData.array);
     const hasChat = chatList.length > 0;

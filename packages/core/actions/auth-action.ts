@@ -6,7 +6,7 @@ import initHeartBeat from './heartbeat';
 import {
   parseToObj
 } from '../lib/storage';
-import { USER_INFO_STORAGE } from '../constant';
+import { USER_INFO_STORAGE, LOGIN_SUCCESS } from '../constant';
 
 let lastUserInfo = localStorage.getItem(USER_INFO_STORAGE);
 
@@ -32,8 +32,7 @@ const defaultAuthStore = {
   isLogin: false,
 };
 
-const runtimeState = Object.assign({}, defaultAuthStore, lastUserInfo ? {
-  ...lastUserInfo,
+const runtimeState = Object.assign({}, defaultAuthStore, lastUserInfo, lastUserInfo ? {
   isLogin: true
 } : {});
 
@@ -52,7 +51,7 @@ async function onLoginSuccess(store, resData) {
     logouting: false,
     isLogin: true,
   };
-  const emitEvent = 'LOGIN_SUCCESS';
+  const emitEvent = LOGIN_SUCCESS;
   const emitData = { userInfo };
 
   stopHeartbeat = initHeartBeat();

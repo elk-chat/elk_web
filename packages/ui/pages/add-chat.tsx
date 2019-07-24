@@ -25,8 +25,6 @@ const getValuesForCheckbox = (contactDataList, exclude: string[]) => {
   return res;
 };
 
-// const checkboxRef = React.createRef();
-
 let checkboxRef;
 let inputRef;
 

@@ -15,18 +15,19 @@ import {
 } from './chat-actions';
 import { fetchContacts } from './contact-actions';
 
-export const INIT = "INIT";
-export function init(dispatch) {
+export const INIT_CHAT = "INIT_CHAT";
+export function initChat(dispatch, callback) {
   return {
-    type: INIT,
+    type: INIT_CHAT,
     dispatch,
+    callback
   };
 }
 
 /**
  * 注册推送事件
  */
-function* initSaga({ dispatch }) {
+function* watchBoard({ dispatch }) {
   function handleStateUpdate(nextState) {
     let mark;
     switch (nextState.MessageType) {
@@ -40,16 +41,18 @@ function* initSaga({ dispatch }) {
     }
     if (mark) {
       /** 如果发送者是自己，则不需要计入 unread count */
-      const { userInfo } = authStore.getState();
-      const { selectedChat, chatContentData } = getChatStore().getState();
-      const selectedChatID = selectedChat.ChatID;
-      const currStateChatID = nextState.ChatID;
-      const myName = userInfo.UserName;
-      const isInChating = !!selectedChatID || (currStateChatID.toString() === (selectedChatID || '').toString());
-      const isMyMsg = nextState.UpdateMessage[mark].SenderName === myName;
-      const currChatContent = chatContentData[currStateChatID] || {};
-      if (!currChatContent.lastState) dispatch(applyFetchChatList());
-      dispatch(receiveChatMessage([nextState], nextState.ChatID, !isMyMsg && !isInChating));
+      // const { userInfo } = authStore.getState();
+      // const { selectedChat, chatContentData } = getChatStore().getState();
+      // const selectedChatID = selectedChat.ChatID;
+      // const currStateChatID = nextState.ChatID;
+      // const myName = userInfo.UserName;
+      // const isInChating = !!selectedChatID || (currStateChatID.toString() === (selectedChatID || '').toString());
+      // const isMyMsg = nextState.UpdateMessage[mark].SenderName === myName;
+      // const currChatContent = chatContentData[currStateChatID] || {};
+      // if (!currChatContent.lastState) {
+      //   dispatch(applyFetchChatList());
+      // }
+      dispatch(receiveChatMessage([nextState], nextState.ChatID));
     }
   }
   yield EventEmitter.on(RECEIVE_STATE_UPDATE, handleStateUpdate);
@@ -69,6 +72,6 @@ function* getInitChatData({ callback }) {
 }
 
 export function* watchInitActions() {
-  yield takeLatest(INIT, initSaga);
+  yield takeLatest(INIT_CHAT, watchBoard);
   yield takeLatest(SYNC_CONTACTS_AND_CHATS, getInitChatData);
 }

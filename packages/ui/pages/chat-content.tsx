@@ -2,8 +2,8 @@ import React from 'react';
 import {
   HasValue, DateFormat, UUID, EventEmitter, DebounceClass
 } from 'basic-helper';
-import { Avatar } from 'ukelli-ui/core/avatar';
 import { Icon } from 'ukelli-ui/core/icon';
+import * as ChatSDK from '@little-chat/sdk/lib';
 // import { VariableSizeList as List } from 'react-window';
 import {
   ChatItemEntity, ChatContentState, UserInfo, FEContentType,
@@ -14,7 +14,7 @@ import {
   RECEIVE_CHAT_MESSAGE
 } from '@little-chat/core/actions';
 import {
-  UploadFile, ReadMsg, CheckMsgReadState
+  UploadFile, ReadMsg, CheckMsgReadState, QueryChatMsgsByCondition
 } from '@little-chat/sdk';
 import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 import Link from '../components/nav-link';
@@ -25,6 +25,7 @@ import {
   GetImgInfo,
 } from '../utils/image-reader';
 import ChatAvatar from '../components/avatar';
+import mergeChatContent from '../utils/merge-chat-content';
 
 interface ChatContentProps {
   applySendMsg: typeof applySendMsg;
@@ -32,8 +33,8 @@ interface ChatContentProps {
   applySyncChatMessage: typeof applySyncChatMessage;
   onQueryHistory: Function;
   selectedChat: ChatItemEntity;
-  chatContentData: ChatContentState;
-  currChatContentData: ChatContentStateInfo;
+  // chatContentData: ChatContentState;
+  // currChatContentData: ChatContentStateInfo;
   userInfo: UserInfo;
 }
 
@@ -41,7 +42,9 @@ interface State {
   page: number;
   limit: number;
   msgPanelHeight: number;
-  showDragArea: boolean;
+  loadingChat: boolean;
+  currChatContentData: ChatContentStateInfo;
+  paging: {};
 }
 
 const debounce = new DebounceClass();
@@ -53,6 +56,8 @@ const MsgTypeClass = {
   1: 'send-msg',
   2: 'add-member',
 };
+
+const ChatContentCache: ChatContentState = {};
 
 export default class ChatContent extends React.PureComponent<ChatContentProps, State> {
   static RightBtns = (props) => {
@@ -96,7 +101,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   msgPanelHeight!: number;
 
-  readState!: {};
+  readState;
 
   msgHeightInfo: {
     [chatIdx: string]: number;
@@ -105,56 +110,95 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   constructor(props: ChatContentProps) {
     super(props);
     this.page = 0;
+    const chatIDStr = props.ChatID.toString();
     this.state = {
       page: 0,
       limit: 12,
       msgPanelHeight: 0,
-      showDragArea: false,
+      loadingChat: true,
+      currChatContentData: ChatContentCache[chatIDStr],
+      paging: {}
     };
-    EventEmitter.on(RECEIVE_CHAT_MESSAGE, this.handleScroll);
     this.editorPanel = React.createRef();
   }
 
   componentDidMount() {
     this.initData();
+    EventEmitter.on(RECEIVE_CHAT_MESSAGE, this.handleReceiveMsg);
   }
 
   componentWillUnmount() {
-    EventEmitter.rm(RECEIVE_CHAT_MESSAGE, this.handleScroll);
     this.props.selectChat('');
+    EventEmitter.rm(RECEIVE_CHAT_MESSAGE, this.handleReceiveMsg);
   }
 
   initData = () => {
     const {
-      currChatContentData, selectedChat, selectChat, ChatID, applySyncChatMessage
+      selectChat, ChatID
     } = this.props;
     selectChat(ChatID);
-    applySyncChatMessage({
-      ChatID,
-      State: currChatContentData.lastState,
-      Limit: 100
-    });
+    QueryChatMsgsByCondition({
+      Paging: {
+        PageSize: 100,
+        PageIndex: 0
+      },
+      Condition: {
+        ChatID,
+        MessageTypes: [FEMessageType.SendMessage, FEMessageType.AddMember]
+      }
+    })
+      .then(({ StateUpdates, Paging }) => {
+        const { ChatID } = this.props;
+        const chatID = ChatID.toString();
+        if (!ChatContentCache[chatID]) {
+          ChatContentCache[chatID] = {
+            lastState: 0,
+            lastData: {},
+            data: []
+          };
+        }
+        const currChatContent = ChatContentCache[chatID].data;
+        const nextContent = mergeChatContent(currChatContent, StateUpdates);
+        const lastData = nextContent[nextContent.length - 1] || {};
+        ChatContentCache[chatID] = {
+          data: nextContent,
+          lastState: lastData.State,
+          lastData,
+        };
+        this.setState({
+          currChatContentData: ChatContentCache[chatID],
+          paging: Paging,
+          loadingChat: false,
+        });
+      });
     CheckMsgReadState({
       ChatID
     }).then((res) => {
-      const { States } = res;
-      this.readState = States;
+      const { State } = res;
+      this.readState = State;
+    });
+  }
+
+  handleReceiveMsg = ({ chatID, chatContent }) => {
+    const { selectedChat } = this.props;
+    const chatIDStr = chatID.toString();
+    if (selectedChat.ChatID && (selectedChat.ChatID.toString() !== chatIDStr)) return;
+    const { currChatContentData } = this.state;
+    const lastData = chatContent[0];
+    this.setState({
+      currChatContentData: {
+        lastData,
+        lastState: lastData.State,
+        data: [...currChatContentData.data, ...chatContent],
+      }
+    }, () => {
+      this.renewMsgPanelHeight();
+      this.handleScroll();
     });
   }
 
   handleScroll = () => {
-    // console.log('123')
     debounce.exec(() => this.scrollToBottom(this.scrollContent), 300);
-  }
-
-  toggleDragArea = (isShow: boolean) => {
-    this.setState({
-      showDragArea: !!isShow
-    });
-  }
-
-  handlePasteText = () => {
-
   }
 
   handlePasteImg = (items: DataTransferItemList) => new Promise((resolve, reject) => {
@@ -180,58 +224,18 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         const nextText = this.getTextContent() + text;
         this.setTextContent(nextText);
       });
-
-    // switch (true) {
-    //   case items.length >= 2:
-    //     break;
-    //   default:
-    //     break;
-    // }
-  }
-
-  addImgToPanel(img) {
-    if (!img) return;
-    const { previewGroup } = this;
-    previewGroup && previewGroup.appendChild(img);
-  }
-
-  queryHistory(nextProps, skip, scrollToBtn = true) {
-    const { limit } = this.state;
-    const { selectedChat, onQueryHistory } = nextProps;
-
-    const currChart = this.props.currChatContentData.data;
-    const lastId = currChart.length > 0 ? currChart[0].ChatID : 0;
-
-    const queryData = {
-      ToUserType: selectedChat.ToUserType,
-      ToUserName: selectedChat.ToUserName,
-      FromUserType: 'user',
-      chatId: selectedChat.ID,
-      lastId,
-      limit,
-      skip: HasValue(skip) ? skip : this.page * limit
-    };
-
-    onQueryHistory(queryData);
-  }
-
-  queryNext() {
-    const currMsgLen = this.props.currChatContentData.data.length;
-    this.queryHistory(this.props, currMsgLen, false);
-    ++this.page;
   }
 
   readMsg = () => {
-    const { selectedChat, currChatContentData } = this.props;
-    const { lastData, lastState } = currChatContentData;
-    const { MessageID } = lastData;
+    const { selectedChat } = this.props;
+    const { currChatContentData } = this.state;
+    const { lastState = '' } = currChatContentData;
     if (this.readState) {
-      const readState = this.readState.StateRead.toString();
-      if (readState < lastState) {
+      const readStateNum = +(this.readState.State.toString());
+      const lastStateNum = +(lastState.toString());
+      if (readStateNum < lastStateNum) {
         ReadMsg({
           ChatID: selectedChat.ChatID,
-          MessageID,
-          MessageType: lastData.MessageType,
           StateRead: lastState
         });
       }
@@ -243,24 +247,22 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     if (e) {
       setTimeout(() => {
         e.scrollTop = this.msgPanelHeight;
-        setTimeout(() => {
-          e.classList.add('ready');
-        }, 100);
+        if (!e.classList.contains('ready')) {
+          setTimeout(() => {
+            e.classList.add('ready');
+          }, 100);
+        }
       }, 10);
     }
     this.readMsg();
   }
 
-  addFileFromInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  loadFileFromInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target && e.target.files.length !== 0) {
-      this.loadFile(e.target.files);
+      ImageReader(files[0]).then((res) => {
+        this.uploadFile(res);
+      });
     }
-  }
-
-  loadFile = async (files: FileList) => {
-    ImageReader(files[0]).then((res) => {
-      this.uploadFile(res);
-    });
   }
 
   uploadFile = async (uploadParams: {
@@ -297,7 +299,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         break;
     }
     if (_msg === '') return;
-    const { selectedChat, currChatContentData } = this.props;
+    const { selectedChat } = this.props;
+    const { currChatContentData } = this.state;
 
     const sendMsgData = Object.assign({}, {
       ChatID: selectedChat.ChatID,
@@ -316,15 +319,16 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   getChatMsgs = () => {
     const {
-      currChatContentData = {}, userInfo, selectedChat
+      userInfo, selectedChat
     } = this.props;
+    const { currChatContentData } = this.state;
     const { UsersRef } = selectedChat;
     const isGroupChat = selectedChat.ChatType === 1;
     const myName = userInfo.UserName;
     let prevTime = 0;
     const { data = [] } = currChatContentData;
 
-    const msgRow = [];
+    const msgRow: any[] = [];
     data.forEach((currMsg, idx) => {
       const currMsgRes = chatContentFilter(currMsg);
       const {
@@ -361,9 +365,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           const propForC = isMe ? {} : {
             Com: 'ContactDetail',
             Title: SenderName,
-            params: {
+            params: currUser ? {
               UserID: currUser.UserID.toString()
-            }
+            } : {}
           };
           msgUnit = (
             <React.Fragment>
@@ -433,21 +437,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   }
 
   renderChatMsgs() {
-    // const { msgPanelHeight } = this.state;
     const msgRow = this.getChatMsgs();
     return msgRow;
-    // return msgPanelHeight && (
-    //   <List
-    //     height={msgPanelHeight}
-    //     itemCount={msgRow.length}
-    //     itemSize={(idx) => {
-    //       return this.msgHeightInfo[idx] || 44;
-    //     }}>
-    //     {
-    //       ({ index }) => msgRow[index]
-    //     }
-    //   </List>
-    // );
   }
 
   saveMsgPanel = (e) => { this.msgPanel = e; };
@@ -458,12 +449,16 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   // };
 
   setTextContent = (nextContent) => {
-    if (this.editorPanel) this.editorPanel.current.innerHTML = nextContent;
+    if (this.editorPanel && this.editorPanel.current) {
+      this.editorPanel.current.innerHTML = nextContent;
+    }
   }
 
   getTextContent = () => {
     let res = '';
-    if (this.editorPanel) res = this.editorPanel.current.innerHTML;
+    if (this.editorPanel && this.editorPanel.current) {
+      res = this.editorPanel.current.innerHTML;
+    }
     return res;
   }
 
@@ -484,8 +479,10 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   }
 
   editorInout = (e) => {
-    const { offsetHeight } = this.editorDOM;
-    this.setMsgPanelPadding(offsetHeight);
+    if (this.editorDOM) {
+      const { offsetHeight } = this.editorDOM;
+      this.setMsgPanelPadding(offsetHeight);
+    }
   }
 
   editorKeyPress = (e) => {
@@ -509,7 +506,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   }
 
   render() {
-    const { currChatContentData } = this.props;
+    const { currChatContentData } = this.state;
     if (!currChatContentData) return null;
     const chatPanelContainer = (
       <div className="msg-panel-container" ref={(e) => {
@@ -535,7 +532,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           onFocus={this.editorFocus}
           onInput={this.editorInout}
           onClickSendBtn={this.editorClickToSend}
-          onSelectedImg={this.addFileFromInput}
+          onSelectedImg={this.loadFileFromInput}
           onKeyPress={this.editorKeyPress}
           ref={this.editorPanel} />
       </section>

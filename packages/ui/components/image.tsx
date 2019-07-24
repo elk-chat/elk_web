@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
-import { DownloadFile, GetFileState } from '@little-chat/sdk';
 import { Call } from 'basic-helper';
+import getFileSrc from '../utils/get-file-src';
 
 const ImageViwer = ({ src, ID }) => (
   <img className="img" alt="" src={src} onLoad={(e) => {
@@ -11,17 +11,21 @@ const ImageViwer = ({ src, ID }) => (
   }} id={ID} />
 );
 
+const Cache = {};
+
 export default (props) => {
   const { FileID, onLoad } = props;
   if (!FileID) return null;
-  const [imgSrc, setImg] = React.useState('');
   const ID = FileID.toString();
+  const srcFromCacha = Cache[ID];
+  const [imgSrc, setImg] = React.useState(srcFromCacha);
   React.useEffect(() => {
-    GetFileState({
-      FileID
-    }).then((res) => {
-      setImg(res.File.URL);
-    });
+    if (FileID && !srcFromCacha) {
+      getFileSrc(FileID).then((fileSrc) => {
+        setImg(fileSrc);
+        Cache[ID] = fileSrc;
+      });
+    }
   }, [FileID]);
   return (
     <div id={ID} className="img-wrapper" onClick={(e) => {

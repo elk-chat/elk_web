@@ -1,30 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar } from 'ukelli-ui/core/avatar';
-import { GetFileState } from '@little-chat/sdk';
+import getFileSrc from '../utils/get-file-src';
 
 interface ChatAvatarProps {
   AvatarFileID: Long | string;
   UserName?: string;
 }
 
-const getAvatarSrc = async (AvatarFileID) => {
-  const remoteFileInfo = await GetFileState({
-    FileID: AvatarFileID
-  });
-  const avatarSrc = remoteFileInfo.File.URL;
-  return avatarSrc;
-};
-
 const AvatarCache = {};
 
 const ChatAvatar: React.SFC<ChatAvatarProps> = (props) => {
   const { AvatarFileID = '', UserName = '', ...other } = props;
   const strID = AvatarFileID.toString();
-  const [avatarSrc, setAvatarSrc] = useState(AvatarCache[strID]);
+  const srcFromCacha = AvatarCache[strID];
+  const [avatarSrc, setAvatarSrc] = useState(srcFromCacha);
 
   useEffect(() => {
-    if (AvatarFileID && !AvatarCache[strID]) {
-      getAvatarSrc(AvatarFileID).then((src) => {
+    if (AvatarFileID && !srcFromCacha) {
+      getFileSrc(AvatarFileID).then((src) => {
         setAvatarSrc(src);
         AvatarCache[strID] = src;
       });
@@ -38,7 +31,5 @@ const ChatAvatar: React.SFC<ChatAvatarProps> = (props) => {
     </Avatar>
   );
 };
-
-export { getAvatarSrc };
 
 export default ChatAvatar;

@@ -128,9 +128,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const {
       currChatContentData, selectedChat, selectChat, ChatID, applySyncChatMessage
     } = this.props;
-    // if (selectedChat.ChatID !== ChatID) {
-    //   /** 处理由浏览器前进后退事件触发的选择 Chat */
-    // }
     selectChat(ChatID);
     applySyncChatMessage({
       ChatID,
@@ -362,7 +359,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
               break;
           }
           const C = isMe ? 'div' : Link;
-          const currUser = UsersRef[SenderName];
+          const currUser = isMe ? userInfo : UsersRef[SenderName];
           const propForC = isMe ? {} : {
             Com: 'ContactDetail',
             Title: SenderName,

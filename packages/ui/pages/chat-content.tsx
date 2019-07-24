@@ -114,7 +114,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     this.state = {
       page: 0,
       limit: 12,
-      msgPanelHeight: 0,
       loadingChat: true,
       currChatContentData: ChatContentCache[chatIDStr],
       paging: {}
@@ -192,8 +191,10 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         data: [...currChatContentData.data, ...chatContent],
       }
     }, () => {
-      this.renewMsgPanelHeight();
-      this.handleScroll();
+      setTimeout(() => {
+        this.renewMsgPanelHeight();
+        this.handleScroll();
+      }, 10);
     });
   }
 
@@ -247,6 +248,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     if (e) {
       setTimeout(() => {
         e.scrollTop = this.msgPanelHeight;
+        console.log(this.msgPanelHeight);
         if (!e.classList.contains('ready')) {
           setTimeout(() => {
             e.classList.add('ready');

@@ -248,7 +248,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     if (e) {
       setTimeout(() => {
         e.scrollTop = this.msgPanelHeight;
-        console.log(this.msgPanelHeight);
         if (!e.classList.contains('ready')) {
           setTimeout(() => {
             e.classList.add('ready');

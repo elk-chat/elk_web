@@ -166,6 +166,14 @@ message UserUpdateProfileReq {
 message UserUpdateProfileResp {
 }
 
+message UserChangePasswordReq {
+  string OldPassword = 1;
+  string NewPassword = 2;
+}
+
+message UserChangePasswordResp {
+}
+
 message UserGetFullUserReq {
   int64 UserID = 1;
 }
@@ -316,6 +324,14 @@ message ChatDeleteMemberReq {
 message ChatDeleteMemberResp {
 }
 
+message ChatUpdateProfileReq {
+  int64 ChatID = 1;
+  string Title = 2;
+  int64 AvatarFileID = 3;
+}
+
+message ChatUpdateProfileResp {
+}
 
 message Member {
   int64 UserID = 1;

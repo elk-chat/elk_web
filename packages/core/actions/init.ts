@@ -11,7 +11,7 @@ import { authStore } from './auth-action';
 import { FEMessageType } from '../types';
 import { getStore as getChatStore } from '../store';
 import {
-  receiveChatMessage, getChatList, applyFetchChatList, applySyncChatMessage
+  receiveChatMessage, getChatList, applyFetchChatList
 } from './chat-actions';
 import { fetchContacts } from './contact-actions';
 
@@ -50,10 +50,6 @@ function* initSaga({ dispatch }) {
       const currChatContent = chatContentData[currStateChatID] || {};
       if (!currChatContent.lastState) dispatch(applyFetchChatList());
       dispatch(receiveChatMessage([nextState], nextState.ChatID, !isMyMsg && !isInChating));
-      // dispatch(applySyncChatMessage({
-      //   ChatID: currStateChatID,
-      //   State: currChatContent.lastState
-      // }));
     }
   }
   yield EventEmitter.on(RECEIVE_STATE_UPDATE, handleStateUpdate);

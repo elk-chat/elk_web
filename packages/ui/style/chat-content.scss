@@ -71,7 +71,9 @@ $headerH: 40px;
     background-color: $chatContainerBgColor;
     opacity: 0;
     -webkit-overflow-scrolling: touch;
+    transition: opacity ease 0.1s;
     &.ready {
+      scroll-behavior: smooth;
       opacity: 1;
     }
   }

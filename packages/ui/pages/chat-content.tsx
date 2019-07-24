@@ -131,7 +131,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     selectChat(ChatID);
     applySyncChatMessage({
       ChatID,
-      State: currChatContentData.lastState
+      State: currChatContentData.lastState,
+      Limit: 100
     });
     CheckMsgReadState({
       ChatID
@@ -242,8 +243,10 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     if (e) {
       setTimeout(() => {
         e.scrollTop = this.msgPanelHeight;
-        e.classList.add('ready');
-      });
+        setTimeout(() => {
+          e.classList.add('ready');
+        }, 100);
+      }, 10);
     }
     this.readMsg();
   }
@@ -258,11 +261,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     ImageReader(files[0]).then((res) => {
       this.uploadFile(res);
     });
-    // files.forEach((file) => {
-    //   ImageReader(file).then((res) => {
-    //     this.uploadFile(res);
-    //   });
-    // });
   }
 
   uploadFile = async (uploadParams: {

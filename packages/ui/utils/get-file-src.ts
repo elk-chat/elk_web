@@ -1,16 +1,49 @@
 import { GetFileState } from '@little-chat/sdk';
+import Storage from 'basic-helper/storage';
 
+const FILE_SRC_CACHE = 'FILE_SRC_CACHE';
+const Cache = (() => {
+  const cache = Storage.getItem(FILE_SRC_CACHE);
+  let res;
+  if (cache) {
+    try {
+      res = JSON.parse(cache);
+    } catch (e) {
+      res = {};
+    }
+  }
+  return res || {};
+})();
 /**
  * 返回 File 的 src
  */
 const getFileSrc = FileID => new Promise((resolve, reject) => {
-  GetFileState({
-    FileID
-  })
-    .then(({ File }) => {
-      resolve(File.URL);
+  const IDStr = FileID.toString();
+  const dataFromCache = Cache[IDStr];
+  if (dataFromCache) {
+    resolve(dataFromCache);
+  } else if (IDStr) {
+    GetFileState({
+      FileID
     })
-    .catch(reject);
+      .then(({ File }) => {
+        Cache[IDStr] = File.URL;
+        Storage.setItem(FILE_SRC_CACHE, Cache);
+        resolve(File.URL);
+      })
+      .catch(reject);
+  } else {
+    reject('需要传入 FileID');
+  }
 });
+
+const getFileSrcFromCache = (FileID) => {
+  if (FileID) {
+    return Cache[FileID.toString()];
+  }
+  return null;
+};
+
+export { getFileSrcFromCache };
 
 export default getFileSrc;

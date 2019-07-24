@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { Call } from 'basic-helper';
-import getFileSrc from '../utils/get-file-src';
+import getFileSrc, { getFileSrcFromCache } from '../utils/get-file-src';
 
 const ImageViwer = ({ src, ID }) => (
   <img className="img" alt="" src={src} onLoad={(e) => {
@@ -11,19 +11,16 @@ const ImageViwer = ({ src, ID }) => (
   }} id={ID} />
 );
 
-const Cache = {};
-
 export default (props) => {
   const { FileID, onLoad } = props;
   if (!FileID) return null;
   const ID = FileID.toString();
-  const srcFromCacha = Cache[ID];
+  const srcFromCacha = getFileSrcFromCache(ID);
   const [imgSrc, setImg] = React.useState(srcFromCacha);
   React.useEffect(() => {
     if (FileID && !srcFromCacha) {
       getFileSrc(FileID).then((fileSrc) => {
         setImg(fileSrc);
-        Cache[ID] = fileSrc;
       });
     }
   }, [FileID]);

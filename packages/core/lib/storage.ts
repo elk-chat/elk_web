@@ -52,7 +52,7 @@ export function setStorage(storageKey: string, content: any, userID?) {
 export function getStorage(storageKey: string, userID?) {
   const UserID = userIDFilter(userID);
 
-  if (!HasValue(UserID)) return;
+  if (!HasValue(UserID)) return null;
 
   const currStorage = StorageCache[UserID];
 

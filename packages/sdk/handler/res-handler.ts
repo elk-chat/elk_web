@@ -90,6 +90,9 @@ function messageResHandler(msgData: DecodedDataStruct) {
     case SigMethod.SIG_USER_GET_CHAT_USER_STATE_RESP:
       api = SDK.kproto.UserGetChatUserStateResp;
       break;
+    case SigMethod.SIG_CHAT_GET_CHAT_STATE_MESSAGES_RESP:
+      api = SDK.kproto.ChatGetChatStateMessagesResp;
+      break;
   }
   if (api) {
     res.Data = api.decode(msgData.DataBuf);

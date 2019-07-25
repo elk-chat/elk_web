@@ -14,16 +14,14 @@ import {
 import {
   UploadFile, ReadMsg, CheckMsgReadState, QueryChatMsgsByCondition
 } from '@little-chat/sdk';
-import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 import Link from '../components/nav-link';
 import Editor from '../components/editor';
-import Image from '../components/image';
 import {
   ImageReader,
   GetImgInfo,
 } from '../utils/image-reader';
-import ChatAvatar from '../components/avatar';
 import mergeChatContent from '../utils/merge-chat-content';
+import ChatMsgRender from '../components/chat-msg-render';
 
 interface ChatContentProps {
   applySendMsg: typeof applySendMsg;
@@ -46,15 +44,6 @@ interface State {
 }
 
 const debounce = new DebounceClass();
-
-const timeDisplayDelay = 5 * 60;
-
-/** 对应 MessageType */
-const MsgTypeClass = {
-  1: 'send-msg',
-  2: 'add-member',
-};
-
 const ChatContentCache: ChatContentState = {};
 
 export default class ChatContent extends React.PureComponent<ChatContentProps, State> {
@@ -228,11 +217,11 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   readMsg = () => {
     const { selectedChat } = this.props;
     const { currChatContentData } = this.state;
-    const { lastState = '' } = currChatContentData;
+    const { lastState = 0 } = currChatContentData;
     if (this.readState) {
       const readStateNum = +(this.readState.StateRead.toString());
       const lastStateNum = +(lastState.toString());
-      if (readStateNum <= lastStateNum) {
+      if (lastState && readStateNum <= lastStateNum) {
         ReadMsg({
           ChatID: selectedChat.ChatID,
           StateRead: lastState
@@ -318,130 +307,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     if (this.editorDOM) this.setMsgPanelPadding(this.editorDOM.offsetHeight);
   }
 
-  getChatMsgs = () => {
-    const {
-      userInfo, selectedChat
-    } = this.props;
-    const { currChatContentData } = this.state;
-    const { UsersRef } = selectedChat;
-    const isGroupChat = selectedChat.ChatType === 1;
-    const myName = userInfo.UserName;
-    let prevTime = 0;
-    const { data = [] } = currChatContentData;
-
-    const msgRow: any[] = [];
-    data.forEach((currMsg, idx) => {
-      const currMsgRes = chatContentFilter(currMsg);
-      const {
-        MessageID, Message, SenderName, FileID, ActionTime,
-        AddedMemeberName
-      } = currMsgRes;
-
-      let timeElem;
-      let msgUnit;
-      let isMe;
-      let actionTime;
-
-      switch (currMsg.MessageType) {
-        case FEMessageType.SendMessage:
-          let message;
-          actionTime = ActionTime;
-          isMe = SenderName === myName;
-          switch (currMsgRes.ContentType) {
-            case FEContentType.Image:
-              message = (
-                <Image FileID={FileID}
-                  onLoad={(e) => {
-                    this.renewMsgPanelHeight();
-                    this.scrollToBottom(this.scrollContent);
-                  }}/>
-              );
-              break;
-            case FEContentType.Text:
-              message = Message;
-              break;
-          }
-          const C = isMe ? 'div' : Link;
-          const currUser = isMe ? userInfo : UsersRef[SenderName];
-          const propForC = isMe ? {} : {
-            Com: 'ContactDetail',
-            Title: SenderName,
-            params: currUser ? {
-              UserID: currUser.UserID.toString()
-            } : {}
-          };
-          msgUnit = (
-            <React.Fragment>
-              <C
-                onClick={(e) => {
-                  // selectContact(contactData[selectedChat.ContactID]);
-                }}
-                {...propForC}>
-                <ChatAvatar
-                  AvatarFileID={currUser ? currUser.AvatarFileID : ''}
-                  text={SenderName[0]}
-                  size={30} />
-                {/* <Avatar size={30}>
-                  {SenderName[0]}
-                </Avatar> */}
-              </C>
-              <div className="unit">
-                {
-                  !isMe && isGroupChat && <div className="username">{SenderName}</div>
-                }
-                <span className="msg">{message}</span>
-              </div>
-            </React.Fragment>
-          );
-          break;
-        case FEMessageType.AddMember:
-          // const { AddedMemeberName, ActionTime } = UpdateMessage.UpdateMessageChatAddMember;
-          actionTime = ActionTime;
-          msgUnit = (
-            <span className="msg">{AddedMemeberName} 加入了聊天</span>
-          );
-          break;
-        default:
-          return;
-      }
-
-      const timeout = actionTime - prevTime > timeDisplayDelay;
-      if (timeout) {
-        prevTime = actionTime;
-        timeElem = (
-          <div className="time-devide">
-            <time>{DateFormat(actionTime * 1000, 'YYYY-MM-DD hh:mm:ss')}</time>
-            {/* <div className="divide"></div> */}
-          </div>
-        );
-      }
-
-      const msgBubbleClass = 'bubble';
-      let bubbleClass = msgBubbleClass;
-      if (isMe) bubbleClass += ' me';
-      if (timeout) bubbleClass += ' divide';
-
-      const itemElem = (
-        <div
-          className={bubbleClass} key={MessageID.toString()}>
-          {timeElem}
-          <div className={`msg-item ${MsgTypeClass[currMsg.MessageType]}`}>
-            {msgUnit}
-          </div>
-        </div>
-      );
-
-      msgRow.push(itemElem);
-    });
-
-    return msgRow;
-  }
-
-  renderChatMsgs() {
-    const msgRow = this.getChatMsgs();
-    return msgRow;
-  }
-
   saveMsgPanel = (e) => { this.msgPanel = e; };
 
   // saveEditprPanel = (e) => {
@@ -476,14 +341,16 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   editorDidMount = (editorDOM) => {
     this.editorDOM = editorDOM;
-    if (editorDOM) this.setMsgPanelPadding(editorDOM.offsetHeight);
+    // if (editorDOM) this.setMsgPanelPadding(editorDOM.offsetHeight);
+    if (editorDOM) this.scrollToBottom(this.scrollContent);
   }
 
   editorInout = (e) => {
-    if (this.editorDOM) {
-      const { offsetHeight } = this.editorDOM;
-      this.setMsgPanelPadding(offsetHeight);
-    }
+    // if (this.editorDOM) {
+    //   const { offsetHeight } = this.editorDOM;
+    //   this.setMsgPanelPadding(offsetHeight);
+    // }
+    this.scrollToBottom(this.scrollContent);
   }
 
   editorKeyPress = (e) => {
@@ -506,7 +373,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     }
   }
 
+  handleImgLoad = () => {
+    this.renewMsgPanelHeight();
+    this.scrollToBottom(this.scrollContent);
+  }
+
   render() {
+    const { selectedChat, userInfo } = this.props;
     const { currChatContentData } = this.state;
     if (!currChatContentData) return null;
     const chatPanelContainer = (
@@ -517,7 +390,11 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         }
       }}>
         <div className="msg-panel" ref={this.saveMsgPanel}>
-          {this.renderChatMsgs()}
+          <ChatMsgRender
+            currChatContentData={currChatContentData}
+            selectedChat={selectedChat}
+            userInfo={userInfo}
+            onImgLoad={this.handleImgLoad} />
         </div>
       </div>
     );

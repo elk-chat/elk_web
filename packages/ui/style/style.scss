@@ -21,17 +21,17 @@
     background-color: rgba(40, 44, 52, 0.95);
     .container {
       background-color: #EEE;
-      // width: 80vw;
-      // height: 90vh;
       margin: 0 auto;
       height: 100%;
       min-width: 320px;
       min-height: 320px;
       max-width: 1024px;
       max-height: 768px;
+      width: 80vw;
       position: relative;
       box-shadow: 0 5px 10px rgba(#000, 0.1);
       z-index: 11;
+      transition: width 0.3s ease;
     }
     .bg-img {
       opacity: 0.5;
@@ -45,6 +45,11 @@
     }
     .navigator-page {
       left: 100% - $navigatorPageWidth;
+    }
+    &.unlog {
+      .container {
+        width: 360px;
+      }
     }
   }
 }

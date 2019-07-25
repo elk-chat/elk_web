@@ -90,7 +90,7 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
     } = this.props;
     const { isMobile } = this.state;
     return (
-      <div className={`little-chat-app ${isMobile ? 'mobile' : 'pc'}`}>
+      <div className={`little-chat-app ${isMobile ? 'mobile' : 'pc'} ${isLogin ? 'logged' : 'unlog'}`}>
         <div className="container">
           <AuthSelector
             applyLogin={applyLogin}

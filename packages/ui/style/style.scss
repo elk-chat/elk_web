@@ -31,7 +31,9 @@
       position: relative;
       box-shadow: 0 5px 10px rgba(#000, 0.1);
       z-index: 11;
-      transition: width 0.3s ease;
+      transition: all 0.3s ease-in-out;
+      border-radius: 5px;
+      overflow: hidden;
     }
     .bg-img {
       opacity: 0.5;
@@ -49,6 +51,7 @@
     &.unlog {
       .container {
         width: 360px;
+        height: 400px;
       }
     }
   }

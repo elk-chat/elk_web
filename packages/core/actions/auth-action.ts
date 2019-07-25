@@ -60,6 +60,8 @@ async function onLoginSuccess(store, resData) {
     userInfo,
   }));
 
+  Object.assign(runtimeState, nextLoginInfo);
+
   store.setState(nextLoginInfo);
 
   EventEmitter.emit(emitEvent, emitData);

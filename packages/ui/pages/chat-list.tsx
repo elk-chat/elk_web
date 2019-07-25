@@ -10,7 +10,6 @@ import {
   UserInfo, ChatItemEntity, ChatListEntity, ChatType, FEContentType, FEMessageType
 } from '@little-chat/core/types';
 // import { selectChat } from '@little-chat/core/actions';
-import { Link } from 'react-multiple-router';
 import NavLink from '../components/nav-link';
 import AddChatPanel from './add-chat';
 import {
@@ -165,12 +164,12 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
         }
       </div>
     ) : (
-      <Link
-        to={CONTACT}>
+      <NavLink
+        Com="SearchContact" Title="搜索联系人" className="link">
         <div className="no-chat-tip p20">
           请添加一个联系人开始
         </div>
-      </Link>
+      </NavLink>
     );
   }
 }

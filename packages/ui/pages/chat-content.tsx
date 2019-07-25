@@ -136,6 +136,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       })
         .then(({ StateUpdates, Paging }) => {
           this.handleReceiveData(StateUpdates, Paging);
+        })
+        .catch((e) => {
+          console.log(e);
         });
     } else {
       SyncChatMessage({
@@ -351,7 +354,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     // TODO: 实现 command + enter 换行
     if (e.charCode === 13) {
       e.preventDefault();
-      let textContent = e.target.textContent;
+      let { textContent } = e.target;
       // let val = e.target.innerHTML;
       textContent = textContent.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
       this.onSendMsg(textContent, FEContentType.Text);
@@ -384,13 +387,11 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           this.msgPanelHeight = e.offsetHeight;
         }
       }}>
-        {/* <div className="msg-panel" ref={this.saveMsgPanel}> */}
         <ChatMsgRender
           currChatContentData={currChatContentData}
           selectedChat={selectedChat}
           userInfo={userInfo}
           onImgLoad={this.handleImgLoad} />
-        {/* </div> */}
       </div>
     );
 

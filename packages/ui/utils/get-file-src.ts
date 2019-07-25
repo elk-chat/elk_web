@@ -38,7 +38,7 @@ const getFileSrc = FileID => new Promise((resolve, reject) => {
 });
 
 const getFileSrcFromCache = (FileID) => {
-  if (FileID) {
+  if (FileID && typeof FileID == 'string') {
     return Cache[FileID.toString()];
   }
   return null;

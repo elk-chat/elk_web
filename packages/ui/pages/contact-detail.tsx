@@ -2,20 +2,19 @@ import React, { useState } from 'react';
 import {
   UserInfo, ContactEntity, ChatListEntity, ContactState
 } from '@little-chat/core/types';
-import { Avatar } from 'ukelli-ui/core/avatar';
 import { Button } from 'ukelli-ui/core/button';
 import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
-import { selectChat } from '@little-chat/core/actions';
 import { AddContact, InitPeerChat, GetFullUser } from '@little-chat/sdk';
-import { CONTACT } from '../config/path-mapper';
 
+import { CONTACT } from '../config/path-mapper';
 import Link from '../components/nav-link';
+import Avatar from '../components/avatar';
 
 interface ContactDetailProps extends UserInfo {
   selectedContact: ContactEntity;
   chatListData: ChatListEntity;
   onNavigate: Function;
-  selectChat: typeof selectChat;
+  selectChat: Function;
   contactData: ContactState;
 }
 
@@ -89,7 +88,7 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
     this.props.applyGetContacts();
     this.props.applyFetchChatList();
     callback(res);
-    adding = false;
+    this.adding = false;
   }
 
   isMyContact = () => {
@@ -99,17 +98,14 @@ export default class ContactDetail extends React.PureComponent<ContactDetailProp
 
   render() {
     const { contactDetail, peerChatID } = this.state;
-    const { UserID, UserName = '' } = contactDetail;
-    const userAvatar = contactDetail.Avatar;
+    const { UserID, UserName = '', AvatarFileID } = contactDetail;
     const isMyContact = this.isMyContact();
     const chatIDStr = peerChatID.toString();
 
     return (
       <div className="contact-detail">
         <div className="contact-info">
-          <Avatar size={50}>
-            {userAvatar || UserName[0]}
-          </Avatar>
+          <Avatar size={50} AvatarFileID={AvatarFileID} text={UserName[0]} />
           <span className="username">{UserName}</span>
         </div>
         <div className="action-group">

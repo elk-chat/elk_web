@@ -5,6 +5,7 @@ import { SearchUser } from '@little-chat/sdk';
 
 import { Call } from 'basic-helper';
 import Link from '../components/nav-link';
+import Avatar from '../components/avatar';
 
 interface SearchContactProps {
 }
@@ -67,7 +68,7 @@ export default class SearchContact extends React.Component<SearchContactProps> {
               <div className="list">
                 {
                   searchRes.map((item) => {
-                    const { UserName, UserID } = item;
+                    const { UserName, UserID, AvatarFileID } = item;
                     const userID = UserID.toString();
                     return (
                       <ActionComponent
@@ -77,12 +78,15 @@ export default class SearchContact extends React.Component<SearchContactProps> {
                           UserName,
                           UserID: userID
                         }}
-                        className="list-item"
+                        className="list-item layout a-i-c _btn"
                         onClick={(e) => {
                           Call(onAction, item);
                         }}
                         key={userID}>
-                        {UserName}
+                        <Avatar size={50} AvatarFileID={AvatarFileID} text={UserName[0]} />
+                        <span className="ms10">
+                          {UserName}
+                        </span>
                       </ActionComponent>
                     );
                   })

@@ -76,7 +76,6 @@ const authActions = store => ({
     if (!runtimeState.userInfo.Token) {
       store.setState({
         isLogin: false,
-        loginResDesc: 'Token 失效'
       });
     } else {
       try {

@@ -8,6 +8,7 @@ import { LOGIN_SUCCESS } from '@little-chat/core/constant';
 import { connect } from 'react-redux';
 import { Call, EventEmitter } from "basic-helper";
 
+import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 import pageRoutersConfig from './config/page-routers';
 import getTabRouteConfig from './config/tab-routers';
 import navRoutersConfig from './config/navigator-routers';
@@ -108,10 +109,20 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
         totalUnreadCount: getTotalUnreadCount(nextUnreadInfo)
       };
     });
+    this.notifyMsg(chatContent[0]);
+  }
+
+  notifyMsg = (chatContent) => {
+    const chatContentRes = chatContentFilter(chatContent);
+    if (window.Notification && Notification.permission === 'granted') {
+      const { SenderName, Message } = chatContentRes;
+      const NotifyObj = new Notification('新消息', {
+        body: Message
+      });
+    }
   }
 
   handleReceiveUnreadData = (unreadData) => {
-    console.log(unreadData)
     this.setState({
       unreadInfo: unreadData,
       totalUnreadCount: getTotalUnreadCount(unreadData)

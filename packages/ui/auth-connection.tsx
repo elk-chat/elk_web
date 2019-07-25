@@ -32,6 +32,16 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
     document.addEventListener("visibilitychange", this.handleVisibilityChange);
     document.addEventListener("resize", this.handleResize);
     EventEmitter.on(SESSION_TIMEOUT, this.reconnect);
+
+    /** 向浏览器申请发送通知的权限 */
+    if (window.Notification && Notification.permission !== 'granted') {
+      Notification.requestPermission((status) => {
+        // 这将使我们能在 Chrome/Safari 中使用 Notification.permission
+        if (Notification.permission !== status) {
+          Notification.permission = status;
+        }
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -47,13 +57,14 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
    *   2-1. 如果已断开链接，再调用自动登陆
    */
   handleVisibilityChange = () => {
+    const { isMobile } = this.state;
     const isVisibility = !document.hidden;
     if (isVisibility) {
       const isConnecting = CheckConnectState();
       if (!isConnecting) {
         this.reconnect();
       }
-    } else {
+    } else if (isMobile) {
       CloseWS();
     }
   }

@@ -8,7 +8,9 @@ interface ChatAvatarProps {
 }
 
 const ChatAvatar: React.SFC<ChatAvatarProps> = (props) => {
-  const { AvatarFileID = '', UserName = '', ...other } = props;
+  const {
+    AvatarFileID = '', UserName = '', text, ...other
+  } = props;
   const strID = AvatarFileID.toString();
   const srcFromCacha = getFileSrcFromCache(strID);
   const [avatarSrc, setAvatarSrc] = useState(srcFromCacha);
@@ -23,9 +25,7 @@ const ChatAvatar: React.SFC<ChatAvatarProps> = (props) => {
   }, [AvatarFileID]);
 
   return (
-    <Avatar src={avatarSrc} {...other}>
-      {UserName[0] || ''}
-    </Avatar>
+    <Avatar key={avatarSrc} src={avatarSrc || srcFromCacha} {...other} text={text || UserName[0]} />
   );
 };
 

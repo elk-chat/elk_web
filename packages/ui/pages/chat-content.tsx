@@ -1,18 +1,20 @@
 import React from 'react';
 import {
-  HasValue, DateFormat, UUID, EventEmitter, DebounceClass
+  EventEmitter, DebounceClass
 } from 'basic-helper';
 import { Icon } from 'ukelli-ui/core/icon';
+import { Loading } from 'ukelli-ui/core/loading';
 import {
   ChatItemEntity, ChatContentState, UserInfo, FEContentType,
   FEMessageType, ChatContentStateInfo
 } from '@little-chat/core/types';
 import {
-  selectContact, applySendMsg, applySyncChatMessage,
+  selectContact, applySendMsg,
   RECEIVE_CHAT_MESSAGE
 } from '@little-chat/core/actions';
 import {
-  UploadFile, ReadMsg, CheckMsgReadState, QueryChatMsgsByCondition
+  UploadFile, ReadMsg, CheckMsgReadState, QueryChatMsgsByCondition,
+  SyncChatMessage
 } from '@little-chat/sdk';
 import Link from '../components/nav-link';
 import Editor from '../components/editor';
@@ -26,11 +28,8 @@ import ChatMsgRender from '../components/chat-msg-render';
 interface ChatContentProps {
   applySendMsg: typeof applySendMsg;
   selectContact: typeof selectContact;
-  applySyncChatMessage: typeof applySyncChatMessage;
   onQueryHistory: Function;
   selectedChat: ChatItemEntity;
-  // chatContentData: ChatContentState;
-  // currChatContentData: ChatContentStateInfo;
   userInfo: UserInfo;
 }
 
@@ -122,46 +121,61 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const {
       selectChat, ChatID
     } = this.props;
+    const { currChatContentData } = this.state;
     selectChat(ChatID);
-    QueryChatMsgsByCondition({
-      Paging: {
-        PageSize: 100,
-        PageIndex: 0
-      },
-      Condition: {
-        ChatID,
-        MessageTypes: [FEMessageType.SendMessage, FEMessageType.AddMember]
-      }
-    })
-      .then(({ StateUpdates, Paging }) => {
-        const { ChatID } = this.props;
-        const chatID = ChatID.toString();
-        if (!ChatContentCache[chatID]) {
-          ChatContentCache[chatID] = {
-            lastState: 0,
-            lastData: {},
-            data: []
-          };
+    if (!currChatContentData) {
+      QueryChatMsgsByCondition({
+        Paging: {
+          PageSize: 100,
+          PageIndex: 0
+        },
+        Condition: {
+          ChatID,
+          MessageTypes: [FEMessageType.SendMessage, FEMessageType.AddMember]
         }
-        const currChatContent = ChatContentCache[chatID].data;
-        const nextContent = mergeChatContent(currChatContent, StateUpdates);
-        const lastData = nextContent[nextContent.length - 1] || {};
-        ChatContentCache[chatID] = {
-          data: nextContent,
-          lastState: lastData.State,
-          lastData,
-        };
-        this.setState({
-          currChatContentData: ChatContentCache[chatID],
-          paging: Paging,
-          loadingChat: false,
+      })
+        .then(({ StateUpdates, Paging }) => {
+          this.handleReceiveData(StateUpdates, Paging);
         });
-      });
+    } else {
+      SyncChatMessage({
+        ChatID,
+        State: currChatContentData.lastState
+      })
+        .then(({ StateUpdates }) => {
+          this.handleReceiveData(StateUpdates);
+        });
+    }
     CheckMsgReadState({
       ChatID
     }).then((res) => {
       const { State } = res;
       this.readState = State;
+    });
+  }
+
+  handleReceiveData = (chatContentData, nextPaging = this.state.paging) => {
+    const { ChatID } = this.props;
+    const chatID = ChatID.toString();
+    if (!ChatContentCache[chatID]) {
+      ChatContentCache[chatID] = {
+        lastState: 0,
+        lastData: {},
+        data: []
+      };
+    }
+    const currChatContent = ChatContentCache[chatID].data;
+    const nextContent = mergeChatContent(currChatContent, chatContentData);
+    const lastData = nextContent[nextContent.length - 1] || {};
+    ChatContentCache[chatID] = {
+      data: nextContent,
+      lastState: lastData.State,
+      lastData,
+    };
+    this.setState({
+      currChatContentData: ChatContentCache[chatID],
+      paging: nextPaging,
+      loadingChat: false,
     });
   }
 
@@ -249,7 +263,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   loadFileFromInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target && e.target.files.length !== 0) {
-      ImageReader(files[0]).then((res) => {
+      ImageReader(e.target.files[0]).then((res) => {
         this.uploadFile(res);
       });
     }
@@ -304,15 +318,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     this.props.applySendMsg(sendMsgData);
 
     this.setTextContent('');
-    // if (this.editorDOM) this.setMsgPanelPadding(this.editorDOM.offsetHeight);
   }
 
   saveMsgPanel = (e) => { this.msgPanel = e; };
-
-  // saveEditprPanel = (e) => {
-  //   this.editorPanel = e;
-  //   if (e) this.setMsgPanelPadding(e.offsetHeight);
-  // };
 
   setTextContent = (nextContent) => {
     if (this.editorPanel && this.editorPanel.current) {
@@ -328,28 +336,14 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     return res;
   }
 
-  setMsgPanelPadding = (paddingBottom: number) => {
-    if (this.prevPadding === paddingBottom) return;
-    if (this.msgPanel) {
-      this.msgPanel.style.paddingBottom = `${paddingBottom}px`;
-      this.prevPadding = paddingBottom;
-      this.scrollToBottom(this.scrollContent);
-    }
-  }
-
   editorFocus = e => this.scrollToBottom(this.scrollContent)
 
   editorDidMount = (editorDOM) => {
     this.editorDOM = editorDOM;
-    // if (editorDOM) this.setMsgPanelPadding(editorDOM.offsetHeight);
     if (editorDOM) this.scrollToBottom(this.scrollContent);
   }
 
-  editorInout = (e) => {
-    // if (this.editorDOM) {
-    //   const { offsetHeight } = this.editorDOM;
-    //   this.setMsgPanelPadding(offsetHeight);
-    // }
+  editorInput = (e) => {
     this.scrollToBottom(this.scrollContent);
   }
 
@@ -357,9 +351,10 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     // TODO: 实现 command + enter 换行
     if (e.charCode === 13) {
       e.preventDefault();
-      let val = e.target.innerHTML;
-      val = val.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
-      this.onSendMsg(val, FEContentType.Text);
+      let textContent = e.target.textContent;
+      // let val = e.target.innerHTML;
+      textContent = textContent.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
+      this.onSendMsg(textContent, FEContentType.Text);
     }
   }
 
@@ -380,7 +375,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   render() {
     const { selectedChat, userInfo } = this.props;
-    const { currChatContentData } = this.state;
+    const { currChatContentData, loadingChat } = this.state;
     if (!currChatContentData) return null;
     const chatPanelContainer = (
       <div className="msg-panel-container" ref={(e) => {
@@ -389,18 +384,19 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           this.msgPanelHeight = e.offsetHeight;
         }
       }}>
-        <div className="msg-panel" ref={this.saveMsgPanel}>
-          <ChatMsgRender
-            currChatContentData={currChatContentData}
-            selectedChat={selectedChat}
-            userInfo={userInfo}
-            onImgLoad={this.handleImgLoad} />
-        </div>
+        {/* <div className="msg-panel" ref={this.saveMsgPanel}> */}
+        <ChatMsgRender
+          currChatContentData={currChatContentData}
+          selectedChat={selectedChat}
+          userInfo={userInfo}
+          onImgLoad={this.handleImgLoad} />
+        {/* </div> */}
       </div>
     );
 
     return (
       <section className="chat-panel-container">
+        <Loading loading={loadingChat} inrow />
         <div className="scroll-content" ref={this.scrollToBottom}>
           {chatPanelContainer}
         </div>
@@ -408,7 +404,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           didMount={this.editorDidMount}
           onPaste={this.editorPaste}
           onFocus={this.editorFocus}
-          onInput={this.editorInout}
+          onInput={this.editorInput}
           onClickSendBtn={this.editorClickToSend}
           onSelectedImg={this.loadFileFromInput}
           onKeyPress={this.editorKeyPress}

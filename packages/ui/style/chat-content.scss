@@ -15,6 +15,17 @@ $headerH: 40px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  .loading-control {
+    height: 2px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    transition: opacity 0.2s ease;
+    &.planning {
+      opacity: 0;
+    }
+  }
   &.drapping {
     .drap-panel {
       display: block;
@@ -80,7 +91,7 @@ $headerH: 40px;
       opacity: 1;
     }
   }
-  .msg-panel {
+  .msg-panel-container {
     padding: 1px 5px;
     // padding-top: 50px;
     .time-devide {
@@ -136,7 +147,7 @@ $headerH: 40px;
       }
       .msg {
         display: inline-block;
-        padding: 3px 10px;
+        padding: 7px 12px;
         border-radius: 3px;
         background-color: #e6e6e6;
         color: #444;
@@ -144,6 +155,7 @@ $headerH: 40px;
         -ms-user-select: text;
         -moz-user-select: text;
         user-select: text;
+        font-size: 14px;
       }
       .unit {
         margin: 0 10px;
@@ -271,5 +283,11 @@ $headerH: 40px;
     background-color: #f7f7f7;
     border-radius: 5px;
     margin: 2%;
+  }
+}
+
+.mobile {
+  .chat-panel-container .msg-panel-container .bubble .msg {
+    font-size: 1.25rem;
   }
 }

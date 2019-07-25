@@ -3,8 +3,6 @@ import {
   HasValue, DateFormat, UUID, EventEmitter, DebounceClass
 } from 'basic-helper';
 import { Icon } from 'ukelli-ui/core/icon';
-import * as ChatSDK from '@little-chat/sdk/lib';
-// import { VariableSizeList as List } from 'react-window';
 import {
   ChatItemEntity, ChatContentState, UserInfo, FEContentType,
   FEMessageType, ChatContentStateInfo
@@ -188,7 +186,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       currChatContentData: {
         lastData,
         lastState: lastData.State,
-        data: [...currChatContentData.data, ...chatContent],
+        data: [...currChatContentData.data, ...lastData],
       }
     }, () => {
       setTimeout(() => {
@@ -232,9 +230,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const { currChatContentData } = this.state;
     const { lastState = '' } = currChatContentData;
     if (this.readState) {
-      const readStateNum = +(this.readState.State.toString());
+      const readStateNum = +(this.readState.StateRead.toString());
       const lastStateNum = +(lastState.toString());
-      if (readStateNum < lastStateNum) {
+      if (readStateNum <= lastStateNum) {
         ReadMsg({
           ChatID: selectedChat.ChatID,
           StateRead: lastState
@@ -255,7 +253,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         }
       }, 10);
     }
-    this.readMsg();
+    debounce.exec(() => {
+      this.readMsg();
+    }, 100);
   }
 
   loadFileFromInput = async (e: React.ChangeEvent<HTMLInputElement>) => {

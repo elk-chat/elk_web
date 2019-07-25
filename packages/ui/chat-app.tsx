@@ -42,7 +42,7 @@ declare global {
   interface Window { __removeLoading: Function }
 }
 
-const { RECEIVE_CHAT_MESSAGE } = ChatActions;
+const { RECEIVE_CHAT_MESSAGE, RECEIVE_UNREAD_DATA } = ChatActions;
 
 const getTotalUnreadCount = (unreadInfo) => {
   let res = 0;
@@ -76,13 +76,18 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
 
     initChat(dispatch);
     syncContactsAndChats();
+    /** 订阅登陆成功 */
     EventEmitter.on(LOGIN_SUCCESS, this.handleLogin);
+    /** 接收消息 */
     EventEmitter.on(RECEIVE_CHAT_MESSAGE, this.handleReceiveMsg);
+    /** 接收最后未读消息 */
+    EventEmitter.on(RECEIVE_UNREAD_DATA, this.handleReceiveUnreadData);
   }
 
   componentWillUnmount() {
     EventEmitter.rm(LOGIN_SUCCESS, this.handleLogin);
     EventEmitter.rm(RECEIVE_CHAT_MESSAGE, this.handleReceiveMsg);
+    EventEmitter.rm(RECEIVE_UNREAD_DATA, this.handleReceiveUnreadData);
   }
 
   handleLogin = () => {
@@ -102,6 +107,14 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
         unreadInfo: nextUnreadInfo,
         totalUnreadCount: getTotalUnreadCount(nextUnreadInfo)
       };
+    });
+  }
+
+  handleReceiveUnreadData = (unreadData) => {
+    console.log(unreadData)
+    this.setState({
+      unreadInfo: unreadData,
+      totalUnreadCount: getTotalUnreadCount(unreadData)
     });
   }
 

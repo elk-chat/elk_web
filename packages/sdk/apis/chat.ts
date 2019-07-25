@@ -1,7 +1,5 @@
 import array2obj from '@little-chat/utils/array2obj';
 import Long from 'long';
-import { FEMessageType } from '@little-chat/core/types';
-import getLastItem from '@little-chat/utils/get-last-item';
 import SDK from '../lib/sdk';
 import { WSSend, GetFullUser } from '..';
 
@@ -40,44 +38,44 @@ export async function QueryChatMsgsByCondition(options: SDK.kproto.IChatGetChatS
 /**
  * 同步多个 Chat 的聊天消息
  */
-export function SyncChatMessages(options: SyncChatMessagesParams) {
-  return new Promise((resolve, reject) => {
-    const { ChatIDs, Limit = 1 } = options;
-    const addQueue: typeof Promise[] = [];
-    const resData = {};
-    ChatIDs.forEach((ChatID) => {
-      const promise = new Promise((rs, rj) => {
-        QueryChatMsgsByCondition({
-          Paging: {
-            PageSize: Limit,
-            PageIndex: 0
-          },
-          Condition: {
-            ChatID,
-            MessageTypes: [FEMessageType.SendMessage]
-          }
-        })
-          .then(({ StateUpdates }) => {
-            resData[ChatID.toString()] = getLastItem(StateUpdates);
-            rs(StateUpdates);
-          })
-          .catch((e) => {
-            rj(e);
-          });
-      });
-      addQueue.push(promise);
-    });
-    Promise.all(addQueue)
-      .then(() => {
-        resolve(resData);
-      })
-      .catch((e) => {
-        reject(e);
-      });
-  });
-  // const res = await WSSend(ChatSyncChatStatesReq, 'ChatSyncChatStatesReq', options);
-  // return res;
-}
+// export function SyncChatMessages(options: SyncChatMessagesParams) {
+//   return new Promise((resolve, reject) => {
+//     const { ChatIDs, Limit = 1 } = options;
+//     const addQueue: typeof Promise[] = [];
+//     const resData = {};
+//     ChatIDs.forEach((ChatID) => {
+//       const promise = new Promise((rs, rj) => {
+//         QueryChatMsgsByCondition({
+//           Paging: {
+//             PageSize: Limit,
+//             PageIndex: 0
+//           },
+//           Condition: {
+//             ChatID,
+//             MessageTypes: [FEMessageType.SendMessage]
+//           }
+//         })
+//           .then(({ StateUpdates }) => {
+//             resData[ChatID.toString()] = getLastItem(StateUpdates);
+//             rs(StateUpdates);
+//           })
+//           .catch((e) => {
+//             rj(e);
+//           });
+//       });
+//       addQueue.push(promise);
+//     });
+//     Promise.all(addQueue)
+//       .then(() => {
+//         resolve(resData);
+//       })
+//       .catch((e) => {
+//         reject(e);
+//       });
+//   });
+//   // const res = await WSSend(ChatSyncChatStatesReq, 'ChatSyncChatStatesReq', options);
+//   // return res;
+// }
 
 /**
  * 告知服务端已收到消息
@@ -139,7 +137,7 @@ export function AddMembersToChat(options: AddMembersToChatParams) {
 }
 
 /**
- * 查看 Chat 的已读消息
+ * 查看自己在对应 Chat 中的已读消息状态
  */
 export async function CheckMsgReadState(options: SDK.kproto.IUserGetChatUserStateReq) {
   const res = await WSSend<typeof UserGetChatUserStateReq, SDK.kproto.IUserGetChatUserStateResp>(UserGetChatUserStateReq, 'UserGetChatUserStateReq', options);

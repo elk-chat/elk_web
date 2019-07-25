@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /**
  * Actions 规则
  * 1. applyAction 请求发起异步请求的 action
@@ -15,10 +16,13 @@ import {
 
 import {
   SendMsg, GetChatList, CreateChat, AddMemberToChat,
-  SyncChatMessage, SyncChatMessages, GetFullUser,
-  MsgStateAck, ReadMsg, GetChatMembers
+  SyncChatMessage,
+  MsgStateAck, GetChatMembers, CheckMsgReadState,
+  QueryChatMsgsByCondition
 } from "@little-chat/sdk";
+import { FEMessageType } from '@little-chat/core/types';
 import SDK from "@little-chat/sdk/lib/sdk";
+import getLastItem from '@little-chat/utils/get-last-item';
 
 import array2obj from '@little-chat/utils/array2obj';
 import { authStore } from './auth-action';
@@ -75,15 +79,15 @@ export function applySyncChatMessage(payload: SDK.kproto.IChatSyncChatStatesReq)
   };
 }
 
-export const APPLY_SYNC_CHAT_MESSAGES = 'APPLY_SYNC_CHAT_MESSAGES';
-export function applySyncChatMessages(payload: {
-  ChatIDs: []; Limit: number;
-}) {
-  return {
-    type: APPLY_SYNC_CHAT_MESSAGES,
-    payload
-  };
-}
+// export const APPLY_SYNC_CHAT_MESSAGES = 'APPLY_SYNC_CHAT_MESSAGES';
+// export function applySyncChatMessages(payload: {
+//   ChatIDs: []; Limit: number;
+// }) {
+//   return {
+//     type: APPLY_SYNC_CHAT_MESSAGES,
+//     payload
+//   };
+// }
 
 export const RECEIVE_CHAT_MESSAGE = "RECEIVE_CHAT_MESSAGE";
 export function receiveChatMessage(chatContent, chatID, countUnread?: boolean) {
@@ -137,7 +141,7 @@ export function* sendMsgReq(action) {
 export const SYNCING_CHAT_MESSAGE = "SYNCING_CHAT_MESSAGE";
 export const SYNC_CHAT_MESSAGE_FAIL = "SYNC_CHAT_MESSAGE_FAIL";
 /**
- * 同步 Chat 的通讯内容
+ * 同步 Chat 的聊天数据
  */
 export function* syncChatMessage(action: {
   payload: SDK.kproto.IChatSyncChatStatesReq;
@@ -152,62 +156,36 @@ export function* syncChatMessage(action: {
   }
 }
 
-export const SYNCING_CHAT_MESSAGES = 'SYNCING_CHAT_MESSAGES';
-export function* syncChatMessages(payload) {
-  yield put({ type: SYNCING_CHAT_MESSAGES });
-  try {
-    const msgsData = yield call(SyncChatMessages, payload);
-    yield put(receiveChatMessages(msgsData));
-  } catch (e) {
-    console.log(e);
-  }
+// export const SYNCING_CHAT_MESSAGES = 'SYNCING_CHAT_MESSAGES';
+// export function* syncChatMessages(payload) {
+//   yield put({ type: SYNCING_CHAT_MESSAGES });
+//   try {
+//     const msgsData = yield call(SyncChatMessages, payload);
+//     yield put(receiveChatMessages(msgsData));
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }
+
+function getUserID() {
+  const { userInfo } = authStore.getState();
+  const currUserID = userInfo.UserID.toString();
+  return currUserID;
 }
 
 export const FETCHING_CHAT_LIST = 'FETCHING_CHAT_LIST';
 export const RECEIVE_CHAT_LIST = 'RECEIVE_CHAT_LIST';
-export function* getChatMembers(Chats) {
-  const getMemberInfoList: SDK.kproto.IChatGetMembersResp[] = [];
-  const currState = authStore.getState();
-  const { userInfo } = currState;
-  const myID = userInfo.UserID.toString();
-  const nextChats = [...Chats];
-  const chatIDs: any[] = [];
-  /** 这里主要为了查找 Chat 的 UserName */
-  Chats.forEach((chat, idx) => {
-    const { ChatID } = chat;
-    chatIDs.push(ChatID);
-    const isOneByOneChat = chat.ChatType === ChatType.OneToOne;
-    const func = (resolve: typeof Promise.resolve, reject: typeof Promise.reject) => {
-      GetChatMembers({
-        ChatID,
-      }, isOneByOneChat ? myID : undefined)
-        .then((usersData) => {
-          if (isOneByOneChat) {
-            const currUser = usersData[0];
-            /** 如果是一对一聊天, 则把对方的用户名赋予该 Chat 的 Title */
-            if (currUser) nextChats[idx].Title = currUser.UserName;
-          }
-          nextChats[idx].Users = usersData;
-          nextChats[idx].UsersRef = array2obj(usersData, 'UserName');
-          resolve(nextChats[idx]);
-        })
-        .catch((e) => {
-          reject(e);
-        });
-    };
-    getMemberInfoList.push(new Promise<SDK.kproto.IChatGetMembersResp>(func));
-  });
+export const RECEIVE_UNREAD_DATA = 'RECEIVE_UNREAD_DATA';
+// export function* getChatMembers(Chats) {
 
-  yield Promise.all(getMemberInfoList);
-  yield put({ type: RECEIVE_CHAT_LIST, chatList: nextChats });
-  return {
-    nextChats, chatIDs
-  };
-}
+// }
 /**
+ * 初始化 Chat 的所需要的内容
+ *
  * 1. 获取 Chat 列表
- * 2. 根据返回的 Chat 的 ChatID 并发获取 Chat 的成员信息
- * 3. 获取已获取的 Chat 的最后一条消息
+ * 2. 根据获取的 Chat 的 ChatID 获取 Chat 的成员信息
+ * 3. 获取 Chat List 每一项的最后一条消息
+ * 4. 获取 Chat List 每一项的已读状态，与 3 获取的最后一条数据做对比，初始化未读数
  */
 export function* getChatList(callback) {
   yield put({ type: FETCHING_CHAT_LIST });
@@ -216,14 +194,103 @@ export function* getChatList(callback) {
     const { Chats } = yield call(GetChatList);
     yield put({ type: RECEIVE_CHAT_LIST, chatList: Chats });
 
+    // 2. 根据获取的 Chat 的 ChatID 获取 Chat 的成员信息
+
+    /** 存储并发请求的队列 */
+    const getDataConcurrentList: any[] = [];
+
+    /** 当前登陆用户的 ID */
+    const currUserID = getUserID();
+    const nextChats = [...Chats];
+
+    /** 存储所有的 ChatID */
+    const chatIDs: any[] = [];
+
+    /** 最后一条聊天数据 */
+    const lastChatDataGroup = {};
+
+    /** 最后未读消息 */
+    const lastUnreadDataGroup = {};
+
+    Chats.forEach((chat, idx) => {
+      switch (chat.ChatType) {
+        case ChatType.Contact:
+        case ChatType.Follower:
+          return;
+      }
+      const { ChatID } = chat;
+      const chatIDStr = ChatID.toString();
+      chatIDs.push(ChatID);
+      const isOneByOneChat = chat.ChatType === ChatType.OneToOne;
+      const func = (resolve, reject) => {
+        GetChatMembers({
+          ChatID,
+        }, isOneByOneChat ? currUserID : undefined)
+          .then((usersData) => {
+            if (isOneByOneChat) {
+              const currUser = usersData[0];
+              /** 如果是一对一聊天, 则把对方的用户名赋予该 Chat 的 Title */
+              if (currUser) nextChats[idx].Title = currUser.UserName;
+            }
+            nextChats[idx].Users = usersData;
+            nextChats[idx].UsersRef = array2obj(usersData, 'UserName');
+            // 3. 获取 Chat List 每一项的最后一条消息
+            QueryChatMsgsByCondition({
+              Paging: {
+                PageSize: 1,
+                PageIndex: 0
+              },
+              Condition: {
+                ChatID,
+                MessageTypes: [FEMessageType.SendMessage, FEMessageType.AddMember]
+              }
+            })
+              .then(({ StateUpdates }) => {
+                lastChatDataGroup[chatIDStr] = getLastItem(StateUpdates) || {};
+                const currMsgLastState = lastChatDataGroup[chatIDStr].State || 0;
+                // console.log(lastChatDataGroup[chatIDStr])
+                // 4. 获取 Chat List 每一项的已读状态，与 3 获取的最后一条数据做对比，初始化未读数
+                CheckMsgReadState({
+                  ChatID,
+                })
+                  .then((res) => {
+                    const readState = res.State.StateRead || 0;
+                    // console.log(currMsgLastState.toString(), readState.toString());
+                    let unreadCount = +currMsgLastState.toString() - +readState.toString() - 1;
+                    if (unreadCount < 0) unreadCount = 0;
+                    lastUnreadDataGroup[chatIDStr] = unreadCount;
+
+                    /** 结束回调 */
+                    resolve(nextChats[idx]);
+                  })
+                  .catch((err) => {
+                    console.log(ChatID, err);
+                  });
+              });
+          })
+          .catch((e) => {
+            reject(e);
+          });
+      };
+      getDataConcurrentList.push(new Promise<SDK.kproto.IChatGetMembersResp>(func));
+    });
+
+    yield Promise.all(getDataConcurrentList);
+    yield put({ type: RECEIVE_CHAT_LIST, chatList: nextChats });
+    yield receiveChatMessages(lastChatDataGroup);
+    EventEmitter.emit(RECEIVE_UNREAD_DATA, lastUnreadDataGroup);
+    // return {
+    //   nextChats, chatIDs
+    // };
+
     // 2. 根据返回的 Chat 的 ChatID 并发获取 Chat 的成员信息
-    const { chatIDs } = yield getChatMembers(Chats);
+    // const { chatIDs } = yield getChatMembers(Chats);
 
     // 3. 获取已获取的 Chat 的最后一条消息
-    yield syncChatMessages({
-      ChatIDs: chatIDs,
-      Limit: 1
-    });
+    // yield syncChatMessages({
+    //   ChatIDs: chatIDs,
+    //   Limit: 1
+    // });
     Call(callback);
   } catch (res) {
     console.log(res);
@@ -258,6 +325,6 @@ export function* watchChatActions() {
   yield takeLatest(APPLY_SEND_MSG, sendMsgReq);
   yield takeLatest(APPLY_FETCH_CHAT_LIST, getChatList);
   yield takeLatest(APPLY_ADD_CHAT, addChat);
-  yield takeLatest(APPLY_SYNC_CHAT_MESSAGES, syncChatMessages);
+  // yield takeLatest(APPLY_SYNC_CHAT_MESSAGES, syncChatMessages);
   yield takeEvery(APPLY_SYNC_CHAT_MESSAGE, syncChatMessage);
 }

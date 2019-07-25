@@ -51,7 +51,6 @@ export function lastMsgInfo(
       const { chatContents } = action;
       nextState = chatContents;
       setStorage('lastMsgInfo', nextState);
-      console.log(nextState)
       return nextState;
     case RECEIVE_CHAT_MESSAGE:
       const { chatContent, chatID } = action;

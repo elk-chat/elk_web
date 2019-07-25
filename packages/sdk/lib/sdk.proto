@@ -362,17 +362,17 @@ message ChatSetTypingReq {
 message ChatSetTypingResp {
 }
 
-message ChatSyncChatStatesReq {
+message ChatSyncChatStateMessagesReq {
   int64 ChatID = 1;
   uint64 State = 2;
   uint32 Limit = 3;
 }
 
-message ChatSyncChatStatesResp {
+message ChatSyncChatStateMessagesResp {
   repeated StateUpdate StateUpdates = 1;
 }
 
-message ChatGetChatStatesCondition {
+message ChatGetChatStateMessagesCondition {
   int64 SenderID = 1;
   int64 ChatID = 2;
   uint64 State = 3;
@@ -381,14 +381,28 @@ message ChatGetChatStatesCondition {
   TimeRange ActionTimeRange = 6;
 }
 
-message ChatGetChatStatesReq {
+message ChatGetChatStateMessagesReq {
   Paging Paging = 1;
-  ChatGetChatStatesCondition Condition = 2;
+  ChatGetChatStateMessagesCondition Condition = 2;
 }
 
-message ChatGetChatStatesResp {
+message ChatGetChatStateMessagesResp {
   Paging Paging = 1;
   repeated StateUpdate StateUpdates = 2;
+}
+
+message ChatState {
+  int64 ChatID = 1;
+	uint64 State = 2;
+	uint64 StateRead = 3;
+}
+
+message ChatGetChatStateReq {
+  int64 ChatID = 1;
+}
+
+message ChatGetChatStateResp {
+  ChatState ChatState = 1;
 }
 
 // 已读消息

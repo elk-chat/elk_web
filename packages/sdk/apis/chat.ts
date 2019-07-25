@@ -8,30 +8,30 @@ interface CreateChatAndAddMemberOptions extends SDK.kproto.IChatCreateReq {
   Title: string;
 }
 
-interface SyncChatMessagesParams {
-  ChatIDs: Long[];
-  Limit: number;
-}
+// interface SyncChatMessagesParams {
+//   ChatIDs: Long[];
+//   Limit: number;
+// }
 
 const {
   ChatSendMessageReq, ChatGetChatsReq, ChatCreateReq, ChatAddMemberReq,
-  ChatSyncChatStatesReq, StateAck, ChatReadMessageReq, ChatGetMembersReq,
-  UserGetChatUserStateReq, ChatGetChatStatesReq
+  ChatSyncChatStateMessagesReq, StateAck, ChatReadMessageReq, ChatGetMembersReq,
+  UserGetChatUserStateReq, ChatGetChatStateReq, ChatGetChatStateMessagesReq
 } = SDK.kproto;
 
 /**
  * 同步单个 Chat 的聊天消息
  */
-export async function SyncChatMessage(options: SDK.kproto.IChatSyncChatStatesReq) {
-  const res = await WSSend<typeof ChatSyncChatStatesReq, SDK.kproto.IChatSyncChatStatesResp>(ChatSyncChatStatesReq, 'ChatSyncChatStatesReq', options);
+export async function SyncChatMessage(options: SDK.kproto.IChatGetChatStateReq) {
+  const res = await WSSend<typeof ChatGetChatStateReq, SDK.kproto.IChatGetChatStateResp>(ChatGetChatStateReq, 'ChatGetChatStateReq', options);
   return res;
 }
 
 /**
  * 通过查询条件和分页控制，查询历史聊天信息
  */
-export async function QueryChatMsgsByCondition(options: SDK.kproto.IChatGetChatStatesReq) {
-  const res = await WSSend<typeof ChatGetChatStatesReq, SDK.kproto.IChatGetChatStatesResp>(ChatGetChatStatesReq, 'ChatGetChatStatesReq', options);
+export async function QueryChatMsgsByCondition(options: SDK.kproto.IChatGetChatStateMessagesReq) {
+  const res = await WSSend<typeof ChatGetChatStateMessagesReq, SDK.kproto.IChatGetChatStateMessagesResp>(ChatGetChatStateMessagesReq, 'ChatGetChatStateMessagesReq', options);
   return res;
 }
 
@@ -73,7 +73,7 @@ export async function QueryChatMsgsByCondition(options: SDK.kproto.IChatGetChatS
 //         reject(e);
 //       });
 //   });
-//   // const res = await WSSend(ChatSyncChatStatesReq, 'ChatSyncChatStatesReq', options);
+//   // const res = await WSSend(ChatSyncChatStateMessagesReq, 'ChatSyncChatStateMessagesReq', options);
 //   // return res;
 // }
 

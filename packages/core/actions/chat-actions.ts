@@ -16,7 +16,7 @@ import {
 
 import {
   SendMsg, GetChatList, CreateChat, AddMemberToChat,
-  SyncChatMessage,
+  SyncChatMessage, GetChatMessage,
   MsgStateAck, GetChatMembers, CheckMsgReadState,
   QueryChatMsgsByCondition
 } from "@little-chat/sdk";
@@ -253,8 +253,8 @@ export function* getChatList(callback) {
                 CheckMsgReadState({
                   ChatID,
                 })
-                  .then((res) => {
-                    const readState = res.State.StateRead || 0;
+                  .then(({ ChatState }) => {
+                    const readState = ChatState.StateRead || 0;
                     // console.log(currMsgLastState.toString(), readState.toString());
                     let unreadCount = +currMsgLastState.toString() - +readState.toString() - 1;
                     if (unreadCount < 0) unreadCount = 0;

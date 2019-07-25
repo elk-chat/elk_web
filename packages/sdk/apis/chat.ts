@@ -20,10 +20,18 @@ const {
 } = SDK.kproto;
 
 /**
+ * 查看自己在对应 Chat 中的已读消息状态
+ */
+export async function CheckMsgReadState(options: SDK.kproto.IChatGetChatStateReq) {
+  const res = await WSSend<typeof ChatGetChatStateReq, SDK.kproto.IChatGetChatStateResp>(ChatGetChatStateReq, 'ChatGetChatStateReq', options);
+  return res;
+}
+
+/**
  * 同步单个 Chat 的聊天消息
  */
-export async function SyncChatMessage(options: SDK.kproto.IChatGetChatStateReq) {
-  const res = await WSSend<typeof ChatGetChatStateReq, SDK.kproto.IChatGetChatStateResp>(ChatGetChatStateReq, 'ChatGetChatStateReq', options);
+export async function SyncChatMessage(options: SDK.kproto.IChatSyncChatStateMessagesReq) {
+  const res = await WSSend<typeof ChatSyncChatStateMessagesReq, SDK.kproto.IChatSyncChatStateMessagesResp>(ChatSyncChatStateMessagesReq, 'ChatSyncChatStateMessagesReq', options);
   return res;
 }
 
@@ -34,48 +42,6 @@ export async function QueryChatMsgsByCondition(options: SDK.kproto.IChatGetChatS
   const res = await WSSend<typeof ChatGetChatStateMessagesReq, SDK.kproto.IChatGetChatStateMessagesResp>(ChatGetChatStateMessagesReq, 'ChatGetChatStateMessagesReq', options);
   return res;
 }
-
-/**
- * 同步多个 Chat 的聊天消息
- */
-// export function SyncChatMessages(options: SyncChatMessagesParams) {
-//   return new Promise((resolve, reject) => {
-//     const { ChatIDs, Limit = 1 } = options;
-//     const addQueue: typeof Promise[] = [];
-//     const resData = {};
-//     ChatIDs.forEach((ChatID) => {
-//       const promise = new Promise((rs, rj) => {
-//         QueryChatMsgsByCondition({
-//           Paging: {
-//             PageSize: Limit,
-//             PageIndex: 0
-//           },
-//           Condition: {
-//             ChatID,
-//             MessageTypes: [FEMessageType.SendMessage]
-//           }
-//         })
-//           .then(({ StateUpdates }) => {
-//             resData[ChatID.toString()] = getLastItem(StateUpdates);
-//             rs(StateUpdates);
-//           })
-//           .catch((e) => {
-//             rj(e);
-//           });
-//       });
-//       addQueue.push(promise);
-//     });
-//     Promise.all(addQueue)
-//       .then(() => {
-//         resolve(resData);
-//       })
-//       .catch((e) => {
-//         reject(e);
-//       });
-//   });
-//   // const res = await WSSend(ChatSyncChatStateMessagesReq, 'ChatSyncChatStateMessagesReq', options);
-//   // return res;
-// }
 
 /**
  * 告知服务端已收到消息
@@ -134,14 +100,6 @@ export function AddMembersToChat(options: AddMembersToChatParams) {
     addQueue.push(promise);
   });
   return Promise.all(addQueue);
-}
-
-/**
- * 查看自己在对应 Chat 中的已读消息状态
- */
-export async function CheckMsgReadState(options: SDK.kproto.IUserGetChatUserStateReq) {
-  const res = await WSSend<typeof UserGetChatUserStateReq, SDK.kproto.IUserGetChatUserStateResp>(UserGetChatUserStateReq, 'UserGetChatUserStateReq', options);
-  return res;
 }
 
 /**

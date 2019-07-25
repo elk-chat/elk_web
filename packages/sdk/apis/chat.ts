@@ -118,7 +118,7 @@ interface AddMembersToChatParams {
  */
 export function AddMembersToChat(options: AddMembersToChatParams) {
   const { ChatID, UserIDs } = options;
-  const addQueue: typeof Promise[] = [];
+  const addQueue: any[] = [];
   UserIDs.forEach((UserID) => {
     const promise = new Promise((resolve, reject) => {
       WSSend(ChatAddMemberReq, 'ChatAddMemberReq', {

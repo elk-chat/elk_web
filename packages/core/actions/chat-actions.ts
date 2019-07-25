@@ -277,7 +277,7 @@ export function* getChatList(callback) {
 
     yield Promise.all(getDataConcurrentList);
     yield put({ type: RECEIVE_CHAT_LIST, chatList: nextChats });
-    yield receiveChatMessages(lastChatDataGroup);
+    yield put(receiveChatMessages(lastChatDataGroup));
     EventEmitter.emit(RECEIVE_UNREAD_DATA, lastUnreadDataGroup);
     // return {
     //   nextChats, chatIDs

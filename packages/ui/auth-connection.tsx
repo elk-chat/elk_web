@@ -14,6 +14,8 @@ import ChatApp from './chat-app';
 interface LoginFilterProps {
 }
 
+const BG_URL = 'bg_opt.jpg';
+
 const isMobileFilter = () => /Android|iOS|iPhone/.test(navigator.userAgent);
 
 let chatStore;
@@ -114,7 +116,7 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
         {
           !isMobile && (
             <div className="bg-img fill fixbg" style={{
-              backgroundImage: 'url(/images/bg_dark.jpg)'
+              backgroundImage: `url(/images/${BG_URL})`
             }}></div>
           )
         }

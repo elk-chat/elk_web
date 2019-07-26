@@ -16,8 +16,8 @@ import {
 
 import {
   SendMsg, GetChatList, CreateChat, AddMemberToChat,
-  SyncChatMessage, GetChatMessage,
-  MsgStateAck, GetChatMembers, CheckMsgReadState,
+  SyncChatMessage, GetChatsLastUnreadState,
+  MsgStateAck, GetChatMembers,
   QueryChatMsgsByCondition
 } from "@little-chat/sdk";
 import { FEMessageType } from '@little-chat/core/types';
@@ -247,24 +247,13 @@ export function* getChatList(callback) {
             })
               .then(({ StateUpdates }) => {
                 lastChatDataGroup[chatIDStr] = getLastItem(StateUpdates) || {};
-                const currMsgLastState = lastChatDataGroup[chatIDStr].State || 0;
-                // console.log(lastChatDataGroup[chatIDStr])
                 // 4. 获取 Chat List 每一项的已读状态，与 3 获取的最后一条数据做对比，初始化未读数
-                CheckMsgReadState({
+                GetChatsLastUnreadState({
                   ChatID,
                 })
-                  .then(({ ChatState }) => {
-                    const readState = ChatState.StateRead || 0;
-                    // console.log(currMsgLastState.toString(), readState.toString());
-                    let unreadCount = +currMsgLastState.toString() - +readState.toString() - 1;
-                    if (unreadCount < 0) unreadCount = 0;
-                    lastUnreadDataGroup[chatIDStr] = unreadCount;
-
-                    /** 结束回调 */
+                  .then(({ SuperscriptNumber }) => {
+                    lastUnreadDataGroup[chatIDStr] = +SuperscriptNumber.toString();
                     resolve(nextChats[idx]);
-                  })
-                  .catch((err) => {
-                    console.log(ChatID, err);
                   });
               });
           })

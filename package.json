@@ -6,12 +6,13 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "PORT=3445 node ./scripts/start",
-    "build": "NODE_ENV=production node ./scripts/build",
+    "start": "npm run setAppVersion; PORT=3445 node ./scripts/start",
+    "build": "npm run setAppVersion; NODE_ENV=production node ./scripts/build",
     "postinstall": "npm run init",
-    "init": "npm run complieProto; npm run genConfig",
+    "init": "npm run setAppVersion; npm run complieProto; npm run genConfig",
     "genConfig": "node ./scripts/gen-config",
     "autoZip": "npm run build; npm run zipBuild;",
+    "setAppVersion": "sh ./version/set-app-version.sh",
     "zipBuild": "mkdir -p ./zip-build; zip -r ./zip-build/build.zip ./build/*",
     "prettier": "prettier -c --write '**/*'",
     "complieProto": "pbjs ./packages/sdk/lib/sdk.proto -t static-module > ./packages/sdk/lib/sdk.js --force-long; npm run pbts",

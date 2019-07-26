@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Avatar } from 'ukelli-ui/core/avatar';
 import { Loading } from 'ukelli-ui/core/loading';
 import { UserInfo, FEContentType } from '@little-chat/core/types';
-import { UpdateProfile, UploadFile, GetFileState } from '@little-chat/sdk';
+import { UpdateProfile, UploadFile } from '@little-chat/sdk';
 import {
   ImageReader,
 } from '../utils/image-reader';
-import ChatAvatar, { getAvatarSrc } from '../components/avatar';
+import ChatAvatar from '../components/avatar';
+import VersionComponent from '../components/version-com';
 
 interface AccountProps {
   userInfo: UserInfo;
@@ -50,7 +50,7 @@ const changeAvatar = (event: React.ChangeEvent<HTMLInputElement>) => new Promise
 });
 
 const Account: React.SFC<AccountProps> = (props) => {
-  const { userInfo, logout } = props;
+  const { userInfo, logout, versionInfo } = props;
   const { AvatarFileID } = userInfo;
   const { UserName } = userInfo;
 
@@ -73,8 +73,11 @@ const Account: React.SFC<AccountProps> = (props) => {
       </div>
       <div className="action-group">
         <span className="flex"></span>
+        <div className="action-item b mb10">
+          <VersionComponent versionInfo={versionInfo} />
+        </div>
         <div className="action-item last" onClick={e => logout()}>
-          注销
+          注销登陆
         </div>
       </div>
       <input

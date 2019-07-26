@@ -10,6 +10,10 @@ import {
 import { authStore, authActions } from '@little-chat/core/actions/auth-action';
 import AuthSelector from './auth';
 import ChatApp from './chat-app';
+import VersionComponent, { VersionChecker } from './components/version-com';
+import versionInfo from './version.json';
+
+const versionUrl = './version.json';
 
 interface LoginFilterProps {
 }
@@ -106,6 +110,7 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
                     <ChatApp
                       isMobile={isMobile}
                       dispatch={chatStore.dispatch}
+                      versionInfo={versionInfo}
                       {...this.props} />
                   </ReduxProvider>
                 );
@@ -120,6 +125,7 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
             }}></div>
           )
         }
+        <VersionChecker versionUrl={versionUrl} versionInfo={versionInfo} />
       </div>
     );
   }

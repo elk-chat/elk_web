@@ -23,7 +23,7 @@ const MsgTypeClass = {
   2: 'add-member',
 };
 
-const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
+const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] => {
   const {
     userInfo, selectedChat, currChatContentData,
     onImgLoad
@@ -34,7 +34,7 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
   let prevTime = 0;
   const { data = [] } = currChatContentData;
 
-  const msgRow: any[] = [];
+  const msgRow: JSX.Element[] = [];
   data.forEach((currMsg, idx) => {
     const currMsgRes = chatContentFilter(currMsg);
     const {

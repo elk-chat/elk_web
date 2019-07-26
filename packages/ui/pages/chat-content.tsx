@@ -87,8 +87,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   msgPanelHeight!: number;
 
-  readState;
-
   msgHeightInfo: {
     [chatIdx: string]: number;
   } = {};
@@ -149,12 +147,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           this.handleReceiveData(StateUpdates);
         });
     }
-    CheckMsgReadState({
-      ChatID
-    }).then((res) => {
-      const { ChatState } = res;
-      this.readState = ChatState;
-    });
   }
 
   handleReceiveData = (chatContentData, nextPaging = this.state.paging) => {
@@ -170,9 +162,10 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const currChatContent = ChatContentCache[chatID].data;
     const nextContent = mergeChatContent(currChatContent, chatContentData);
     const lastData = nextContent[nextContent.length - 1] || {};
+    const lastState = lastData.State;
     ChatContentCache[chatID] = {
       data: nextContent,
-      lastState: lastData.State,
+      lastState,
       lastData,
     };
     this.setState({
@@ -180,18 +173,30 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       paging: nextPaging,
       loadingChat: false,
     });
+    CheckMsgReadState({
+      ChatID
+    }).then((res) => {
+      const { StateRead } = res;
+      console.log(+StateRead.toString())
+      if (+StateRead.toString() < +lastState.toString()) this.readMsg(lastState);
+    });
   }
 
   handleReceiveMsg = ({ chatID, chatContent }) => {
     const { selectedChat } = this.props;
     const chatIDStr = chatID.toString();
     if (selectedChat.ChatID && (selectedChat.ChatID.toString() !== chatIDStr)) return;
+    /** 如果该页面在激活状态，则发送已读请求 */
     const { currChatContentData } = this.state;
     const lastData = chatContent[0];
+    const lastState = lastData.State;
+    this.readMsg(lastState);
+
+    /** 设置最后消息的状态 */
     this.setState({
       currChatContentData: {
         lastData,
-        lastState: lastData.State,
+        lastState,
         data: [...currChatContentData.data, ...lastData],
       }
     }, () => {
@@ -231,19 +236,20 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       });
   }
 
-  readMsg = () => {
+  readMsg = (StateRead) => {
     const { selectedChat } = this.props;
     const { currChatContentData } = this.state;
     const { lastState = 0 } = currChatContentData;
-    if (this.readState) {
-      const readStateNum = +(this.readState.StateRead.toString());
-      const lastStateNum = +(lastState.toString());
-      if (lastState && readStateNum <= lastStateNum) {
-        ReadMsg({
-          ChatID: selectedChat.ChatID,
-          StateRead: lastState
-        });
-      }
+    if (StateRead) {
+      // const readStateNum = +(StateRead.toString());
+      // const lastStateNum = +(lastState.toString());
+      // console.log('ReadMsg');
+      // console.log(readStateNum, 'readStateNum');
+      // console.log(lastStateNum, 'lastStateNum');
+      ReadMsg({
+        ChatID: selectedChat.ChatID,
+        StateRead: lastState
+      });
     }
   }
 
@@ -259,9 +265,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         }
       }, 10);
     }
-    debounce.exec(() => {
-      this.readMsg();
-    }, 100);
   }
 
   loadFileFromInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -397,7 +400,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
     return (
       <section className="chat-panel-container">
-        <Loading loading={loadingChat} inrow />
         <div className="scroll-content" ref={this.scrollToBottom}>
           {chatPanelContainer}
         </div>

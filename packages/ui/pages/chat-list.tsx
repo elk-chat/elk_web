@@ -167,7 +167,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
       <NavLink
         Com="SearchContact" Title="搜索联系人" className="link">
         <div className="no-chat-tip p20">
-          请添加一个联系人开始
+          请添加一个联系人开始聊天
         </div>
       </NavLink>
     );

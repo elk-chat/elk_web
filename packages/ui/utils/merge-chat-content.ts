@@ -1,15 +1,15 @@
 import {
   ChatContentItem
-} from '../types';
+} from '@little-chat/core/types';
 
 function mergeChatContent(
   array: ChatContentItem[], mergeArr: ChatContentItem[]
 ): ChatContentItem[] {
-  const mergedArr = [...(array || []), ...(mergeArr || [])];
+  const mergedArr = array.concat(mergeArr);
   const obj = {};
   let res: ChatContentItem[] = [];
   mergedArr.forEach((item) => {
-    obj[`${item.State}`] = item;
+    if (item && item.MessageID) obj[`${item.MessageID.toString()}`] = item;
   });
   res = Object.values(obj);
   res.sort((f, s) => +f.State.toString() - +s.State.toString());

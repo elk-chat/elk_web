@@ -36,8 +36,8 @@
       overflow: hidden;
     }
     .bg-img {
-      opacity: 0.5;
-      // filter: blur(5px);
+      opacity: 0.3;
+      filter: blur(5px);
     }
     .main-container, .tab-bar {
       right: $navigatorPageWidth;
@@ -87,6 +87,13 @@
   .little-chat-app.pc {
     .container {
       margin-top: 20px;
+    }
+  }
+}
+@media (max-width: 1024px) {
+  .little-chat-app.pc {
+    .container {
+      width: 100%;
     }
   }
 }

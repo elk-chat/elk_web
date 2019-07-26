@@ -177,7 +177,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       ChatID
     }).then((res) => {
       const { StateRead } = res;
-      console.log(+StateRead.toString())
       if (+StateRead.toString() < +lastState.toString()) this.readMsg(lastState);
     });
   }
@@ -208,7 +207,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   }
 
   handleScroll = () => {
-    debounce.exec(() => this.scrollToBottom(this.scrollContent), 300);
+    debounce.exec(() => this.scrollToBottom(this.scrollContent), 100);
   }
 
   handlePasteImg = (items: DataTransferItemList) => new Promise((resolve, reject) => {

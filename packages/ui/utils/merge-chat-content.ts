@@ -1,6 +1,8 @@
 import {
-  ChatContentItem
+  ChatContentItem, FEMessageType
 } from '@little-chat/core/types';
+
+const msgFilterGroup = [FEMessageType.SendMessage, FEMessageType.AddMember];
 
 function mergeChatContent(
   array: ChatContentItem[], mergeArr: ChatContentItem[]
@@ -9,7 +11,7 @@ function mergeChatContent(
   const obj = {};
   let res: ChatContentItem[] = [];
   mergedArr.forEach((item) => {
-    if (item && item.MessageID) obj[`${item.MessageID.toString()}`] = item;
+    if (item && item.MessageID && msgFilterGroup.indexOf(item.MessageType) !== -1) obj[`${item.MessageID.toString()}`] = item;
   });
   res = Object.values(obj);
   res.sort((f, s) => +f.State.toString() - +s.State.toString());

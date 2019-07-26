@@ -84,14 +84,20 @@ function messageResHandler(msgData: DecodedDataStruct) {
     case SigMethod.SIG_CHAT_READ_MESSAGE_RESP:
       api = SDK.kproto.ChatReadMessageResp;
       break;
-    case SigMethod.SIG_CHAT_GET_CHAT_STATE_RESP:
-      api = SDK.kproto.ChatGetChatStateResp;
-      break;
+    // case SigMethod.SIG_CHAT_GET_CHAT_STATE_RESP:
+    //   api = SDK.kproto.ChatGetChatStateResp;
+    //   break;
     case SigMethod.SIG_USER_GET_CHAT_USER_STATE_RESP:
       api = SDK.kproto.UserGetChatUserStateResp;
       break;
     case SigMethod.SIG_CHAT_GET_CHAT_STATE_MESSAGES_RESP:
       api = SDK.kproto.ChatGetChatStateMessagesResp;
+      break;
+    case SigMethod.SIG_USER_GET_CHAT_USER_SUPERSCRIPT_RESP:
+      api = SDK.kproto.UserGetChatUserSuperscriptResp;
+      break;
+    case SigMethod.SIG_CHAT_GET_STATE_READ_RESP:
+      api = SDK.kproto.ChatGetStateReadResp;
       break;
   }
   if (api) {

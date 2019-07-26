@@ -219,6 +219,14 @@ message UserGetChatUserStateResp {
   ChatUserState State = 1;
 }
 
+message UserGetChatUserSuperscriptReq {
+  int64 ChatID = 1;
+}
+
+message UserGetChatUserSuperscriptResp {
+  uint64 SuperscriptNumber = 1;
+}
+
 message UserSetOptionReq {
   string Name = 1;
   string Value = 2;
@@ -355,6 +363,14 @@ message ChatSendMessageReq {
 message ChatSendMessageResp {
 }
 
+message ChatGetStateReadReq {
+  int64 ChatID = 1;
+}
+
+message ChatGetStateReadResp {
+  uint64 StateRead  = 1;
+}
+
 message ChatSetTypingReq {
   int64 ChatID = 1;
 }
@@ -391,20 +407,6 @@ message ChatGetChatStateMessagesResp {
   repeated StateUpdate StateUpdates = 2;
 }
 
-message ChatState {
-  int64 ChatID = 1;
-	uint64 State = 2;
-	uint64 StateRead = 3;
-}
-
-message ChatGetChatStateReq {
-  int64 ChatID = 1;
-}
-
-message ChatGetChatStateResp {
-  ChatState ChatState = 1;
-}
-
 // 已读消息
 message ChatReadMessageReq {
   int64 ChatID = 1;
@@ -413,7 +415,6 @@ message ChatReadMessageReq {
 
 message ChatReadMessageResp {
 }
-
 
 // dfs file
 message DfsFile {

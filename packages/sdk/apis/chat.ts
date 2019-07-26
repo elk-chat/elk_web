@@ -14,16 +14,24 @@ interface CreateChatAndAddMemberOptions extends SDK.kproto.IChatCreateReq {
 // }
 
 const {
-  ChatSendMessageReq, ChatGetChatsReq, ChatCreateReq, ChatAddMemberReq,
+  ChatSendMessageReq, ChatGetChatsReq, ChatCreateReq, ChatAddMemberReq, ChatGetStateReadReq,
   ChatSyncChatStateMessagesReq, StateAck, ChatReadMessageReq, ChatGetMembersReq,
-  UserGetChatUserStateReq, ChatGetChatStateReq, ChatGetChatStateMessagesReq
+  UserGetChatUserStateReq, ChatGetChatStateMessagesReq, UserGetChatUserSuperscriptReq
 } = SDK.kproto;
 
 /**
- * 查看自己在对应 Chat 中的已读消息状态
+ * 获取最后的未读状态
  */
-export async function CheckMsgReadState(options: SDK.kproto.IChatGetChatStateReq) {
-  const res = await WSSend<typeof ChatGetChatStateReq, SDK.kproto.IChatGetChatStateResp>(ChatGetChatStateReq, 'ChatGetChatStateReq', options);
+export async function GetChatsLastUnreadState(options: SDK.kproto.IUserGetChatUserSuperscriptReq) {
+  const res = await WSSend<typeof UserGetChatUserSuperscriptReq, SDK.kproto.IUserGetChatUserSuperscriptResp>(UserGetChatUserSuperscriptReq, 'UserGetChatUserSuperscriptReq', options);
+  return res;
+}
+
+/**
+ * 查看该 Chat 中的最后已读消息状态
+ */
+export async function CheckMsgReadState(options: SDK.kproto.IChatGetStateReadReq) {
+  const res = await WSSend<typeof ChatGetStateReadReq, SDK.kproto.IChatGetStateReadResp>(ChatGetStateReadReq, 'ChatGetStateReadReq', options);
   return res;
 }
 

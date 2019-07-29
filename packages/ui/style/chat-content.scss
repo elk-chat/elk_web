@@ -191,12 +191,12 @@ $headerH: 40px;
         .user-mark {
           flex-direction: row-reverse;
           .username {
-            color: $colorBlue;
+            color: $themeColor;
           }
         }
         .msg {
           color: #FFF;
-          background-color: $colorBlue;
+          background-color: $themeColor;
         }
       }
     }

@@ -1,6 +1,8 @@
+import { FormOptionsItem } from "ukelli-ui/core/form-generator/form-filter";
+
 const isDev = process.env.NODE_ENV === 'development';
 
-const loginFormOptions = [
+const loginFormOptions: FormOptionsItem[] = [
   {
     ref: 'UserName',
     type: 'input',
@@ -26,7 +28,7 @@ const loginFormOptions = [
   // }
 ];
 
-const registeFormOptions = [
+const registeFormOptions: FormOptionsItem[] = [
   {
     ref: 'UserName',
     type: 'input',

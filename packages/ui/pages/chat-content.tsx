@@ -177,7 +177,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       ChatID
     }).then((res) => {
       const { StateRead } = res;
-      if (+StateRead.toString() < +lastState.toString()) this.readMsg(lastState);
+      if (StateRead && lastState && +StateRead.toString() < +lastState.toString()) {
+        this.readMsg(lastState);
+      }
     });
   }
 
@@ -238,6 +240,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   readMsg = (StateRead) => {
     const { selectedChat } = this.props;
     const { currChatContentData } = this.state;
+    if (!currChatContentData) return;
     const { lastState = 0 } = currChatContentData;
     if (StateRead) {
       // const readStateNum = +(StateRead.toString());

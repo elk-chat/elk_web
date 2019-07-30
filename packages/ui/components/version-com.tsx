@@ -1,9 +1,11 @@
+/* eslint-disable consistent-return */
 /* eslint-disable react/no-multi-comp */
 
 import React, { Component } from 'react';
-import { ShowModal } from 'ukelli-ui/core/modal';
+import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { TipPanel } from 'ukelli-ui/core/tip-panel';
 import { Notify } from 'ukelli-ui/core/notification';
+import { Button } from 'ukelli-ui/core/button';
 
 interface VersionCheckerProps {
   /** 版本内容 */
@@ -17,7 +19,16 @@ interface VersionCheckerProps {
 interface VersionDisplayerProps extends VersionCheckerProps {
 }
 
+const NO_NOTIFY = 'NO_NOTIFY';
+const isNoNotify = !!localStorage.getItem(NO_NOTIFY);
+
 class VersionChecker extends Component<VersionCheckerProps> {
+  __unmount
+
+  timer
+
+  errorCount
+
   constructor(props) {
     super(props);
 
@@ -51,7 +62,7 @@ class VersionChecker extends Component<VersionCheckerProps> {
   getVersion = () => {
     const { versionUrl } = this.props;
     if (!versionUrl) return console.log('请设置版本文件地址 versionUrl');
-    if (this.errorCount === 5) return this._clear();
+    if (isNoNotify || this.errorCount === 5) return this._clear();
     fetch(`${versionUrl}?t=${Date.now()}`)
       .then(res => res.json())
       .then((remoteVersion) => {
@@ -83,8 +94,8 @@ class VersionChecker extends Component<VersionCheckerProps> {
   };
 
   reload = () => {
-    const { updateLog, lastVersion } = this.state;
-    ShowModal({
+    const { updateLog } = this.state;
+    const ModalID = ShowModal({
       title: '是否更新版本？',
       type: 'confirm',
       width: 400,
@@ -98,6 +109,11 @@ class VersionChecker extends Component<VersionCheckerProps> {
           <TipPanel
             type="success"
             text="请确保已保存工作内容，页面即将刷新" />
+          <hr />
+          <Button onClick={(e) => {
+            localStorage.setItem(NO_NOTIFY, 'true');
+            CloseModal(ModalID);
+          }} text="不再提示" />
         </div>
       ),
       onConfirm: (isSure) => {

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar } from 'ukelli-ui/core/avatar';
+import { AvatarProps } from 'ukelli-ui/core/avatar/avatar';
 import getFileSrc, { getFileSrcFromCache } from '../utils/get-file-src';
 
-interface ChatAvatarProps {
+interface ChatAvatarProps extends AvatarProps {
   AvatarFileID: Long | string;
   UserName?: string;
 }

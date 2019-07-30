@@ -130,7 +130,7 @@ $headerH: 40px;
       }
       ._img {
         height: auto;
-        margin: 5px 0 5px;
+        // margin: 5px 0 5px;
         border-radius: 4px;
         max-width: 100%;
         img {
@@ -147,15 +147,14 @@ $headerH: 40px;
       }
       .msg {
         display: inline-block;
-        padding: 7px 12px;
         border-radius: 3px;
-        background-color: #e6e6e6;
-        color: #444;
-        -webkit-user-select: text;
-        -ms-user-select: text;
-        -moz-user-select: text;
-        user-select: text;
-        font-size: 14px;
+        &.txt {
+          padding: 7px 12px;
+          background-color: #e6e6e6;
+          color: #444;
+          user-select: text;
+          font-size: 14px;
+        }
       }
       .unit {
         margin: 0 10px;
@@ -194,7 +193,7 @@ $headerH: 40px;
             color: $themeColor;
           }
         }
-        .msg {
+        .msg.txt {
           color: #FFF;
           background-color: $themeColor;
         }

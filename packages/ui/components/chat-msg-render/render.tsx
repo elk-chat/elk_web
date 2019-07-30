@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import React from 'react';
 import { FEMessageType, FEContentType } from '@little-chat/core/types';
 import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
@@ -23,7 +24,25 @@ const MsgTypeClass = {
   2: 'add-member',
 };
 
-const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] => {
+const today = Date.now();
+const oneDayTime = 86400;
+const timeFilter = (time) => {
+  const dateDiff = (today / 1000) - time;
+  let format = 'hh:mm';
+  let prefix = '';
+  if (dateDiff < oneDayTime) {
+
+  } else if (dateDiff < oneDayTime * 2) {
+    prefix = '昨天';
+  } else if (dateDiff < oneDayTime * 3) {
+    prefix = '前天';
+  } else if (dateDiff >= oneDayTime * 3) {
+    format = 'YYYY-MM-DD hh:mm';
+  }
+  return `${prefix ? `${prefix} ` : ''}${DateFormat(time * 1000, format)}`;
+};
+
+const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] | null => {
   const {
     userInfo, selectedChat, currChatContentData,
     onImgLoad
@@ -45,6 +64,7 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] => {
     let timeElem;
     let msgUnit;
     let isMe;
+    let msgType;
     let actionTime;
 
     switch (currMsg.MessageType) {
@@ -54,44 +74,45 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] => {
         isMe = SenderName === myName;
         switch (currMsgRes.ContentType) {
           case FEContentType.Image:
+            msgType = 'img';
             message = (
               <Image FileID={FileID}
                 onLoad={onImgLoad}/>
             );
             break;
           case FEContentType.Text:
+            msgType = 'txt';
             message = Message;
             break;
         }
-        const C = isMe ? 'div' : Link;
         const currUser = isMe ? userInfo : UsersRef[SenderName];
-        const propForC = isMe ? {} : {
-          Com: 'ContactDetail',
-          Title: SenderName,
-          params: currUser ? {
-            UserID: currUser.UserID.toString()
-          } : {}
-        };
+        const avatar = (
+          <ChatAvatar
+            AvatarFileID={currUser ? currUser.AvatarFileID : ''}
+            text={SenderName[0]}
+            size={30} />
+        );
         msgUnit = (
           <React.Fragment>
-            <C
-              onClick={(e) => {
-                // selectContact(contactData[selectedChat.ContactID]);
-              }}
-              {...propForC}>
-              <ChatAvatar
-                AvatarFileID={currUser ? currUser.AvatarFileID : ''}
-                text={SenderName[0]}
-                size={30} />
-              {/* <Avatar size={30}>
-                  {SenderName[0]}
-                </Avatar> */}
-            </C>
+            {
+              isMe ? (
+                <div>
+                  {avatar}
+                </div>
+              ) : (
+                <Link Com="ContactDetail" Title={SenderName}
+                  params={{
+                    UserID: currUser.UserID.toString()
+                  }}>
+                  {avatar}
+                </Link>
+              )
+            }
             <div className="unit">
               {
                 !isMe && isGroupChat && <div className="username">{SenderName}</div>
               }
-              <span className="msg">{message}</span>
+              <span className={`msg ${msgType}`}>{message}</span>
             </div>
           </React.Fragment>
         );
@@ -104,7 +125,7 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] => {
         );
         break;
       default:
-        return;
+        return null;
     }
 
     const timeout = actionTime - prevTime > timeDisplayDelay;
@@ -112,7 +133,7 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] => {
       prevTime = actionTime;
       timeElem = (
         <div className="time-devide">
-          <time>{DateFormat(actionTime * 1000, 'YYYY-MM-DD hh:mm:ss')}</time>
+          <time>{timeFilter(actionTime)}</time>
           {/* <div className="divide"></div> */}
         </div>
       );

@@ -87,6 +87,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   msgPanelHeight!: number;
 
+  currScrollTop!: number;
+
   msgHeightInfo: {
     [chatIdx: string]: number;
   } = {};
@@ -259,6 +261,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     this.scrollContent = this.scrollContent || e;
     if (e) {
       setTimeout(() => {
+        this.currScrollTop = this.msgPanelHeight;
         e.scrollTop = this.msgPanelHeight;
         if (!e.classList.contains('ready')) {
           setTimeout(() => {
@@ -378,7 +381,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   handleImgLoad = () => {
     this.renewMsgPanelHeight();
-    this.scrollToBottom(this.scrollContent);
+    if (this.currScrollTop < this.msgPanelHeight) {
+      this.scrollToBottom(this.scrollContent);
+    }
   }
 
   render() {

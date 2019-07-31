@@ -25,13 +25,17 @@ const MsgTypeClass = {
 };
 
 const today = Date.now();
-const oneDayTime = 86400;
+const todayDate = new Date();
+const oneDayTime = 86400 * 1000;
 const timeFilter = (time) => {
-  const dateDiff = (today / 1000) - time;
+  const _time = time * 1000;
+  const currTimeDate = new Date(_time);
+  const isTodayTime = currTimeDate.getDate() - todayDate.getDate() === 0;
+  const dateDiff = today - _time;
   let format = 'hh:mm';
   let prefix = '';
-  if (dateDiff < oneDayTime) {
-
+  if (isTodayTime && dateDiff < oneDayTime) {
+    prefix = '今天';
   } else if (dateDiff < oneDayTime * 2) {
     prefix = '昨天';
   } else if (dateDiff < oneDayTime * 3) {
@@ -39,7 +43,7 @@ const timeFilter = (time) => {
   } else if (dateDiff >= oneDayTime * 3) {
     format = 'YYYY-MM-DD hh:mm';
   }
-  return `${prefix ? `${prefix} ` : ''}${DateFormat(time * 1000, format)}`;
+  return `${prefix ? `${prefix} ` : ''}${DateFormat(_time, format)}`;
 };
 
 const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] | null => {

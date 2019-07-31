@@ -370,7 +370,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   }
 
   editorClickToSend = (e) => {
-    this.onSendMsg(this.editorPanel.current.innerHTML, FEContentType.Text);
+    this.onSendMsg(this.editorPanel.current.textContent, FEContentType.Text);
   }
 
   renewMsgPanelHeight = () => {

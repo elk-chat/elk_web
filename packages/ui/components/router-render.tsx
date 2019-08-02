@@ -15,12 +15,16 @@ interface RouterRenderProps {
   activeRoute: string;
   /** 导航器的标志 */
   navRouterMark: string;
+  /** 是否在加载数据 */
+  isFetchingData: boolean;
   /** onNavigate */
   onNavigate: Function;
 }
 
 const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterRenderProps) => {
-  const { routeConfig, activeRoute, ...other } = propsOfRouterRender;
+  const {
+    routeConfig, activeRoute, isFetchingData, ...other
+  } = propsOfRouterRender;
   return (
     <div className="main-container">
       {
@@ -28,6 +32,7 @@ const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterR
           const {
             path, props, component, title, header = true
           } = route;
+          const _title = isFetchingData ? 'Updating...' : title;
           const isActive = activeRoute === path;
           const C = component;
           const { RightBtns } = C;
@@ -42,7 +47,7 @@ const RouterRender: React.SFC<RouterRenderProps> = (propsOfRouterRender: RouterR
                     passProps={propsOfRouterRender}
                     RightBtns={RightBtns}
                     onNavigate={propsOfRouterRender.onNavigate}
-                    title={title} />
+                    title={_title} />
                 )
               }
               <div className="page-content">

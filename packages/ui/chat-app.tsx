@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import * as ChatActions from '@little-chat/core/actions';
+import * as ChatStateTypes from '@little-chat/core/types';
 import {
   RouterMultiple, RouterHelperProps, RouterState,
 } from 'react-multiple-router';
@@ -23,6 +24,9 @@ import "./style/style.scss";
 export interface ChatAppProps extends RouterHelperProps {
   dispatch: Function;
   isMobile?: boolean;
+  syncContactsAndChats: typeof ChatActions.syncContactsAndChats;
+  initChat: typeof ChatActions.initChat;
+  chatListData: ChatStateTypes.ChatListEntity;
 }
 
 export interface ChatState extends RouterState {
@@ -62,6 +66,8 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
 
   isNative = false;
 
+  isFetchingData = true;
+
   state = {
     ...this.state,
     activeMainRoute: this.defaultPath,
@@ -93,6 +99,7 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
 
   handleLogin = () => {
     this.props.syncContactsAndChats();
+    this.isFetchingData = false;
   }
 
   handleReceiveMsg = ({ chatID, chatContent }) => {
@@ -162,6 +169,7 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
       <React.Fragment>
         <RouterRender
           {...this.getProps()}
+          isFetchingData={this.isFetchingData}
           unreadInfo={unreadInfo}
           activeRoute={isMobile ? activeRoute : activeMainRoute}
           routeConfig={pageRoutersConfig}

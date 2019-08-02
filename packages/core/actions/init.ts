@@ -16,7 +16,7 @@ import {
 import { fetchContacts } from './contact-actions';
 
 export const INIT_CHAT = "INIT_CHAT";
-export function initChat(dispatch, callback) {
+export function initChat(dispatch, callback?) {
   return {
     type: INIT_CHAT,
     dispatch,
@@ -59,7 +59,7 @@ function* watchBoard({ dispatch }) {
 }
 
 export const SYNC_CONTACTS_AND_CHATS = "SYNC_CONTACTS_AND_CHATS";
-export function syncContactsAndChats(callback) {
+export function syncContactsAndChats(callback?) {
   return {
     type: SYNC_CONTACTS_AND_CHATS,
     callback

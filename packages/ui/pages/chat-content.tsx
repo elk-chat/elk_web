@@ -3,7 +3,6 @@ import {
   EventEmitter, DebounceClass
 } from 'basic-helper';
 import { Icon } from 'ukelli-ui/core/icon';
-import { Loading } from 'ukelli-ui/core/loading';
 import {
   ChatItemEntity, ChatContentState, UserInfo, FEContentType,
   FEMessageType, ChatContentStateInfo
@@ -93,6 +92,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     [chatIdx: string]: number;
   } = {};
 
+  __mount = false;
+
   constructor(props: ChatContentProps) {
     super(props);
     this.page = 0;
@@ -102,6 +103,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       limit: 12,
       loadingChat: true,
       currChatContentData: ChatContentCache[chatIDStr],
+      msgPanelHeight: 0,
       paging: {}
     };
     this.editorPanel = React.createRef();
@@ -109,11 +111,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   componentDidMount() {
     this.initData();
+    this.__mount = true;
     EventEmitter.on(RECEIVE_CHAT_MESSAGE, this.handleReceiveMsg);
   }
 
   componentWillUnmount() {
     this.props.selectChat('');
+    this.__mount = false;
     EventEmitter.rm(RECEIVE_CHAT_MESSAGE, this.handleReceiveMsg);
   }
 
@@ -170,19 +174,21 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       lastState,
       lastData,
     };
-    this.setState({
-      currChatContentData: ChatContentCache[chatID],
-      paging: nextPaging,
-      loadingChat: false,
-    });
-    CheckMsgReadState({
-      ChatID
-    }).then((res) => {
-      const { StateRead } = res;
-      if (StateRead && lastState && +StateRead.toString() < +lastState.toString()) {
-        this.readMsg(lastState);
-      }
-    });
+    if (this.__mount) {
+      this.setState({
+        currChatContentData: ChatContentCache[chatID],
+        paging: nextPaging,
+        loadingChat: false,
+      });
+      CheckMsgReadState({
+        ChatID
+      }).then((res) => {
+        const { StateRead } = res;
+        if (StateRead && lastState && +StateRead.toString() < +lastState.toString()) {
+          this.readMsg(lastState);
+        }
+      });
+    }
   }
 
   handleReceiveMsg = ({ chatID, chatContent }) => {

@@ -106,7 +106,7 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] | nu
               ) : (
                 <Link Com="ContactDetail" Title={SenderName}
                   params={{
-                    UserID: currUser.UserID.toString()
+                    UserID: currUser ? currUser.UserID.toString() : ''
                   }}>
                   {avatar}
                 </Link>

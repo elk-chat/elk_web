@@ -3,13 +3,14 @@
 // import { Provider } from 'react-redux';
 import Long from 'long';
 import protobuf from 'protobufjs';
+import { hot } from 'react-hot-loader';
 
 import ChatApp from './auth-connection';
 
 protobuf.util.Long = Long;
 protobuf.configure();
 
-export default ChatApp;
+export default hot(module)(ChatApp);
 
 // const chatStore = createChatStore({});
 

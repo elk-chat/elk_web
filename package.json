@@ -70,6 +70,7 @@
     "protobufjs": "^6.8.8",
     "react-app-polyfill": "^1.0.1",
     "react-dev-utils": "^9.0.1",
+    "react-hot-loader": "^4.12.10",
     "resolve": "1.10.0",
     "sass-loader": "7.1.0",
     "semver": "6.0.0",

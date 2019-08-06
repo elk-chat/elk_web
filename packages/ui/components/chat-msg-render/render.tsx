@@ -8,10 +8,12 @@ import {
 import ChatAvatar from '../avatar';
 import Image from '../image';
 import Link from '../nav-link';
+import { Icon } from 'ukelli-ui/core/icon';
 
 interface ChatMsgRenderProps {
   userInfo;
   selectedChat;
+  sendingMsg;
   currChatContentData;
   onImgLoad: () => void;
 }
@@ -46,9 +48,9 @@ const timeFilter = (time) => {
   return `${prefix ? `${prefix} ` : ''}${DateFormat(_time, format)}`;
 };
 
-const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] | null => {
+const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
   const {
-    userInfo, selectedChat, currChatContentData,
+    userInfo, selectedChat, currChatContentData, sendingMsg,
     onImgLoad
   } = props;
   const { UsersRef } = selectedChat;
@@ -57,7 +59,8 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] | nu
   let prevTime = 0;
   const { data = [] } = currChatContentData;
 
-  const msgRow: JSX.Element[] = [];
+  const msgRow: React.ReactElement[] = [];
+  // eslint-disable-next-line consistent-return
   data.forEach((currMsg, idx) => {
     const currMsgRes = chatContentFilter(currMsg);
     const {
@@ -160,6 +163,39 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props): JSX.Element[] | nu
 
     msgRow.push(itemElem);
   });
+  // eslint-disable-next-line guard-for-in
+  for (const msgID in sendingMsg) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (sendingMsg.hasOwnProperty(msgID)) {
+      const msgItem = sendingMsg[msgID];
+      const { Image, Message } = msgItem;
+      const isImage = !!Image;
+      msgRow.push((
+        <div
+          className="bubble me" key={msgID}>
+          <div className={`msg-item ${MsgTypeClass[1]}`}>
+            <ChatAvatar
+              AvatarFileID={userInfo.AvatarFileID}
+              text={myName[0]}
+              size={30} />
+            <div className="unit">
+              <Icon n="spinner" classNames={['btn-loading']}/>
+              <span className={`msg ${isImage ? 'img' : 'txt'}`}>
+                {
+                  isImage ? (
+                    <div
+                      className="img-wrapper">
+                      <img className="_img" alt="" src={Image} />
+                    </div>
+                  ) : String(Message)
+                }
+              </span>
+            </div>
+          </div>
+        </div>
+      ));
+    }
+  }
 
   return msgRow;
 };

@@ -48,13 +48,13 @@ export function fetchChats() {
 
 }
 
-export const APPLY_SEND_MSG = "APPLY_SEND_MSG";
-export function applySendMsg(payload: SDK.kproto.IChatSendMessageReq) {
-  return {
-    type: APPLY_SEND_MSG,
-    payload
-  };
-}
+// export const APPLY_SEND_MSG = "APPLY_SEND_MSG";
+// export function applySendMsg(payload: SDK.kproto.IChatSendMessageReq) {
+//   return {
+//     type: APPLY_SEND_MSG,
+//     payload
+//   };
+// }
 
 export const APPLY_FETCH_CHAT_LIST = 'APPLY_FETCH_CHAT_LIST';
 export function applyFetchChatList() {
@@ -121,22 +121,22 @@ export function receiveChatMessages(chatContents) {
   };
 }
 
-export const SENDING_MSG = "SENDING_MSG";
-export const SENT_MSG = "SENT_MSG";
-export const SEND_MSG_FAIL = "SEND_MSG_FAIL";
-/**
- * 发送消息
- */
-export function* sendMsgReq(action) {
-  // console.log(action)
-  const { payload } = action;
-  yield put({ type: SENDING_MSG });
-  try {
-    yield call(SendMsg, payload);
-  } catch (e) {
-    console.log(e);
-  }
-}
+// export const SENDING_MSG = "SENDING_MSG";
+// export const SENT_MSG = "SENT_MSG";
+// export const SEND_MSG_FAIL = "SEND_MSG_FAIL";
+// /**
+//  * 发送消息
+//  */
+// export function* sendMsgReq(action) {
+//   // console.log(action)
+//   const { payload } = action;
+//   yield put({ type: SENDING_MSG });
+//   try {
+//     yield call(SendMsg, payload);
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }
 
 export const SYNCING_CHAT_MESSAGE = "SYNCING_CHAT_MESSAGE";
 export const SYNC_CHAT_MESSAGE_FAIL = "SYNC_CHAT_MESSAGE_FAIL";
@@ -144,7 +144,7 @@ export const SYNC_CHAT_MESSAGE_FAIL = "SYNC_CHAT_MESSAGE_FAIL";
  * 同步 Chat 的聊天数据
  */
 export function* syncChatMessage(action: {
-  payload: SDK.kproto.IChatSyncChatStatesReq;
+  payload: SDK.kproto.IChatSyncChatStateMessagesReq;
 }) {
   const { payload } = action;
   yield put({ type: SYNCING_CHAT_MESSAGE });
@@ -173,7 +173,7 @@ function getUserID() {
   return currUserID;
 }
 
-export const FETCHING_CHAT_LIST = 'FETCHING_CHAT_LIST';
+// export const FETCHING_CHAT_LIST = 'FETCHING_CHAT_LIST';
 export const RECEIVE_CHAT_LIST = 'RECEIVE_CHAT_LIST';
 export const RECEIVE_UNREAD_DATA = 'RECEIVE_UNREAD_DATA';
 // export function* getChatMembers(Chats) {
@@ -188,7 +188,7 @@ export const RECEIVE_UNREAD_DATA = 'RECEIVE_UNREAD_DATA';
  * 4. 获取 Chat List 每一项的已读状态，与 3 获取的最后一条数据做对比，初始化未读数
  */
 export function* getChatList(callback) {
-  yield put({ type: FETCHING_CHAT_LIST });
+  // yield put({ type: FETCHING_CHAT_LIST });
   try {
     // 1. 获取 Chat 列表
     const { Chats } = yield call(GetChatList);
@@ -311,7 +311,7 @@ export function* addChat(action) {
 }
 
 export function* watchChatActions() {
-  yield takeLatest(APPLY_SEND_MSG, sendMsgReq);
+  // yield takeLatest(APPLY_SEND_MSG, sendMsgReq);
   yield takeLatest(APPLY_FETCH_CHAT_LIST, getChatList);
   yield takeLatest(APPLY_ADD_CHAT, addChat);
   // yield takeLatest(APPLY_SYNC_CHAT_MESSAGES, syncChatMessages);

@@ -15,6 +15,10 @@ $headerH: 40px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  .btn-loading {
+    color: #888;
+    margin-right: 5px;
+  }
   .loading-control {
     height: 2px;
     position: absolute;
@@ -87,7 +91,7 @@ $headerH: 40px;
     transition: opacity ease 0.1s;
     flex: 1;
     &.ready {
-      scroll-behavior: smooth;
+      // scroll-behavior: smooth;
       opacity: 1;
     }
   }

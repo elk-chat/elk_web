@@ -7,7 +7,7 @@ import { Menus } from 'ukelli-ui/core/menu';
 import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 
 import {
-  UserInfo, ChatItemEntity, ChatListEntity, ChatType, FEContentType, FEMessageType
+  UserInfo, LastMsgInfo, ChatListEntity, ChatType, FEContentType, FEMessageType
 } from '@little-chat/core/types';
 // import { selectChat } from '@little-chat/core/actions';
 import NavLink from '../components/nav-link';
@@ -19,6 +19,7 @@ import ChatAvatar from '../components/avatar';
 
 interface ChatListProps extends UserInfo {
   chatListData: ChatListEntity;
+  lastMsgInfo: LastMsgInfo;
   selectChat: Function;
   syncContactsAndChats: Function;
 }
@@ -44,17 +45,10 @@ const msgFilter = (ChatEntity) => {
   return str;
 };
 
-const avatarGroup = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-const avatarSrcFilter = (chatID) => {
-  const remainder = chatID % avatarGroup.length;
-  return `/face/${avatarGroup[remainder]}.jpg`;
-};
-
 export default class ChatList extends React.PureComponent<ChatListProps, {}> {
   static RightBtns = props => (
     <DropdownWrapper
       position="right"
-      needAction={false}
       outside
       overlay={({ hide }) => (
         <Menus data={[
@@ -78,7 +72,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
           }
         ]} />
       )}>
-      <Icon n="plus" className={["p20"]} />
+      <Icon n="plus" classNames={["p15"]} />
     </DropdownWrapper>
   )
 
@@ -90,17 +84,21 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
     const nextLit = [...chatList]
       .filter(item => item.ChatType !== ChatType.Contact)
       .sort((f, s) => {
-        const FChatID = f.ChatID;
-        const SChatID = s.ChatID;
+        const FChatID = f.ChatID.toString();
+        const SChatID = s.ChatID.toString();
         const FLastInfo = lastMsgInfo[FChatID];
         const SLastInfo = lastMsgInfo[SChatID];
-        if (!FLastInfo || !SLastInfo || SLastInfo.length < 1 || FLastInfo.length < 1) {
+        if (!FLastInfo || !FLastInfo.ActionTime) {
           return 1;
         }
-        if (SLastInfo.ActionTime && FLastInfo.ActionTime) {
-          return +SLastInfo.ActionTime.toString() - +FLastInfo.ActionTime.toString();
+        if (!SLastInfo || !SLastInfo.ActionTime) {
+          return -1;
         }
-        return 1;
+
+        const result = +SLastInfo.ActionTime.toString() - +FLastInfo.ActionTime.toString();
+
+        return result;
+        // return -1;
       });
     return nextLit;
   }
@@ -153,6 +151,9 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
                 <div className="content">
                   <div className="chat-title">
                     {Title}
+                    {
+                      process.env.NODE_ENV === 'development' && ` ChatID: ${chatID}`
+                    }
                   </div>
                   <div className="last-msg">
                     {msgFilter(currLastMsg)}

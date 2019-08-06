@@ -11,6 +11,27 @@ const ImageViwer = ({ src, ID }) => (
   }} id={ID} />
 );
 
+const handlePrevImg = (imgSrc, ID) => (e) => {
+  const ModalID = ShowModal({
+    width: '100%',
+    animation: false,
+    clickBgToClose: true,
+    modalLayoutDOM: (
+      <div
+        className="fill img-prev"
+        style={{
+          zIndex: 999,
+          backgroundColor: 'rgba(0,0,0,0.7)',
+          // position: 'fixed',
+          pointerEvents: 'all'
+        }}>
+        <span className="close-btn" onClick={() => CloseModal(ModalID)}>x</span>
+        <ImageViwer src={imgSrc} ID={`img_${ID}`}/>
+      </div>
+    )
+  });
+};
+
 export default (props) => {
   const { FileID, onLoad } = props;
   if (!FileID) return null;
@@ -25,26 +46,7 @@ export default (props) => {
     }
   }, [FileID]);
   return (
-    <div id={ID} className="img-wrapper" onClick={(e) => {
-      const ModalID = ShowModal({
-        width: '100%',
-        animation: false,
-        clickBgToClose: true,
-        modalLayoutDOM: (
-          <div
-            className="fill img-prev"
-            style={{
-              zIndex: 999,
-              backgroundColor: 'rgba(0,0,0,0.7)',
-              // position: 'fixed',
-              pointerEvents: 'all'
-            }}>
-            <span className="close-btn" onClick={e => CloseModal(ModalID)}>x</span>
-            <ImageViwer src={imgSrc} ID={`img_${ID}`}/>
-          </div>
-        )
-      });
-    }}>
+    <div id={ID} className="img-wrapper" onClick={handlePrevImg(imgSrc, ID)}>
       <img className="_img" alt="" onLoad={(e) => {
         Call(onLoad, e, imgSrc);
       }} src={imgSrc} />

@@ -2,7 +2,7 @@ import { UUID } from 'basic-helper';
 import setDOMById from 'ukelli-ui/core/set-dom';
 
 interface ReturnParams {
-  file: File;
+  file?: File | null;
   fileInfo: {
     width: number;
     height: number;
@@ -80,7 +80,9 @@ const GetImgToBuffer = blob => new Promise<string | ArrayBuffer | null>((resolve
   }
 });
 
-const GetImgInfo = (items: DataTransferItemList) => new Promise((resolve, reject) => {
+const GetImgInfo = (
+  items: DataTransferItemList
+): Promise<ReturnParams> => new Promise((resolve, reject) => {
   let fileName;
   let isImg = false;
   for (let index = 0; index < items.length; index++) {
@@ -97,6 +99,7 @@ const GetImgInfo = (items: DataTransferItemList) => new Promise((resolve, reject
         .then(([buffer, imgInfo]) => {
           resolve({
             buffer,
+            file: blob,
             fileInfo: {
               ...imgInfo,
               name: fileName || UUID(),

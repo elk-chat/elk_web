@@ -82,7 +82,7 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
     this.initRoute();
 
     initChat(dispatch);
-    syncContactsAndChats();
+    // syncContactsAndChats();
     /** 订阅登陆成功 */
     EventEmitter.on(LOGIN_SUCCESS, this.handleLogin);
     /** 接收消息 */

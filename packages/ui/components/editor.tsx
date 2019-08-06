@@ -6,7 +6,7 @@ import { Call } from 'basic-helper';
 interface EditorProps {
   onPaste: (event: React.ClipboardEvent<HTMLDivElement>) => void;
   onFocus: (event: React.FocusEvent<HTMLDivElement>) => void;
-  onInput: (event: React.FormEvent<HTMLDivElement>) => void;
+  onInput?: (event: React.FormEvent<HTMLDivElement>) => void;
   onKeyPress: (event: React.KeyboardEvent<HTMLDivElement>) => void;
   onClickSendBtn: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
   onSelectedImg: (event: React.ChangeEvent<HTMLInputElement>) => void;

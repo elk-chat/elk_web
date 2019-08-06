@@ -76,8 +76,8 @@ const Account: React.SFC<AccountProps> = (props) => {
         <div className="action-item b mb10">
           <VersionComponent versionInfo={versionInfo} />
         </div>
-        <div className="action-item last" onClick={e => logout()}>
-          注销登陆
+        <div className="action-item last mb20" onClick={e => logout()}>
+          登出
         </div>
       </div>
       <input

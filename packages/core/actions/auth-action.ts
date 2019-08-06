@@ -113,7 +113,7 @@ const authActions = store => ({
       clearPrevLoginData();
     }
   },
-  async logout() {
+  logout() {
     store.setState({
       logouting: true,
     });

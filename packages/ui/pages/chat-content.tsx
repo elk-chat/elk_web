@@ -369,7 +369,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   getTextContent = () => {
     let res = '';
     if (this.editorPanel && this.editorPanel.current) {
-      res = this.editorPanel.current.innerHTML;
+      res = this.editorPanel.current.textContent;
       res = res.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
     }
     return res;

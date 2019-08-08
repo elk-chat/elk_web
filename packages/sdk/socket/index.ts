@@ -164,16 +164,17 @@ class SocketHelper extends EventEmitterClass {
     const decodedData = decodeData(data);
     const { RequestID } = decodedData;
     const finalData = messageResHandler(decodedData);
+    const emitData = this.after(finalData);
+    emitData.RequestID = String(RequestID);
     if (+(RequestID.toString()) === 0) {
       /** 来自推送的消息 */
-      EventEmitter.emit(RECEIVE_STATE_UPDATE, finalData.Data);
+      EventEmitter.emit(RECEIVE_STATE_UPDATE, emitData);
     } else {
       const currReq = this.getReqQueue(RequestID);
       const { success, fail } = currReq;
       const isSuccess = this.resStatusFilter(finalData);
-      const nextData = this.after(finalData);
-      Call(isSuccess ? success : fail, nextData);
-      this.emit(onMessageMark, nextData);
+      Call(isSuccess ? success : fail, emitData);
+      this.emit(onMessageMark, emitData);
     }
   }
 

@@ -198,7 +198,9 @@ export function GetChatMembers(options: SDK.kproto.IChatGetMembersReq, myID?) {
 /**
  * 发送消息
  */
-export async function SendMsg(msgData: SDK.kproto.IChatSendMessageReq) {
-  const res = await WSSend<typeof ChatSendMessageReq, SDK.kproto.IChatSendMessageResp>(ChatSendMessageReq, 'ChatSendMessageReq', msgData);
+export async function SendMsg(msgData: SDK.kproto.IChatSendMessageReq, requestID?) {
+  const res = await WSSend<typeof ChatSendMessageReq, SDK.kproto.IChatSendMessageResp>(
+    ChatSendMessageReq, 'ChatSendMessageReq', msgData, true, requestID
+  );
   return res;
 }

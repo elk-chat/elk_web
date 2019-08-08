@@ -15,6 +15,9 @@ interface Api {
   decode: (Uint8Array) => {};
   toObject: (any) => {};
 }
+interface Response {
+  RequestID?: string;
+}
 
 const SDKErrorDesc = '请先调用 InitSDK';
 
@@ -27,13 +30,13 @@ function GetWS() {
   return $WS;
 }
 
-function WSSend<T extends Api, S>(api: T, apiName: string, data?, needAuth = true): Promise<S> {
+function WSSend<T extends Api, S>(
+  api: T, apiName: string, data?, needAuth = true, requestID = BigInt(UUID(16))
+): Promise<S> {
   return new Promise((resolve, reject) => {
     if (!$WS) {
-      console.error(SDKErrorDesc);
-      return reject(SDKErrorDesc);
+      throw Error(SDKErrorDesc);
     }
-    const requestID = BigInt(UUID(16));
     const msgWrite = api.create(data);
     const bufData = api.encode(msgWrite).finish();
 

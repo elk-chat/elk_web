@@ -1,4 +1,5 @@
 import React from 'react';
+import JSBI from 'jsbi';
 import {
   EventEmitter, DebounceClass, UUID
 } from 'basic-helper';
@@ -343,8 +344,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
     this.delayScrollToBottom();
 
-    SendMsg(sendMsgData)
-      .then(() => {
+    SendMsg(sendMsgData, JSBI.BigInt(msgClientID))
+      .then(({ RequestID }) => {
         /** 发送成功后，把正在发送队列消息删除 */
         const { sendingMsg } = this.state;
         const nextSendingState = Object.assign({}, sendingMsg);
@@ -369,7 +370,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   getTextContent = () => {
     let res = '';
     if (this.editorPanel && this.editorPanel.current) {
-      res = this.editorPanel.current.textContent;
+      res = this.editorPanel.current.textContent || '';
       res = res.replace(/<div>/gi, '<br>').replace(/<\/div>/gi, '');
     }
     return res;
@@ -463,6 +464,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       .then(({ StateUpdates, Paging }) => {
         const nextPIdx = pIdx + 1;
         this.handleReceiveData(StateUpdates, Paging, nextPIdx, () => {
+          // 让滚动条保持在用户浏览加载的部分
           this.renewMsgPanelHeight();
           const scrollDiff = this.msgPanelHeight - currMsgPanelHeight;
           this.scrollTo(scrollDiff);

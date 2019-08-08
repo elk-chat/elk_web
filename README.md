@@ -1,8 +1,8 @@
 # Little chat
 
-Little Chat 是一套即时通讯 web 客户端程序。
+Little Chat 是一款即时通讯 web 客户端程序，基于 Protobuf 和 Websocket。提供快速、稳定的即时通讯体验，支持多终端同时登陆、信息同步等功能，更多功能持续完善中。
 
-## 所需知识
+## 基础
 
 - typescript
 - react
@@ -16,15 +16,11 @@ Little Chat 是一套即时通讯 web 客户端程序。
 
 ```js
 module.exports = {
-  "apiHost":"192.168.192.145:9999/gate",
-  "beforeWSHook": (data) => {
-    // 在发送请求之前的 hook
-    return data;
-  },
-  "afterWSHook": (data) => {
-    // 在请求回应之后的 hook
-    return data;
-  },
+  "apiHost": "ws://host",
+  "appName": "little-chat",
+  "logo": {
+    "src": ""
+  }
 }
 ```
 
@@ -32,9 +28,9 @@ module.exports = {
 
 主要分为 3 层
 
-1. SDK
-2. Actions
-3. UI
+1. SDK -> @little-chat/sdk
+2. Actions -> @little-chat/core
+3. UI -> @little-chat/ui
 
 ### SDK
 
@@ -42,7 +38,7 @@ module.exports = {
 import SDK from '@little-chat/sdk'
 ```
 
-基于 `proto` 协议，以 `websocket` 作为通讯渠道，来构建封装的 `SDK`
+基于 `proto` 协议，以 `websocket` 作为通讯渠道，构建封装的 `SDK`。
 
 ### Actions
 
@@ -56,30 +52,33 @@ import SDK from '@little-chat/core'
 
 ```js
 import SDK from '@little-chat/ui'
-import SDK from 'react-multiple-router'
 ```
 
-基于 Actions 提供的数据结构，构建渲染 UI 视图。同时在`特殊情况`也可以直接调用 `SDK` 获取数据。例如`搜索功能`，搜索结果挂载在 `redux` 是没有必要的。
+基于 Actions 提供的数据结构，构建渲染 UI 视图。同时在`特殊情况`也可以直接调用 `SDK` 获取数据。例如`搜索功能`，直接使用 `SDK` 获取数据。
 
-## Chat 基本概念
+## 路由机制
+
+```js
+import * as RouterMultiple from 'react-multiple-router'
+```
+
+由于 `react-router` 对`多路由共存`支持不友好，所以采用 `uke-web-admin-scaffold` 管理系统的多路由共存机制，确保页面之间的正确导航关系。为了更好的应对各种情况，所以路由的值经过了 `base64` 处理。
+
+详情查看 `./packages/react-multiple-router` 提供的 `Link` 以及 `onNavigate`。
+
+## 基本概念
+
+### Chat 基本概念
 
 每一个聊天都是一个 `Chat`，根据 `ChatType` 判断是 `一对一聊天` 还是 `群聊`。
 
-## Ack
+### Ack
 
 > TCP为了保证不发生丢包，就给每个包一个序号，同时序号也保证了传送到接收端实体的包的按序接收。然后接收端实体对已成功收到的包发回一个相应的确认信息（ACK）；如果发送端实体在合理的往返时延（RTT）内未收到确认，那么对应的数据包就被假设为已丢失并进行重传。TCP用一个校验和函数来检验数据是否有错误，在发送和接收时都要计算校验和。
 >
 > 维基百科《网络三次握手》
 
 为了提高消息的可靠性，需要客户端在收到推送消息后发送 Ack 确认消息给服务端，确保消息不丢失。还应用于显示已读未读状态的功能
-
-## 路由机制
-
-由于 `react-router` 对`多路由共存`支持不友好，所以采用 `uke-web-admin-scaffold` 管理系统的多路由共存机制，确保页面之间的跳转关系。
-
-为了更好的应对各种情况，所以路由的值经过了 `base64` 处理。
-
-详情查看 `./packages/react-multiple-router` 提供的 `Link` 以及 `onNavigate`。
 
 ## TODO
 

@@ -3,6 +3,7 @@ import { CreateChatAndAddMember, AddMemberToChat } from '@little-chat/sdk';
 // import { FormLayout } from 'ukelli-ui/core/form-generator';
 import { Checkbox } from 'ukelli-ui/core/selector';
 import { Button } from 'ukelli-ui/core/button';
+import { Toast } from 'ukelli-ui/core/toast';
 import { Input } from 'ukelli-ui/core/form-control';
 
 interface AddChatPanelProps {
@@ -27,6 +28,7 @@ const getValuesForCheckbox = (contactDataList, exclude: string[]) => {
 
 let checkboxRef;
 let inputRef;
+let toastRef;
 
 const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
   const {
@@ -39,8 +41,17 @@ const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => () => {
+    checkboxRef = null;
+    inputRef = null;
+    toastRef = null;
+  }, []);
+
   return hasOptions ? (
     <div className="add-chat-panel p20">
+      <Toast ref={(e) => {
+        toastRef = e;
+      }} />
       {
         needInput && <input
           className="form-control mb20"
@@ -65,8 +76,10 @@ const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
           }).then((res) => {
             props.onSuccess();
             props.applyFetchChatList();
-          }).catch((e) => {
-            console.log(e);
+          }).catch((err) => {
+            console.log(toastRef);
+            toastRef && toastRef.show(err.Message, 'error');
+            setLoading(false);
           });
         }
       }} />

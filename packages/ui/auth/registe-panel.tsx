@@ -35,7 +35,7 @@ type btnGColor = (typeof btnGColorTypes)[number];
 export default class RegisterPanel extends Component<RegisterPanelProps, {}> {
   static defaultProps = {
     btnGColor: 'blue',
-    logo: (appName = 'Little Chat') => (
+    logo: (appName = 'Elk Chat') => (
       <h2 className="title" style={{
         fontFamily: 'cursive'
       }}>{appName}</h2>

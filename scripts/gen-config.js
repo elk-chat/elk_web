@@ -13,7 +13,7 @@ const configPath = path.resolve(process.cwd(), configStorePath, configName)
 if(!fs.existsSync(configPath)) {
   const defaultConfig = {
     apiHost: "wss://gate.kchat.im/gate",
-    appName: "little-chat",
+    appName: "Elk Chat",
     logo: { src: '' },
     beforeWSHook: (data) => data,
     afterWSHook: (data) => data,

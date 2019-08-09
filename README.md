@@ -17,7 +17,7 @@ Little Chat 是一款即时通讯 web 客户端程序，基于 Protobuf 和 Webs
 ```js
 module.exports = {
   "apiHost": "ws://host",
-  "appName": "little-chat",
+  "appName": "Elk Chat",
   "logo": {
     "src": ""
   }

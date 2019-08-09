@@ -37,7 +37,7 @@ export default class LoginPanel extends Component<LoginPanelProps> {
     logging: false,
     autoLoging: false,
     btnGColor: 'blue',
-    logo: (appName = 'Little Chat') => (
+    logo: (appName = 'Elk Chat') => (
       <h2 className="title" style={{
         fontFamily: 'cursive'
       }}>{appName}</h2>

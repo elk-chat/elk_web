@@ -44,6 +44,7 @@ message UpdateMessage {
   UpdateMessageChatReadMessage UpdateMessageChatReadMessage = 3;
   UpdateMessageChatDeleteMember UpdateMessageChatDeleteMember = 4;
   UpdateMessageChatSetTyping UpdateMessageChatSetTyping = 5;
+  UpdateMessageChatDeleteMessage UpdateMessageChatDeleteMessage = 6;
 }
 
 message UpdateMessageChatAddMember {
@@ -65,6 +66,12 @@ message UpdateMessageChatSendMessage {
   int32 ContentType = 4;
   int64 FileID = 5;
   int64 ActionTime = 6;
+}
+
+message UpdateMessageChatDeleteMessage {
+  int64 ChatID = 1;
+  string SenderName = 2;
+  uint64 StateDeleted = 3;
 }
 
 message UpdateMessageChatReadMessage {
@@ -219,6 +226,27 @@ message UserGetChatUserStateResp {
   ChatUserState State = 1;
 }
 
+message ChatUserSettings {
+  int64 ChatID = 1;
+	int64 UserID = 2;
+	int32 Invisible = 3;
+}
+
+message UserSetChatUserSettingsReq {
+  ChatUserSettings ChatUserSettings = 1;
+}
+
+message UserSetChatUserSettingsResp {
+}
+
+message UserGetChatUserSettingsReq {
+  int64 ChatID = 1;
+}
+
+message UserGetChatUserSettingsResp {
+  ChatUserSettings ChatUserSettings = 1;
+}
+
 message UserGetChatUserSuperscriptReq {
   int64 ChatID = 1;
 }
@@ -363,12 +391,22 @@ message ChatSendMessageReq {
 message ChatSendMessageResp {
 }
 
+message ChatDeleteMessageReq {
+  int64 ChatID = 1;
+  uint64 StateDeleted = 2;
+}
+
+message ChatDeleteMessageResp {
+}
+
+
 message ChatGetStateReadReq {
   int64 ChatID = 1;
 }
 
 message ChatGetStateReadResp {
   uint64 StateRead  = 1;
+  uint64 OwnStateRead = 2;
 }
 
 message ChatSetTypingReq {

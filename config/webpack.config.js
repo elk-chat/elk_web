@@ -178,6 +178,7 @@ module.exports = function(webpackEnv) {
         .filter(ext => useTypeScript || !ext.includes('ts')),
       alias: {
         'react-native': 'react-native-web',
+        'react-dom': '@hot-loader/react-dom',
       },
       plugins: [
         PnpWebpackPlugin,

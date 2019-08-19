@@ -22,6 +22,7 @@
   "devDependencies": {
     "@babel/core": "7.4.3",
     "@babel/plugin-proposal-export-default-from": "^7.2.0",
+    "@hot-loader/react-dom": "^16.8.6-4.12.10",
     "@svgr/webpack": "4.1.0",
     "@types/jest": "24.0.13",
     "@types/node": "12.0.2",
@@ -75,6 +76,7 @@
     "sass-loader": "7.1.0",
     "semver": "6.0.0",
     "style-loader": "0.23.1",
+    "terser-brunch": "^3.0.0",
     "terser-webpack-plugin": "1.2.3",
     "ts-pnp": "1.1.2",
     "tslint": "^5.17.0",

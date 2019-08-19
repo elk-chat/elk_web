@@ -38,8 +38,12 @@ interface State {
   sendingMsg: {
     [msgID: string]: any;
   };
-  currChatContentData: ChatContentStateInfo;
+  currChatContentData?: ChatContentStateInfo;
   paging: {};
+}
+
+interface CacheState {
+  [chatID: string]: State;
 }
 
 const debounce = new DebounceClass();
@@ -48,6 +52,24 @@ const ChatContentCache: ChatContentState = {};
 const prevPageSize = 10;
 const firstPageIdx = 3;
 const firstPageSize = prevPageSize * firstPageIdx;
+
+const CACHE_STATE: CacheState = {};
+
+const DefaultState = {
+  pIdx: 0,
+  loadingChat: true,
+  currChatContentData: undefined,
+  sendingMsg: {},
+  paging: {}
+};
+
+// eslint-disable-next-line arrow-body-style
+const getCacheState = (chatID) => {
+  return chatID ? CACHE_STATE[chatID] || DefaultState : DefaultState;
+};
+const setCacheState = (chatID, nextState) => {
+  CACHE_STATE[chatID] = nextState;
+};
 
 export default class ChatContent extends React.PureComponent<ChatContentProps, State> {
   static RightBtns = (props) => {
@@ -104,13 +126,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   constructor(props: ChatContentProps) {
     super(props);
     const chatIDStr = props.ChatID.toString();
-    this.state = {
-      pIdx: 0,
-      loadingChat: true,
-      currChatContentData: ChatContentCache[chatIDStr],
-      sendingMsg: {},
-      paging: {}
-    };
+    this.state = getCacheState(chatIDStr);
     this.editorPanel = React.createRef();
   }
 
@@ -183,12 +199,14 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       lastData,
     };
     if (this.__mount) {
-      this.setState({
+      const nextState = {
         currChatContentData: ChatContentCache[chatID],
         paging: nextPaging,
         pIdx: nextPagIdx,
         loadingChat: false,
-      }, callback);
+      };
+      this.setState(nextState, callback);
+      setCacheState(chatID, nextState);
       CheckMsgReadState({
         ChatID
       }).then((res) => {

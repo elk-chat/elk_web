@@ -10,8 +10,8 @@ import ChatApp from './auth-connection';
 protobuf.util.Long = Long;
 protobuf.configure();
 
-// export default hot(module)(ChatApp);
-export default ChatApp;
+export default hot(module)(ChatApp);
+// export default ChatApp;
 
 // const chatStore = createChatStore({});
 

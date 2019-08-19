@@ -34,7 +34,8 @@ const msgFilter = (ChatEntity) => {
     case FEMessageType.SendMessage:
       switch (ChatEntity.ContentType) {
         case FEContentType.Text:
-          str = ChatEntity.Message;
+          const { SenderName, Message } = ChatEntity;
+          str = `${SenderName}: ${Message}`;
           break;
         case FEContentType.Image:
           str = '「图片」';

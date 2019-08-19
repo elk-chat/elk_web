@@ -192,7 +192,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       CheckMsgReadState({
         ChatID
       }).then((res) => {
-        const { StateRead } = res;
+        const { StateRead, OwnStateRead } = res;
         if (StateRead && lastState && +StateRead.toString() < +lastState.toString()) {
           this.readMsg(lastState);
         }

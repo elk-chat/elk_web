@@ -1,7 +1,7 @@
 import React from 'react';
 import JSBI from 'jsbi';
 import {
-  EventEmitter, DebounceClass, UUID
+  EventEmitter, DebounceClass, UUID, HasValue
 } from 'basic-helper';
 import { Icon } from 'ukelli-ui/core/icon';
 import {
@@ -193,7 +193,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         ChatID
       }).then((res) => {
         const { StateRead, OwnStateRead } = res;
-        if (StateRead && lastState && +StateRead.toString() < +lastState.toString()) {
+        if (HasValue(StateRead) && !!lastState && +StateRead.toString() < +lastState.toString()) {
           this.readMsg(lastState);
         }
       });

@@ -193,7 +193,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         ChatID
       }).then((res) => {
         const { StateRead, OwnStateRead } = res;
-        if (HasValue(StateRead) && !!lastState && +StateRead.toString() < +lastState.toString()) {
+        if (HasValue(OwnStateRead) && !!lastState && +OwnStateRead.toString() < +lastState.toString()) {
           this.readMsg(lastState);
         }
       });

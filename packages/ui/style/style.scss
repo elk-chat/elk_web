@@ -1,5 +1,7 @@
 @import './index.scss';
 
+$PCChatListWidth: 300px;
+
 ::selection {
   background-color: #222;
   color: #FFF;
@@ -19,8 +21,6 @@
 .little-chat-app {
   // height: 100%;
   &.pc {
-    $navigatorPageWidth: 70%;
-
     @include fill;
     background-color: rgba(40, 44, 52, 0.95);
     .container {
@@ -44,7 +44,7 @@
       filter: blur(5px);
     }
     .main-container, .tab-bar {
-      right: $navigatorPageWidth;
+      right: calc(100% - #{$PCChatListWidth});
     }
     .main-container {
       border-right: 1px solid #EEE;
@@ -52,18 +52,18 @@
     .navigator-page-container {
       &.active-idx-1 {
         .navigator-page.idx-0 {
-          right: $navigatorPageWidth / 3;
+          right: calc(100% - #{$PCChatListWidth * 4});
         }
       }
     }
     .navigator-page {
-      left: 100% - $navigatorPageWidth;
+      left: $PCChatListWidth;
       &.idx-0 {
         visibility: visible;
         opacity: 1;
       }
       &.idx-1 {
-        left: 100% - $navigatorPageWidth / 3;
+        left: $PCChatListWidth * 4;
       }
     }
     &.unlog {

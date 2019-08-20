@@ -1,11 +1,5 @@
 // @import "../../style/var.scss";
-$optionHeight: 100px;
-$textInputHeight: 16px;
-$textPanelPadding: 5px;
-$textPanelHeight: $textInputHeight + $textPanelPadding * 2;
 $chatContainerBgColor: #f9f9f9;
-$tabsBgColor: #f9f9f9;
-$containerBorderRadius: 5px;
 
 $headerH: 40px;
 
@@ -18,6 +12,11 @@ $headerH: 40px;
   .btn-loading {
     color: #888;
     margin-right: 5px;
+  }
+  .read-tip {
+    color: $blue-3;
+    font-size: 10px;
+    margin-left: 5px;
   }
   .loading-control {
     height: 2px;
@@ -202,66 +201,6 @@ $headerH: 40px;
           background-color: $themeColor;
         }
       }
-    }
-  }
-  .editor-panel {
-    padding: 8px;
-    background-color: $tabsBgColor;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 0 0 5px 0;
-    // position: absolute;
-    // bottom: 0;
-    // left: 0;
-    // right: 0;
-    box-shadow: 0 -2px 3px rgba(#000, 0.1);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 111;
-    .icon {
-      width: 20px;
-      text-align: center;
-    }
-    .typing-area {
-      border: 1px solid #DDD;
-      // height: $textInputHeight;
-      line-height: $textInputHeight;
-      border-radius: 3px;
-      // width: 90%;
-      flex: 1;
-      padding: 8px 10px;
-      width: 100%;
-      max-height: 100px;
-      overflow-y: auto;
-      &[disabled] {
-        background-color: #f3f3f3;
-        cursor: not-allowed;
-      }
-      &:focus {
-        outline: none;
-        border-color: $themeColor;
-      }
-    }
-    .item {
-      cursor: pointer;
-      padding: 5px 0;
-      min-width: 30px;
-      border: 1px solid transparent;
-      text-align: center;
-    }
-    .send-btn {
-      background-color: $themeColor;
-      color: #FFF;
-      border-radius: 3px;
-      border-color: $themeColor;
-      width: 40px;
-    }
-    .more-btn {
-      height: 30px;
-      width: 30px;
-      border-color: #DDD;
-      border-radius: 50%;
-      margin: 0 5px;
     }
   }
 }

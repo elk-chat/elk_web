@@ -5,16 +5,17 @@ import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 import {
   DateFormat
 } from 'basic-helper';
+import { Icon } from 'ukelli-ui/core/icon';
 import ChatAvatar from '../avatar';
 import Image from '../image';
 import Link from '../nav-link';
-import { Icon } from 'ukelli-ui/core/icon';
 
 interface ChatMsgRenderProps {
   userInfo;
   selectedChat;
   sendingMsg;
   currChatContentData;
+  readState: any;
   onImgLoad: () => void;
 }
 
@@ -50,7 +51,7 @@ const timeFilter = (time) => {
 
 const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
   const {
-    userInfo, selectedChat, currChatContentData, sendingMsg,
+    userInfo, selectedChat, currChatContentData, sendingMsg, readState,
     onImgLoad
   } = props;
   const { UsersRef } = selectedChat;
@@ -64,7 +65,7 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
   data.forEach((currMsg, idx) => {
     const currMsgRes = chatContentFilter(currMsg);
     const {
-      MessageID, Message, SenderName, FileID, ActionTime,
+      MessageID, Message, SenderName, FileID, ActionTime, State,
       AddedMemeberName
     } = currMsgRes;
 
@@ -99,6 +100,7 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
             text={SenderName[0]}
             size={30} />
         );
+        const isRead = +String(State) <= +String(readState);
         msgUnit = (
           <React.Fragment>
             {
@@ -119,7 +121,16 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
               {
                 !isMe && isGroupChat && <div className="username">{SenderName}</div>
               }
-              <span className={`msg ${msgType}`}>{message}</span>
+              <span className={`msg ${msgType}`}>
+                {message}
+              </span>
+              {
+                isMe && (
+                  <span className="read-tip">
+                    <Icon n={isRead ? 'check-double' : 'check'} />
+                  </span>
+                )
+              }
             </div>
           </React.Fragment>
         );

@@ -89,6 +89,7 @@ export function applySyncChatMessage(payload: SDK.kproto.IChatSyncChatStatesReq)
 //   };
 // }
 
+export const ON_READ_CHAT_MESSAGE = "ON_READ_CHAT_MESSAGE";
 export const RECEIVE_CHAT_MESSAGE = "RECEIVE_CHAT_MESSAGE";
 export function receiveChatMessage(chatContent, chatID, countUnread?: boolean) {
   EventEmitter.emit(RECEIVE_CHAT_MESSAGE, {

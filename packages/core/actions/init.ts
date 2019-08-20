@@ -11,7 +11,7 @@ import { authStore } from './auth-action';
 import { FEMessageType } from '../types';
 import { getStore as getChatStore } from '../store';
 import {
-  receiveChatMessage, getChatList, applyFetchChatList
+  receiveChatMessage, getChatList, applyFetchChatList, ON_READ_CHAT_MESSAGE
 } from './chat-actions';
 import { fetchContacts } from './contact-actions';
 
@@ -33,10 +33,13 @@ function* watchBoard({ dispatch }) {
     switch (nextState.MessageType) {
       case FEMessageType.AddMember:
         mark = 'UpdateMessageChatAddMember';
-        // dispatch(receiveChatMessage([nextState], nextState.ChatID, false));
         break;
       case FEMessageType.SendMessage:
         mark = 'UpdateMessageChatSendMessage';
+        break;
+      case FEMessageType.ReadState:
+        // mark = 'UpdateMessageChatReadMessage';
+        EventEmitter.emit(ON_READ_CHAT_MESSAGE, nextState);
         break;
     }
     if (mark) {

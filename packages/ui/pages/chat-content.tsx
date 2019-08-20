@@ -9,8 +9,9 @@ import {
   FEMessageType, ChatContentStateInfo
 } from '@little-chat/core/types';
 import {
-  selectContact, RECEIVE_CHAT_MESSAGE
+  selectContact, RECEIVE_CHAT_MESSAGE, ON_READ_CHAT_MESSAGE
 } from '@little-chat/core/actions';
+import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 import {
   UploadFile, ReadMsg, CheckMsgReadState, QueryChatMsgsByCondition,
   SyncChatMessage, SendMsg
@@ -38,6 +39,7 @@ interface State {
   sendingMsg: {
     [msgID: string]: any;
   };
+  readState: any;
   currChatContentData?: ChatContentStateInfo;
   paging: {};
 }
@@ -91,6 +93,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   page: number = 0;
 
+  StateRead;
+
   lastScrollTop!: number;
 
   planningImgList = [];
@@ -134,12 +138,14 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     this.initData();
     this.__mount = true;
     EventEmitter.on(RECEIVE_CHAT_MESSAGE, this.handleReceiveMsg);
+    EventEmitter.on(ON_READ_CHAT_MESSAGE, this.handleReadMsg);
   }
 
   componentWillUnmount() {
     this.props.selectChat('');
     this.__mount = false;
     EventEmitter.rm(RECEIVE_CHAT_MESSAGE, this.handleReceiveMsg);
+    EventEmitter.rm(ON_READ_CHAT_MESSAGE, this.handleReadMsg);
     this.unbindScrolling();
   }
 
@@ -177,10 +183,17 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     }
   }
 
+  handleReadMsg = ({ State }) => {
+    this.setState({
+      readState: State
+    });
+  }
+
   handleReceiveData = (
-    chatContentData, nextPaging = this.state.paging, nextPagIdx = this.state.pIdx, callback?
+    chatContentData, nextPaging = this.state.paging,
+    nextPagIdx = this.state.pIdx, callback?
   ) => {
-    const { ChatID } = this.props;
+    const { ChatID, userInfo } = this.props;
     const chatID = ChatID.toString();
     if (!ChatContentCache[chatID]) {
       ChatContentCache[chatID] = {
@@ -199,19 +212,24 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       lastData,
     };
     if (this.__mount) {
-      const nextState = {
-        currChatContentData: ChatContentCache[chatID],
-        paging: nextPaging,
-        pIdx: nextPagIdx,
-        loadingChat: false,
-      };
-      this.setState(nextState, callback);
-      setCacheState(chatID, nextState);
       CheckMsgReadState({
         ChatID
       }).then((res) => {
         const { StateRead, OwnStateRead } = res;
-        if (HasValue(OwnStateRead) && !!lastState && +OwnStateRead.toString() < +lastState.toString()) {
+        const nextState = {
+          currChatContentData: ChatContentCache[chatID],
+          paging: nextPaging,
+          readState: StateRead,
+          pIdx: nextPagIdx,
+          loadingChat: false,
+        };
+        this.setState(nextState, callback);
+        setCacheState(chatID, nextState);
+        /** 过滤自己的信息，不发送已读消息 */
+        const isMyMsg = chatContentFilter(lastData).SenderName === userInfo.UserName;
+        if (!isMyMsg && HasValue(OwnStateRead)
+          && !!lastState
+          && +String(OwnStateRead) < +String(lastState)) {
           this.readMsg(lastState);
         }
       });
@@ -222,20 +240,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const { selectedChat } = this.props;
     const chatIDStr = chatID.toString();
     if (selectedChat.ChatID && (selectedChat.ChatID.toString() !== chatIDStr)) return;
-    /** 如果该页面在激活状态，则发送已读请求 */
-    const { currChatContentData } = this.state;
-    const lastData = chatContent[0];
-    const lastState = lastData.State;
-    this.readMsg(lastState);
-
-    /** 设置最后消息的状态 */
-    this.setState({
-      currChatContentData: {
-        lastData,
-        lastState,
-        data: [...currChatContentData.data, ...lastData],
-      }
-    }, () => {
+    this.handleReceiveData(chatContent, undefined, undefined, () => {
       setTimeout(() => {
         this.renewMsgPanelHeight();
         this.delayScrollToBottom();
@@ -502,7 +507,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   render() {
     const { selectedChat, userInfo } = this.props;
-    const { currChatContentData, loadingChat, sendingMsg } = this.state;
+    const { currChatContentData, readState, sendingMsg } = this.state;
     if (!currChatContentData) return null;
 
     return (
@@ -511,6 +516,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           <div className="msg-panel-container" ref={this.saveMsgPanelContainer}>
             <ChatMsgRender
               sendingMsg={sendingMsg}
+              readState={readState}
               currChatContentData={currChatContentData}
               selectedChat={selectedChat}
               userInfo={userInfo}

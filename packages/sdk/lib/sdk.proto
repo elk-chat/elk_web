@@ -66,6 +66,7 @@ message UpdateMessageChatSendMessage {
   int32 ContentType = 4;
   int64 FileID = 5;
   int64 ActionTime = 6;
+  Markup Markup = 7;
 }
 
 message UpdateMessageChatDeleteMessage {
@@ -381,11 +382,24 @@ message ChatGetMembersResp {
   repeated Member Members = 1;
 }
 
+message Markup {
+  int32 ColumnSize = 1;
+  repeated MarkupElement Elements = 2;
+}
+
+message MarkupElement {
+  int32 ElementType = 1;
+  string Caption = 2;
+  int64 FileID = 3; // 支持显示图片
+  string Message = 4;
+}
+
 message ChatSendMessageReq {
   int64 ChatID = 1;
   int32 ContentType = 2;
   string Message = 3;
   int64 FileID = 4;
+  Markup Markup = 5;
 }
 
 message ChatSendMessageResp {
@@ -430,9 +444,11 @@ message ChatGetChatStateMessagesCondition {
   int64 SenderID = 1;
   int64 ChatID = 2;
   uint64 State = 3;
-  repeated int32 MessageTypes = 4;
-  string MessageContent = 5;
-  TimeRange ActionTimeRange = 6;
+  uint64 StateBefore = 4;
+  uint64 StateAfter = 5;
+  repeated int32 MessageTypes = 6;
+  string MessageContent = 7;
+  TimeRange ActionTimeRange = 8;
 }
 
 message ChatGetChatStateMessagesReq {

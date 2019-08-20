@@ -474,6 +474,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const { ChatID } = this.props;
     const { pIdx } = this.state;
     const currMsgPanelHeight = this.msgPanelHeight;
+    
     QueryChatMsgsByCondition({
       Paging: {
         PageSize: prevPageSize,

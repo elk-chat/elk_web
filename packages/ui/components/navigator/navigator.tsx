@@ -66,39 +66,45 @@ const Navigator: React.SFC<NavigatorProps> = (props) => {
 
   /** 将 currRouterConfig 缓存到 RouteCache */
   RouteCache[activeComponentName] = currRouterConfig;
+  const routeKeys = Object.keys(RouteCache);
+
+  let activeIdx;
+
+  const navs = routeKeys.map((comName, idx) => {
+    const currCacheRouterConfig = RouteCache[comName];
+    const { Com, Title } = currCacheRouterConfig.params;
+    /** 保证每个页面都正确渲染 */
+    const key = JSON.stringify(currCacheRouterConfig.params);
+    const currConfig = navRoutersConfig[Com] || {};
+    const { component } = currConfig;
+    const C = component;
+    const isActive = activeComponentName === Com;
+    if (isActive) {
+      activeIdx = idx;
+    }
+    return C ? (
+      <div
+        key={key}
+        className={`navigator-page${isActive ? ' active' : ''} idx-${idx}`}>
+        <NavHeader
+          {...props}
+          passProps={props}
+          back
+          RightBtns={C.RightBtns}
+          title={Title} />
+        <div className="navigator-content">
+          <C {...props} {...currRouterConfig.params} />
+        </div>
+        {/* {routesNav}
+            {routes} */}
+      </div>
+    ) : <NotFound />;
+  });
 
   return (
-    <React.Fragment>
-      {
-        Object.keys(RouteCache).map((comName) => {
-          const currCacheRouterConfig = RouteCache[comName];
-          const { Com, Title } = currCacheRouterConfig.params;
-          /** 保证每个页面都正确渲染 */
-          const key = JSON.stringify(currCacheRouterConfig.params);
-          const currConfig = navRoutersConfig[Com] || {};
-          const { component } = currConfig;
-          const C = component;
-          const isActive = activeComponentName === Com;
-          return C ? (
-            <div
-              key={key}
-              className={`navigator-page${isActive ? ' active' : ''}`}>
-              <NavHeader
-                {...props}
-                passProps={props}
-                back
-                RightBtns={C.RightBtns}
-                title={Title} />
-              <div className="navigator-content">
-                <C {...props} {...currRouterConfig.params} />
-              </div>
-              {/* {routesNav}
-                {routes} */}
-            </div>
-          ) : <NotFound />;
-        })
-      }
-    </React.Fragment>
+    <div className={`navigator-page-container active-idx-${activeIdx}`}>
+      {navs}
+    </div>
   );
 };
 

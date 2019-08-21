@@ -12,9 +12,11 @@ interface AddChatPanelProps {
   /** 点击按钮的回调，如果没有，则调用 CreateChatAndAddMember */
   action?: (values: [], valuesObj: {
     [val: string]: string;
-  }) => void;
+  }) => Promise<{}>;
   /** 是否需要输入标题 */
   needInput?: boolean;
+  /** onSuccess */
+  onSuccess?: () => void;
 }
 
 const getValuesForCheckbox = (contactDataList, exclude: string[]) => {
@@ -32,7 +34,7 @@ let toastRef;
 
 const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
   const {
-    contactData, userInfo, exclude = [], action, needInput = true
+    contactData, userInfo, exclude = [], action, needInput = true, onSuccess
   } = props;
   const contactDataList = contactData.array;
 
@@ -68,19 +70,24 @@ const AddChatPanel: React.SFC<AddChatPanelProps> = (props) => {
       <Button text="确定" loading={loading} onClick={(e) => {
         setLoading(true);
         if (action) {
-          action(checkboxRef.value, checkboxRef.valuesObj);
+          action(checkboxRef.value, checkboxRef.valuesObj)
+            .catch((err) => {
+              toastRef && toastRef.show(err.Message, 'error');
+              setLoading(false);
+            });
         } else {
           CreateChatAndAddMember({
             Title: inputRef.value,
             UserIDs: checkboxRef.value
-          }).then((res) => {
-            props.onSuccess();
-            props.applyFetchChatList();
-          }).catch((err) => {
-            console.log(toastRef);
-            toastRef && toastRef.show(err.Message, 'error');
-            setLoading(false);
-          });
+          })
+            .then((res) => {
+              onSuccess && onSuccess();
+              props.applyFetchChatList();
+            })
+            .catch((err) => {
+              toastRef && toastRef.show(err.Message, 'error');
+              setLoading(false);
+            });
         }
       }} />
     </div>

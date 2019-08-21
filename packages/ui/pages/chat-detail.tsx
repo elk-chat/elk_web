@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Avatar } from 'ukelli-ui/core/avatar';
 import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
 import { Icon } from 'ukelli-ui/core/icon';
 import { AddMembersToChat, CreateChatAndAddMember } from '@little-chat/sdk';
@@ -58,7 +57,7 @@ const ChatDetail: React.SFC<ChatDetailProps> = (props) => {
               <AddChatPanel
                 exclude={excludeUsers}
                 needInput={false}
-                action={(checkedVal, valObj) => {
+                action={(checkedVal, valObj) => new Promise((resolve, reject) => {
                   switch (true) {
                     case isGroupChat:
                       AddMembersToChat({
@@ -68,7 +67,9 @@ const ChatDetail: React.SFC<ChatDetailProps> = (props) => {
                         .then(() => {
                           CloseModal(ModalID);
                           applyFetchChatList();
-                        });
+                          resolve();
+                        })
+                        .catch(reject);
                       break;
                     case isOneToOneChat:
                       const maxName = 5;
@@ -79,10 +80,12 @@ const ChatDetail: React.SFC<ChatDetailProps> = (props) => {
                         .then(() => {
                           CloseModal(ModalID);
                           applyFetchChatList();
-                        });
+                          resolve();
+                        })
+                        .catch(reject);
                       break;
                   }
-                }}
+                })}
                 onSuccess={e => CloseModal(ModalID)}
                 {...props} />
             )

@@ -38,7 +38,9 @@ const uploadFile = async (uploadParams) => {
 
   return AvatarFileID;
 };
-const changeAvatar = (event: React.ChangeEvent<HTMLInputElement>) => new Promise((resolve, reject) => {
+const changeAvatar = (
+  event: React.ChangeEvent<HTMLInputElement>
+) => new Promise((resolve, reject) => {
   if (event.target && event.target.files && event.target.files.length !== 0) {
     const { files } = event.target;
     ImageReader(files[0]).then((res) => {

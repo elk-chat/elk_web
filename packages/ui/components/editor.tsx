@@ -55,7 +55,7 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>((props, ref) => {
     onPaste, onFocus, onInput, onKeyPress, onClickSendBtn,
     onSelectedImg, didMount
   } = props;
-  // const [showFace, setShowFace] = useState(false);
+  const [showFace, setShowFace] = useState(false);
   // const [showMoreOptions, setMoreOptions] = React.useState(false);
   useEffect(() => {
     Call(didMount, document.querySelector(`#${editorID}`));

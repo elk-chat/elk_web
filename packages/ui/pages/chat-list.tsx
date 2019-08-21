@@ -25,8 +25,8 @@ interface ChatListProps extends UserInfo {
 }
 
 const msgFilter = (ChatEntity) => {
-  let str = '';
-  if (!ChatEntity) return '「暂无内容」';
+  let str = '「暂无消息」';
+  if (!ChatEntity) return str;
   switch (ChatEntity.MessageType) {
     case FEMessageType.AddMember:
       str = `${ChatEntity.AddedMemeberName}加入了聊天`;

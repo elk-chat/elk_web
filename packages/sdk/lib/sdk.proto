@@ -45,6 +45,7 @@ message UpdateMessage {
   UpdateMessageChatDeleteMember UpdateMessageChatDeleteMember = 4;
   UpdateMessageChatSetTyping UpdateMessageChatSetTyping = 5;
   UpdateMessageChatDeleteMessage UpdateMessageChatDeleteMessage = 6;
+  UpdateMessageChatPinMessage UpdateMessageChatPinMessage = 7;
 }
 
 message UpdateMessageChatAddMember {
@@ -60,13 +61,7 @@ message UpdateMessageChatDeleteMember {
 }
 
 message UpdateMessageChatSendMessage {
-  int64 ChatID = 1;
-  string SenderName = 2;
-  string Message = 3;
-  int32 ContentType = 4;
-  int64 FileID = 5;
-  int64 ActionTime = 6;
-  Markup Markup = 7;
+  ChatMessage ChatMessage = 1;
 }
 
 message UpdateMessageChatDeleteMessage {
@@ -84,6 +79,11 @@ message UpdateMessageChatReadMessage {
 message UpdateMessageChatSetTyping {
   int64 ChatID = 1;
   string SenderName = 2;
+}
+
+message UpdateMessageChatPinMessage {
+  int64 ChatID = 1;
+  uint64 PinState = 2;
 }
 
 // request and response
@@ -225,6 +225,20 @@ message UserGetChatUserStateReq {
 
 message UserGetChatUserStateResp {
   ChatUserState State = 1;
+}
+
+message UserAddBlockedUserReq {
+  int64 UserID = 1;
+}
+
+message UserAddBlockedUserResp {
+}
+
+message UserDeleteBlockedUserReq {
+  int64 UserID = 1;
+}
+
+message UserDeleteBlockedUserResp {
 }
 
 message ChatUserSettings {
@@ -394,12 +408,21 @@ message MarkupElement {
   string Message = 4;
 }
 
-message ChatSendMessageReq {
+message ChatMessage {
   int64 ChatID = 1;
-  int32 ContentType = 2;
-  string Message = 3;
-  int64 FileID = 4;
-  Markup Markup = 5;
+  string SenderName = 2;
+  int32 ContentType = 3;
+  string Message = 4;
+  int64 FileID = 5;
+  int64 ActionTime = 6;
+  Markup Markup = 7;
+  uint64 ReplyState = 8;
+  int64 ForwardChatID = 9;
+  uint64 ForwardState = 10;
+}
+
+message ChatSendMessageReq {
+  ChatMessage ChatMessage = 1;
 }
 
 message ChatSendMessageResp {
@@ -413,6 +436,14 @@ message ChatDeleteMessageReq {
 message ChatDeleteMessageResp {
 }
 
+
+message ChatPinMessageReq {
+  int64 ChatID = 1;
+  uint64 PinState = 2;
+}
+
+message ChatPinMessageResp {
+}
 
 message ChatGetStateReadReq {
   int64 ChatID = 1;

@@ -367,7 +367,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
     this.delayScrollToBottom();
 
-    SendMsg(sendMsgData, JSBI.BigInt(msgClientID))
+    SendMsg({ ChatMessage: sendMsgData }, JSBI.BigInt(msgClientID))
       .then(({ RequestID }) => {
         /** 发送成功后，把正在发送队列消息删除 */
         const { sendingMsg } = this.state;

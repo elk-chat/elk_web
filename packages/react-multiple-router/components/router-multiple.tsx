@@ -64,6 +64,10 @@ class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends C
 
   defaultPath: string | null = null;
 
+  handlePop!: () => void
+
+  handlePush!: () => void
+
   constructor(props) {
     super(props);
 

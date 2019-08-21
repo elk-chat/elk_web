@@ -16,7 +16,8 @@ $headerH: 40px;
   .read-tip {
     color: $blue-3;
     font-size: 10px;
-    margin-left: 5px;
+    margin-right: 5px;
+    padding-top: 5px;
   }
   .loading-control {
     height: 2px;
@@ -160,7 +161,7 @@ $headerH: 40px;
         }
       }
       .unit {
-        margin: 0 10px;
+        margin: 0 5px;
         max-width: 70%;
       }
       .user-mark {

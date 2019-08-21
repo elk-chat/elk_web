@@ -117,6 +117,13 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
                 </Link>
               )
             }
+            {
+              isMe && (
+                <span className="read-tip">
+                  <Icon n={isRead ? 'check-double' : 'check'} />
+                </span>
+              )
+            }
             <div className="unit">
               {
                 !isMe && isGroupChat && <div className="username">{SenderName}</div>
@@ -124,13 +131,6 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
               <span className={`msg ${msgType}`}>
                 {message}
               </span>
-              {
-                isMe && (
-                  <span className="read-tip">
-                    <Icon n={isRead ? 'check-double' : 'check'} />
-                  </span>
-                )
-              }
             </div>
           </React.Fragment>
         );

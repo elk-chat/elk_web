@@ -6,6 +6,7 @@ Little Chat 是一款即时通讯 web 客户端程序，基于 Protobuf 和 Webs
 
 - typescript
 - react
+  - react hook
 - redux
   - redux-saga
 - protobuff

@@ -136,6 +136,19 @@ class SocketHelper extends EventEmitterClass {
     }
   }
 
+  sendDirect = (sendOptions: SendOptions) => {
+    const {
+      apiName, bufData, requestID,
+      success, fail
+    } = sendOptions;
+    if (this.socket) {
+      const buffer = encodeData(apiName, bufData, requestID);
+      const wrapData = this.before(buffer);
+      this.socket.send(wrapData);
+      this.setReqQuquq(requestID, success, fail);
+    }
+  }
+
   /**
    * 在 onopen 的时候发送在未 open 时候发送请求
    */
@@ -166,9 +179,14 @@ class SocketHelper extends EventEmitterClass {
     const finalData = messageResHandler(decodedData);
     const emitData = this.after(finalData);
     emitData.RequestID = String(RequestID);
-    if (+(RequestID.toString()) === 0) {
-      /** 来自推送的消息 */
-      EventEmitter.emit(RECEIVE_STATE_UPDATE, emitData);
+    if (String(RequestID) === '0') {
+      /** 消息处理错误 */
+      if (emitData.Code) {
+        throw Error(emitData.Message);
+      } else {
+        /** 来自推送的消息 */
+        EventEmitter.emit(RECEIVE_STATE_UPDATE, emitData);
+      }
     } else {
       const currReq = this.getReqQueue(RequestID);
       const { success, fail } = currReq;

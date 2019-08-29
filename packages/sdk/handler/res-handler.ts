@@ -99,6 +99,12 @@ function messageResHandler(msgData: DecodedDataStruct) {
     case SigMethod.SIG_CHAT_GET_STATE_READ_RESP:
       api = SDK.kproto.ChatGetStateReadResp;
       break;
+    case SigMethod.SIG_INIT_CONNECTION_RESP:
+      api = SDK.kproto.InitConnectionResp;
+      break;
+    case SigMethod.SIG_CHAT_SEND_MESSAGE_RESP:
+      api = SDK.kproto.ChatSendMessageResp;
+      break;
   }
   if (api) {
     res.Data = api.decode(msgData.DataBuf);

@@ -2,7 +2,10 @@ import JSBI from 'jsbi';
 import { UUID } from 'basic-helper';
 import SocketHelper from './socket';
 import failResHandler from './handler/error-res-handler';
+import SDK from './lib/sdk';
 // import { encodeData } from './handler/date-buffer';
+
+const { InitConnectionReq } = SDK.kproto;
 
 interface Params {
   apiHost: string;
@@ -57,14 +60,47 @@ function WSSend<T extends Api, S>(
   });
 }
 
-function InitSDK(params: Params = prevWSParams) {
-  /** 保存上一个参数 */
-  if (params) prevWSParams = params;
-  const { apiHost } = params;
-  $WS = new SocketHelper({
-    apiHost
+/**
+ * 初始化连接
+ */
+export function InitConnection() {
+  return new Promise((resolve, reject) => {
+    // const res = await WSSend(InitConnectionReq, 'InitConnectionReq', null, false);
+  // return res;
+    const msgWrite = InitConnectionReq.create({});
+    const bufData = InitConnectionReq.encode(msgWrite).finish();
+    $WS.sendDirect({
+      apiName: 'InitConnectionReq',
+      bufData,
+      requestID: BigInt(UUID(16)),
+      success: (res) => {
+        resolve(res);
+      },
+      fail: (res) => {
+        failResHandler(res);
+        reject(res);
+      },
+    });
   });
-  return $WS;
+}
+
+function InitSDK(params: Params = prevWSParams) {
+  return new Promise((resolve, reject) => {
+  /** 保存上一个参数 */
+    if (params) prevWSParams = params;
+    const { apiHost } = params;
+    $WS = new SocketHelper({
+      apiHost
+    });
+    $WS.on('onOpen', () => {
+      InitConnection()
+        .then(() => {
+          resolve($WS);
+        })
+        .catch(reject);
+    });
+    // return $WS;
+  });
 }
 
 /**

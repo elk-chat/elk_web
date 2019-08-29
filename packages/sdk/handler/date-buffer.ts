@@ -35,10 +35,10 @@ const COMMON_HEADER: HeaderStruct = {
   Len: 0,
   Sig: 0,
   ApplicationID: 1,
-  AuthKeyID: BigInt(10),
-  SessionID: BigInt(10),
-  RequestID: BigInt(10),
-  ResponseID: BigInt(10)
+  AuthKeyID: BigInt(0),
+  SessionID: BigInt(0),
+  RequestID: BigInt(0),
+  ResponseID: BigInt(0)
 };
 
 export function setHeaderSSID(SessionID) {

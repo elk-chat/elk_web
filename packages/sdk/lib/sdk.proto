@@ -1,3 +1,4 @@
+
 syntax = "proto3";
 
 package kproto;
@@ -86,29 +87,34 @@ message UpdateMessageChatPinMessage {
   uint64 PinState = 2;
 }
 
+message InitConnectionReq {
+}
+
+message InitConnectionResp {
+}
+
 // request and response
-message AuthPQReq { // 服务端每次为连接随机生成大质数
+message AuthPGReq { // 服务端每次为连接随机生成大质数
 }
 
-message AuthPQResp {
+message AuthPGResp {
+  bytes P = 1;
+  bytes G = 2;
 }
 
-message AuthKeyReq {
+message AuthKeyExchangeReq {
+  bytes ClientNonce = 1;
 }
 
-message AuthKeyResp {
+message AuthKeyExchangeResp {
+  bytes ServerNonce = 1;
+  uint64 AuthKeyID = 2;
 }
 
 message HeartbeatReq {
 }
 
 message HeartbeatResp {
-}
-
-message InitConnectionReq {
-}
-
-message InitConnectionResp {
 }
 
 message RequestVerificationCodeReq {
@@ -328,6 +334,8 @@ message Chat {
   string Title = 5;
   int64 AvatarFileID = 6;
   int32 Disabled = 7;
+  int64 CreatorID = 8;
+  uint64 PinState = 9;
 }
 
 // 用户只能创建普通群
@@ -426,6 +434,8 @@ message ChatSendMessageReq {
 }
 
 message ChatSendMessageResp {
+  uint64 MessageID = 1;
+  uint64 State = 2;
 }
 
 message ChatDeleteMessageReq {

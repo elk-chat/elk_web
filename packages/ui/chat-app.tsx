@@ -121,12 +121,12 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
 
   notifyMsg = (chatContent) => {
     const chatContentRes = chatContentFilter(chatContent);
-    if (window.Notification && Notification.permission === 'granted') {
-      const { SenderName, Message } = chatContentRes;
-      const NotifyObj = new Notification('新消息', {
-        body: Message
-      });
-    }
+    // if (window.Notification && Notification.permission === 'granted') {
+    //   const { SenderName, Message } = chatContentRes;
+    //   const NotifyObj = new Notification('新消息', {
+    //     body: Message
+    //   });
+    // }
   }
 
   handleReceiveUnreadData = (unreadData) => {

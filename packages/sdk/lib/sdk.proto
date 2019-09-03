@@ -87,14 +87,15 @@ message UpdateMessageChatPinMessage {
   uint64 PinState = 2;
 }
 
+
+// request and response
 message InitConnectionReq {
 }
 
 message InitConnectionResp {
 }
 
-// request and response
-message AuthPGReq { // 服务端每次为连接随机生成大质数
+message AuthPGReq { 
 }
 
 message AuthPGResp {
@@ -149,6 +150,7 @@ message UserLoginReq {
   string Password = 2;
   string Token = 3;
   string ClientApplication = 4;
+  string ClientPlatform = 5;
 }
 
 message UserLoginResp {
@@ -293,6 +295,21 @@ message UserGetOptionResp {
   string Value = 2;
 }
 
+message DiscoverItem {
+  int64 DiscoverID = 1;
+  string IconURL = 2;
+	string EntryURL = 3;
+  string Remark = 4;
+  int32 Sort = 5;      
+	int32 DiscoverType = 6;
+}
+
+message UserGetDiscoverItemsReq {}
+
+message UserGetDiscoverItemsResp {
+  repeated DiscoverItem DiscoverItems = 1;
+}
+
 // message Contact {
 //   int64 UserID = 1;
 // }
@@ -418,15 +435,16 @@ message MarkupElement {
 
 message ChatMessage {
   int64 ChatID = 1;
-  string SenderName = 2;
-  int32 ContentType = 3;
-  string Message = 4;
-  int64 FileID = 5;
-  int64 ActionTime = 6;
-  Markup Markup = 7;
-  uint64 ReplyState = 8;
-  int64 ForwardChatID = 9;
-  uint64 ForwardState = 10;
+  uint64 ClientMessageID = 2;
+  string SenderName = 3;
+  int32 ContentType = 4;
+  string Message = 5;
+  int64 FileID = 6;
+  int64 ActionTime = 7;
+  Markup Markup = 8;
+  uint64 ReplyState = 9;
+  int64 ForwardChatID = 10;
+  uint64 ForwardState = 11;
 }
 
 message ChatSendMessageReq {
@@ -436,6 +454,7 @@ message ChatSendMessageReq {
 message ChatSendMessageResp {
   uint64 MessageID = 1;
   uint64 State = 2;
+  uint64 ClientMessageID = 3;
 }
 
 message ChatDeleteMessageReq {

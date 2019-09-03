@@ -6,7 +6,7 @@ import {
 import { Icon } from 'ukelli-ui/core/icon';
 import {
   ChatItemEntity, ChatContentState, UserInfo, FEContentType,
-  FEMessageType, ChatContentStateInfo
+  FEMessageType, ChatContentStateInfo, ChatContentItem
 } from '@little-chat/core/types';
 import {
   selectContact, RECEIVE_CHAT_MESSAGE, ON_READ_CHAT_MESSAGE
@@ -36,9 +36,9 @@ interface ChatContentProps {
 interface State {
   pIdx: number;
   loadingChat: boolean;
-  sendingMsg: {
-    [msgID: string]: any;
-  };
+  // sendingMsg: {
+  //   [msgID: string]: any;
+  // };
   readState: any;
   currChatContentData?: ChatContentStateInfo;
   paging: {};
@@ -46,6 +46,16 @@ interface State {
 
 interface CacheState {
   [chatID: string]: State;
+}
+
+interface SendingMsgItem extends ChatContentItem {
+  MessageID?;
+  Image?;
+  State?;
+  msgStatus?: 'sending' | 'done' | 'timeout';
+}
+interface SendingQueue {
+  [requestID: string]: SendingMsgItem;
 }
 
 const debounce = new DebounceClass();
@@ -61,7 +71,7 @@ const DefaultState = {
   pIdx: 0,
   loadingChat: true,
   currChatContentData: undefined,
-  sendingMsg: {},
+  // sendingMsg: {},
   paging: {}
 };
 
@@ -72,6 +82,7 @@ const getCacheState = (chatID) => {
 const setCacheState = (chatID, nextState) => {
   CACHE_STATE[chatID] = nextState;
 };
+const GenClientMsgID = () => UUID(16);
 
 export default class ChatContent extends React.PureComponent<ChatContentProps, State> {
   static RightBtns = (props) => {
@@ -92,6 +103,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   isAddDrapListener: boolean = false;
 
   page: number = 0;
+
+  sendingQueue: SendingQueue = {}
 
   StateRead;
 
@@ -190,7 +203,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   }
 
   handleReceiveData = (
-    chatContentData, nextPaging = this.state.paging,
+    chatContentData: ChatContentItem[], nextPaging = this.state.paging,
     nextPagIdx = this.state.pIdx, callback?
   ) => {
     const { ChatID, userInfo } = this.props;
@@ -239,7 +252,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
   handleReceiveMsg = ({ chatID, chatContent }) => {
     const { selectedChat } = this.props;
     const chatIDStr = chatID.toString();
-    if (selectedChat.ChatID && (selectedChat.ChatID.toString() !== chatIDStr)) return;
+    if ((String(selectedChat.ChatID) !== chatIDStr)) return;
     this.handleReceiveData(chatContent, undefined, undefined, () => {
       setTimeout(() => {
         this.renewMsgPanelHeight();
@@ -319,10 +332,11 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const { fileInfo, buffer, file } = uploadParams;
     const { selectedChat } = this.props;
     const uint8 = new Uint8Array(buffer);
-    const msgClientID = UUID();
+    const msgClientID = GenClientMsgID();
     /** 把图片设置到正在发送的消息队列中 */
     this.setSendingMsg({
-      [msgClientID]: { Image: URL.createObjectURL(file) },
+      msgStatus: 'sending',
+      Image: URL.createObjectURL(file)
     });
     const { File } = await UploadFile({
       ChatID: selectedChat.ChatID,
@@ -333,32 +347,45 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       Height: fileInfo.height,
       Data: uint8,
     });
-    this.onSendMsg(File.FileID, FEContentType.Image, msgClientID);
+    if (File) this.onSendMsg(File.FileID, FEContentType.Image, msgClientID);
   }
 
-  setSendingMsg = (sendingMsg, callback?) => {
-    this.setState({
-      sendingMsg
-    }, callback);
+  setSendingMsg = (sendingMsg: SendingMsgItem, callback?) => {
+    const { userInfo } = this.props;
+    const { ClientMessageID, MessageID } = sendingMsg;
+    if (!this.sendingQueue[ClientMessageID]) {
+      this.sendingQueue[ClientMessageID] = {};
+    }
+    Object.assign(this.sendingQueue[ClientMessageID], sendingMsg, {
+      SenderName: userInfo.UserName,
+    });
+    const receiveData = this.sendingQueue[ClientMessageID];
+    this.handleReceiveData([receiveData]);
   }
 
-  onSendMsg = (msg, contentType: FEContentType = FEContentType.Text, msgClientID = UUID()) => {
+  onSendMsg = (
+    msg,
+    contentType: FEContentType = FEContentType.Text,
+    msgClientID = GenClientMsgID()
+  ) => {
     const { selectedChat } = this.props;
     const _msg = String(msg).trim();
-    const sendMsgData: kproto.IChatSendMessageResp = {
+    const sendMsgData = {
       ChatID: selectedChat.ChatID,
       ContentType: contentType,
+      ClientMessageID: msgClientID,
       Message: _msg,
     };
     switch (contentType) {
       case FEContentType.Text:
         if (_msg === '') return;
         /** 设置正在发送的消息队列 */
-        const { sendingMsg } = this.state;
-        const nextSendingState = Object.assign({}, sendingMsg, {
-          [msgClientID]: sendMsgData
+        const sendingData = Object.assign({}, sendMsgData, {
+          msgStatus: 'sending',
+          MessageType: FEMessageType.SendMessage,
+          State: +this.state.currChatContentData.lastState + 1
         });
-        this.setSendingMsg(nextSendingState);
+        this.setSendingMsg(sendingData);
         break;
       case FEContentType.Image:
         sendMsgData.FileID = _msg;
@@ -368,12 +395,14 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     this.delayScrollToBottom();
 
     SendMsg({ ChatMessage: sendMsgData }, JSBI.BigInt(msgClientID))
-      .then(({ RequestID }) => {
+      .then(({ RequestID, MessageID, State }) => {
         /** 发送成功后，把正在发送队列消息删除 */
-        const { sendingMsg } = this.state;
-        const nextSendingState = Object.assign({}, sendingMsg);
-        delete nextSendingState[msgClientID];
+        const nextSendingState = Object.assign({}, this.sendingQueue[RequestID], {
+          msgStatus: 'done',
+          MessageID
+        });
         this.setSendingMsg(nextSendingState, () => this.scrollToBottom());
+        // this.scrollToBottom();
       })
       .catch((e) => {
         console.log(e);
@@ -508,7 +537,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   render() {
     const { selectedChat, userInfo } = this.props;
-    const { currChatContentData, readState, sendingMsg } = this.state;
+    const { currChatContentData, readState } = this.state;
     if (!currChatContentData) return null;
 
     return (
@@ -516,7 +545,6 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         <div className="scroll-content" ref={this.saveScrollContent}>
           <div className="msg-panel-container" ref={this.saveMsgPanelContainer}>
             <ChatMsgRender
-              sendingMsg={sendingMsg}
               readState={readState}
               currChatContentData={currChatContentData}
               selectedChat={selectedChat}

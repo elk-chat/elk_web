@@ -17,7 +17,7 @@ const chatContentFilter = (ChatEntity) => {
       mark = 'UpdateMessageChatReadMessage';
       break;
   }
-  if (mark) {
+  if (mark && res.UpdateMessage) {
     Object.assign(res, res.UpdateMessage[mark].ChatMessage);
   }
   return res;

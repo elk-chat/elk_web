@@ -13,7 +13,7 @@ import Link from '../nav-link';
 interface ChatMsgRenderProps {
   userInfo;
   selectedChat;
-  sendingMsg;
+  // sendingMsg;
   currChatContentData;
   readState: any;
   onImgLoad: () => void;
@@ -49,9 +49,32 @@ const timeFilter = (time) => {
   return `${prefix ? `${prefix} ` : ''}${DateFormat(_time, format)}`;
 };
 
+const MsgTip = ({ isRead, status }) => {
+  let icon = 'check';
+  if (isRead) {
+    icon = 'check-double';
+  } else if (status) {
+    switch (status) {
+      case 'sending':
+        icon = 'redo-alt';
+        break;
+      case 'timeout':
+        icon = 'exclamation';
+        break;
+    }
+  }
+  return (
+    <span className="status-tip">
+      <Icon n={icon} />
+    </span>
+  );
+};
+
 const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
   const {
-    userInfo, selectedChat, currChatContentData, sendingMsg, readState,
+    userInfo, selectedChat, currChatContentData,
+    // sendingMsg,
+    readState,
     onImgLoad
   } = props;
   const { UsersRef } = selectedChat;
@@ -63,11 +86,12 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
   const msgRow: React.ReactElement[] = [];
   // eslint-disable-next-line consistent-return
   data.forEach((currMsg, idx) => {
-    const currMsgRes = chatContentFilter(currMsg);
+    // const currMsgRes = chatContentFilter(currMsg);
     const {
-      MessageID, Message, SenderName, FileID, ActionTime, State,
+      ClientMessageID, MessageID, Message, SenderName, ContentType,
+      FileID, ActionTime, State, msgStatus, MessageType,
       AddedMemeberName
-    } = currMsgRes;
+    } = currMsg;
 
     let timeElem;
     let msgUnit;
@@ -75,12 +99,12 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
     let msgType;
     let actionTime;
 
-    switch (currMsg.MessageType) {
+    switch (MessageType) {
       case FEMessageType.SendMessage:
         let message;
         actionTime = ActionTime;
         isMe = SenderName === myName;
-        switch (currMsgRes.ContentType) {
+        switch (ContentType) {
           case FEContentType.Image:
             msgType = 'img';
             message = (
@@ -118,11 +142,7 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
               )
             }
             {
-              isMe && (
-                <span className="read-tip">
-                  <Icon n={isRead ? 'check-double' : 'check'} />
-                </span>
-              )
+              isMe && <MsgTip isRead={isRead} status={msgStatus} />
             }
             <div className="unit">
               {
@@ -164,9 +184,9 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
 
     const itemElem = (
       <div
-        className={bubbleClass} key={MessageID.toString()}>
+        className={bubbleClass} key={String(ClientMessageID || MessageID)}>
         {timeElem}
-        <div className={`msg-item ${MsgTypeClass[currMsg.MessageType]}`}>
+        <div className={`msg-item ${MsgTypeClass[MessageType]}`}>
           {msgUnit}
         </div>
       </div>
@@ -174,39 +194,6 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
 
     msgRow.push(itemElem);
   });
-  // eslint-disable-next-line guard-for-in
-  for (const msgID in sendingMsg) {
-    // eslint-disable-next-line no-prototype-builtins
-    if (sendingMsg.hasOwnProperty(msgID)) {
-      const msgItem = sendingMsg[msgID];
-      const { Image, Message } = msgItem;
-      const isImage = !!Image;
-      msgRow.push((
-        <div
-          className="bubble me" key={msgID}>
-          <div className={`msg-item ${MsgTypeClass[1]}`}>
-            <ChatAvatar
-              AvatarFileID={userInfo.AvatarFileID}
-              text={myName[0]}
-              size={30} />
-            <div className="unit">
-              <Icon n="spinner" classNames={['btn-loading']}/>
-              <span className={`msg ${isImage ? 'img' : 'txt'}`}>
-                {
-                  isImage ? (
-                    <div
-                      className="img-wrapper">
-                      <img className="_img" alt="" src={Image} />
-                    </div>
-                  ) : String(Message)
-                }
-              </span>
-            </div>
-          </div>
-        </div>
-      ));
-    }
-  }
 
   return msgRow;
 };

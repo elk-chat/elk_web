@@ -358,6 +358,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     }
     Object.assign(this.sendingQueue[ClientMessageID], sendingMsg, {
       SenderName: userInfo.UserName,
+      ActionTime: Date.now() / 1000
     });
     const receiveData = this.sendingQueue[ClientMessageID];
     this.handleReceiveData([receiveData]);

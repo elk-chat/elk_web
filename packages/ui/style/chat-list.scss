@@ -1,9 +1,11 @@
 .chat-list {
   .chat-item {
-    padding: 10px;
-    border-bottom: 1px solid #EEE;
+    padding: 0 5px 0 5px;
+    // margin-bottom: 5px;
+    // border-bottom: 1px solid #EEE;
     background-color: #fefefe;
     flex-wrap: nowrap;
+    align-items: center;
     position: relative;
     cursor: pointer;
     &:hover {
@@ -11,6 +13,14 @@
     }
     &.active {
       background-color: #f3f3f3;
+    }
+    .content {
+      flex: 1;
+      padding: 10px 0;
+      border-bottom: 1px solid #EEE;
+    }
+    .uke-avatar  {
+      padding-top: 5px;
     }
   }
   .chat-title {

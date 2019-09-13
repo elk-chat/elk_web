@@ -11,14 +11,15 @@ body {
 // }
 .chat-list, .contact-list {
   .uke-avatar .avatar {
-    border-radius: 3px;
+    overflow: hidden;
+    // border-radius: 3px;
     margin-right: 10px;
   }
 }
 
-.avatar {
-  border-radius: 4px;
-}
+// .avatar {
+//   border-radius: 4px;
+// }
 
 .main-container {
   // @include fill;

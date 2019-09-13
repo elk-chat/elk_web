@@ -1,9 +1,20 @@
 .contact-list {
   .c-item {
-    padding: 10px;
-    border-bottom: 1px solid #EEE;
+    padding: 0 10px;
+    // border-bottom: 1px solid #EEE;
+    display: flex;
+    align-items: center;
     &:focus,&:hover {
       background-color: #f7f7f7;
+    }
+    .uke-avatar {
+      padding: 5px 0;
+    }
+    .name {
+      flex: 1;
+      padding: 15px 0;
+      display: inline-block;
+      border-bottom: 1px solid #EEE;
     }
   }
 }

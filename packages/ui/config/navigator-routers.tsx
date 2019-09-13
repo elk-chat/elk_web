@@ -6,6 +6,7 @@ import LinkLoader from '../pages/link-loader';
 import Moment from '../pages/moment';
 import SearchContact from '../pages/search-contact';
 import ChatDetail from '../pages/chat-detail';
+import ChangePW from '../pages/change-pw';
 
 const navRoutersConfig = {
   Setting: {
@@ -35,6 +36,10 @@ const navRoutersConfig = {
   ChatDetail: {
     title: "聊天详情",
     component: ChatDetail
+  },
+  ChangePW: {
+    title: "修改密码",
+    component: ChangePW
   },
 };
 

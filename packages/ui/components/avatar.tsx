@@ -6,11 +6,12 @@ import getFileSrc, { getFileSrcFromCache } from '../utils/get-file-src';
 interface ChatAvatarProps extends AvatarProps {
   AvatarFileID: Long | string;
   UserName?: string;
+  isCycle?: boolean;
 }
 
 const ChatAvatar: React.SFC<ChatAvatarProps> = (props) => {
   const {
-    AvatarFileID = '', UserName = '', text, ...other
+    AvatarFileID = '', UserName = '', text, isCycle = true, ...other
   } = props;
   const strID = AvatarFileID.toString();
   const srcFromCacha = getFileSrcFromCache(strID);

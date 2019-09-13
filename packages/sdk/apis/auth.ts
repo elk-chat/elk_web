@@ -2,7 +2,7 @@ import SDK from '../lib/sdk';
 import { GetWS, WSSend, setHeaderSSID } from '..';
 
 const {
-  UserLoginReq, UserRegisterReq, HeartbeatReq
+  UserLoginReq, UserRegisterReq, HeartbeatReq, UserChangePasswordReq
 } = SDK.kproto;
 
 /**
@@ -38,6 +38,14 @@ export async function ApplyRegister(form: SDK.kproto.IUserRegisterReq) {
  */
 export async function HeartBeat(form: SDK.kproto.IHeartbeatReq) {
   const res = await WSSend<typeof HeartbeatReq, SDK.kproto.IHeartbeatResp>(HeartbeatReq, 'HeartbeatReq', form);
+  return res;
+}
+
+/**
+ * 修改密码
+ */
+export async function ChangePassword(form: SDK.kproto.IUserChangePasswordReq) {
+  const res = await WSSend<typeof UserChangePasswordReq, SDK.kproto.IUserChangePasswordResp>(UserChangePasswordReq, 'UserChangePasswordReq', form);
   return res;
 }
 

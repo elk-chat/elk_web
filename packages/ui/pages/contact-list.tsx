@@ -83,8 +83,8 @@ export default class Contacts extends React.Component<ContactProps, {}> {
                   <ChatAvatar
                     AvatarFileID={AvatarFileID}
                     text={UserName[0]}
-                    size={30} />
-                  {UserName}
+                    size={40} />
+                  <span className="name">{UserName}</span>
                 </div>
               </Link>
             );

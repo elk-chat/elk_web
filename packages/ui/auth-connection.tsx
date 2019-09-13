@@ -118,13 +118,13 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
             }
           </AuthSelector>
         </div>
-        {
+        {/* {
           !isMobile && (
             <div className="bg-img fill fixbg" style={{
               backgroundImage: `url(/images/${BG_URL})`
             }}></div>
           )
-        }
+        } */}
         <VersionChecker versionUrl={versionUrl} versionInfo={versionInfo} />
       </div>
     );

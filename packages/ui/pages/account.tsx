@@ -7,6 +7,7 @@ import {
 } from '../utils/image-reader';
 import ChatAvatar from '../components/avatar';
 import VersionComponent from '../components/version-com';
+import Link from '../components/nav-link';
 
 interface AccountProps {
   userInfo: UserInfo;
@@ -74,6 +75,9 @@ const Account: React.SFC<AccountProps> = (props) => {
         </div>
       </div>
       <div className="action-group">
+        <div className="action-item b mb10">
+          <Link Com="ChangePW" Title="修改密码">修改密码</Link>
+        </div>
         <span className="flex"></span>
         <div className="action-item b mb10">
           <VersionComponent versionInfo={versionInfo} />

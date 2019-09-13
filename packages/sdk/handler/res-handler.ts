@@ -105,6 +105,9 @@ function messageResHandler(msgData: DecodedDataStruct) {
     case SigMethod.SIG_CHAT_SEND_MESSAGE_RESP:
       api = SDK.kproto.ChatSendMessageResp;
       break;
+    case SigMethod.SIG_USER_CHANGE_PASSWORD_RESP:
+      api = SDK.kproto.UserChangePasswordResp;
+      break;
   }
   if (api) {
     res.Data = api.decode(msgData.DataBuf);

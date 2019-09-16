@@ -3,7 +3,11 @@ import {
 } from '@little-chat/core/types';
 import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 
-const msgFilterGroup = [FEMessageType.SendMessage, FEMessageType.AddMember];
+export const msgFilterGroup = [
+  FEMessageType.SendMessage,
+  FEMessageType.AddMember,
+  FEMessageType.DeletedMemeber
+];
 
 function mergeChatContent(
   srcArray: ChatContentItem[], mergeArr: ChatContentItem[]

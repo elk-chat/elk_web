@@ -37,24 +37,15 @@ function* watchBoard({ dispatch }) {
       case FEMessageType.SendMessage:
         mark = 'UpdateMessageChatSendMessage';
         break;
+      case FEMessageType.DeletedMemeber:
+        mark = 'UpdateMessageChatDeletedMember';
+        break;
       case FEMessageType.ReadState:
         // mark = 'UpdateMessageChatReadMessage';
         EventEmitter.emit(ON_READ_CHAT_MESSAGE, nextState);
         break;
     }
     if (mark) {
-      /** 如果发送者是自己，则不需要计入 unread count */
-      // const { userInfo } = authStore.getState();
-      // const { selectedChat, chatContentData } = getChatStore().getState();
-      // const selectedChatID = selectedChat.ChatID;
-      // const currStateChatID = nextState.ChatID;
-      // const myName = userInfo.UserName;
-      // const isInChating = !!selectedChatID || (currStateChatID.toString() === (selectedChatID || '').toString());
-      // const isMyMsg = nextState.UpdateMessage[mark].SenderName === myName;
-      // const currChatContent = chatContentData[currStateChatID] || {};
-      // if (!currChatContent.lastState) {
-      //   dispatch(applyFetchChatList());
-      // }
       dispatch(receiveChatMessage([nextState], nextState.ChatID));
     }
   }

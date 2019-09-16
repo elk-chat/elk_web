@@ -16,14 +16,13 @@ import {
   UploadFile, ReadMsg, CheckMsgReadState, QueryChatMsgsByCondition,
   SyncChatMessage, SendMsg
 } from '@little-chat/sdk';
-import { kproto } from '@little-chat/sdk/lib';
 import Link from '../components/nav-link';
 import Editor from '../components/editor';
 import {
   ImageReader,
   GetImgInfo,
 } from '../utils/image-reader';
-import mergeChatContent from '../utils/merge-chat-content';
+import mergeChatContent, { msgFilterGroup } from '../utils/merge-chat-content';
 import ChatMsgRender from '../components/chat-msg-render';
 
 interface ChatContentProps {
@@ -176,7 +175,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         },
         Condition: {
           ChatID,
-          MessageTypes: [FEMessageType.SendMessage, FEMessageType.AddMember]
+          MessageTypes: msgFilterGroup
         }
       })
         .then(({ StateUpdates, Paging }) => {
@@ -192,6 +191,9 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       })
         .then(({ StateUpdates }) => {
           this.handleReceiveData(StateUpdates);
+        })
+        .catch((err) => {
+          console.log(err);
         });
     }
   }
@@ -265,11 +267,13 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     const { selectedChat } = this.props;
     const { currChatContentData } = this.state;
     if (!currChatContentData) return;
-    const { lastState = 0 } = currChatContentData;
-    if (StateRead) {
+    const { lastData, lastState = 0 } = currChatContentData;
+    if (StateRead && lastData.MessageType === FEMessageType.SendMessage) {
       ReadMsg({
         ChatID: selectedChat.ChatID,
         StateRead: lastState
+      }).catch((err) => {
+        console.log(err);
       });
     }
   }
@@ -512,7 +516,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
       },
       Condition: {
         ChatID,
-        MessageTypes: [FEMessageType.SendMessage, FEMessageType.AddMember]
+        MessageTypes: msgFilterGroup
       }
     })
       .then(({ StateUpdates, Paging }) => {

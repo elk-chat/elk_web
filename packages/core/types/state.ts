@@ -13,6 +13,7 @@ export enum FEMessageType {
   SendMessage = 1,
   AddMember = 2,
   ReadState = 3,
+  DeletedMemeber = 4,
 }
 
 export enum ChatType {

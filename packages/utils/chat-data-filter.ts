@@ -5,20 +5,19 @@ import {
 const chatContentFilter = (ChatEntity) => {
   if (!ChatEntity) return ChatEntity;
   const res = { ...ChatEntity };
-  let mark;
   switch (ChatEntity.MessageType) {
     case FEMessageType.SendMessage:
-      mark = 'UpdateMessageChatSendMessage';
+      Object.assign(res, res.UpdateMessage.UpdateMessageChatSendMessage.ChatMessage);
       break;
     case FEMessageType.AddMember:
-      mark = 'UpdateMessageChatAddMember';
+      Object.assign(res, res.UpdateMessage.UpdateMessageChatAddMember);
       break;
     case FEMessageType.ReadState:
-      mark = 'UpdateMessageChatReadMessage';
+      Object.assign(res, res.UpdateMessage.UpdateMessageChatReadMessage.ChatMessage);
       break;
-  }
-  if (mark && res.UpdateMessage) {
-    Object.assign(res, res.UpdateMessage[mark].ChatMessage);
+    case FEMessageType.DeletedMemeber:
+      Object.assign(res, res.UpdateMessage.UpdateMessageChatDeleteMember);
+      break;
   }
   return res;
 };

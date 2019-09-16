@@ -25,6 +25,7 @@ const timeDisplayDelay = 5 * 60;
 const MsgTypeClass = {
   1: 'send-msg',
   2: 'add-member',
+  4: 'add-member',
 };
 
 const today = Date.now();
@@ -90,7 +91,7 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
     const {
       ClientMessageID, MessageID, Message, SenderName, ContentType,
       FileID, ActionTime, State, msgStatus, MessageType,
-      AddedMemeberName
+      AddedMemeberName, DeletedMemeberName
     } = currMsg;
 
     let timeElem;
@@ -156,10 +157,15 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
         );
         break;
       case FEMessageType.AddMember:
-        // const { AddedMemeberName, ActionTime } = UpdateMessage.UpdateMessageChatAddMember;
         actionTime = ActionTime;
         msgUnit = (
           <span className="msg">{AddedMemeberName} 加入了聊天</span>
+        );
+        break;
+      case FEMessageType.DeletedMemeber:
+        actionTime = ActionTime;
+        msgUnit = (
+          <span className="msg">{DeletedMemeberName} 被移除群聊</span>
         );
         break;
       default:

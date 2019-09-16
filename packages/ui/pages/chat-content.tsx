@@ -24,6 +24,7 @@ import {
 } from '../utils/image-reader';
 import mergeChatContent, { msgFilterGroup } from '../utils/merge-chat-content';
 import ChatMsgRender from '../components/chat-msg-render';
+import { Notify } from 'ukelli-ui/core/notification';
 
 interface ChatContentProps {
   selectContact: typeof selectContact;
@@ -410,7 +411,11 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         // this.scrollToBottom();
       })
       .catch((e) => {
-        console.log(e);
+        // console.log(e);
+        Notify({
+          title: '消息未能发送成功',
+          text: e.Message
+        });
       });
 
     this.setTextContent('');

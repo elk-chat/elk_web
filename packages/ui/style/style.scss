@@ -7,6 +7,10 @@ $PCChatListWidth: 300px;
   color: #FFF;
 }
 
+#Main {
+  height: 100%;
+}
+
 .vertical-center {
   display: flex;
   flex-direction: column;
@@ -17,12 +21,31 @@ $PCChatListWidth: 300px;
 .version-container {
   color: #999;
 }
+.tabs-container.login-tabs {
+  margin: 0;
+}
 
 .little-chat-app {
   // height: 100%;
   &.pc {
     @include fill;
     background-image: radial-gradient(#FFF, #CCC);
+    .tabs-container.login-tabs {
+      margin: 0;
+      display: flex;
+      flex-direction: column-reverse;
+      .tab-group {
+        z-index: 1;
+        .tab {
+          flex: 1;
+          margin-right: 0;
+        }
+        .tab-label {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    }
     .container {
       background-color: #EEE;
       height: 100%;
@@ -67,6 +90,15 @@ $PCChatListWidth: 300px;
       }
     }
   }
+  &.mobile {
+    height: 100%;
+    .container {
+      height: 100%;
+      .tabs-container {
+        height: 100%;
+      }
+    }
+  }
 }
 .horizontal-form {
   padding: 20px 20px;
@@ -78,22 +110,6 @@ $PCChatListWidth: 300px;
   max-width: 100% !important;
 }
 
-.tabs-container.login-tabs {
-  margin: 0;
-  display: flex;
-  flex-direction: column-reverse;
-  .tab-group {
-    z-index: 1;
-    .tab {
-      flex: 1;
-      margin-right: 0;
-    }
-    .tab-label {
-      width: 100%;
-      text-align: center;
-    }
-  }
-}
 .form-container .form-control {
   min-width: auto !important;
 }

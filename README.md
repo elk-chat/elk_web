@@ -69,7 +69,7 @@ import SDK from '@little-chat/ui'
 import * as RouterMultiple from 'react-multiple-router'
 ```
 
-由于 `react-router` 对`多路由共存`支持不友好，所以采用 `uke-web-admin-scaffold` 管理系统的多路由共存机制，确保页面之间的正确导航关系。为了更好的应对各种情况，所以路由的值经过了 `base64` 处理。
+由于 `react-router` 对`多路由共存`支持不友好，所以采用 `admin-scaffold` 管理系统的多路由共存机制，确保页面之间的正确导航关系。为了更好的应对各种情况，所以路由的值经过了 `base64` 处理。
 
 详情查看 `./packages/react-multiple-router` 提供的 `Link` 以及 `onNavigate`。
 

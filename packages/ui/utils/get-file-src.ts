@@ -1,5 +1,5 @@
 import { GetFileState } from '@little-chat/sdk';
-import Storage from 'basic-helper/storage';
+import Storage from '@mini-code/base-func/storage';
 
 const FILE_SRC_CACHE = 'FILE_SRC_CACHE';
 const Cache = (() => {

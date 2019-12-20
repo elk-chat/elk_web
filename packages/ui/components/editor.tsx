@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Icon } from 'ukelli-ui/core/icon';
-import { DropdownWrapper } from 'ukelli-ui/core/selector';
-import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
-import { Call } from 'basic-helper';
+import { Icon } from '@deer-ui/core/icon';
+import { DropdownWrapper } from '@deer-ui/core/dropdown-wrapper';
+import { ShowModal, CloseModal } from '@deer-ui/core/modal';
+import { Call } from '@mini-code/base-func';
 
 import 'emoji-mart/css/emoji-mart.css';
 import { Picker } from 'emoji-mart';
@@ -64,17 +64,20 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>((props, ref) => {
     <div className="editor-panel" id={editorID}>
       <DropdownWrapper
         position="top"
-        overlay={e => (
+        overlay={(e) => (
           <Picker
             i18n={emojiPickerZHCN}
             onSelect={(emojiEvent) => {
               editorRef.textContent += emojiEvent.native;
-            }} />
-        )}>
+            }}
+          />
+        )}
+      >
         <span className="face-picker"
           onClick={(e) => {
           // setShowFace(true);
-          }}>
+          }}
+        >
           <Icon n="surprise" s="r" />
         </span>
       </DropdownWrapper>
@@ -82,25 +85,28 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>((props, ref) => {
         contentEditable
         ref={(e) => {
           editorRef = e;
+          // eslint-disable-next-line no-param-reassign
           if (ref) ref.current = e;
         }}
         className="typing-area"
         onPaste={onPaste}
         onFocus={onFocus}
         onInput={onInput}
-        onKeyPress={onKeyPress} />
+        onKeyPress={onKeyPress}
+      />
       <span className="more-btn item" onClick={(e) => {
         // setMoreOptions(!showMoreOptions);
         const ModalID = ShowModal({
           type: 'side',
           position: 'bottom',
           needHeader: false,
-          children: (
+          children: () => (
             <div className="more-options">
               <div className="item-wrapper" onClick={(e) => {
                 document.querySelector(`#${inputID}`).click();
                 CloseModal(ModalID);
-              }}>
+              }}
+              >
                 <div className="item">
                   <Icon n="images"/>
                 </div>
@@ -109,7 +115,8 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>((props, ref) => {
             </div>
           )
         });
-      }}>
+      }}
+      >
         <Icon n="plus" />
       </span>
       <span className="send-btn item" onClick={onClickSendBtn}>
@@ -121,7 +128,8 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>((props, ref) => {
           display: 'none'
         }}
         id={inputID}
-        onChange={onSelectedImg} />
+        onChange={onSelectedImg}
+      />
     </div>
   );
 });

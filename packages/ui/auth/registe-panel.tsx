@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 
-import { FormGenerator } from 'ukelli-ui/core/form-generator';
-import { TipPanel } from 'ukelli-ui/core/tip-panel';
-import { Button } from 'ukelli-ui/core/button';
-import { Toast } from 'ukelli-ui/core/toast';
-import { Call } from 'basic-helper/call';
-import { tuple } from 'basic-helper/utils/type';
+import { FormGenerator } from '@deer-ui/core/form-generator';
+import { Button } from '@deer-ui/core/button';
+import { Toast } from '@deer-ui/core/toast';
+import { Call } from '@mini-code/base-func/call';
+import { tuple } from '@mini-code/base-func/utils/type';
 import { ApplyRegister } from '@little-chat/sdk';
 import { registeFormOptions } from './form-options';
 import gradientColorFilter, { gradientColorMapper } from '../components/color';

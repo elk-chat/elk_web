@@ -1,4 +1,4 @@
-import { Random } from 'basic-helper';
+import { Random } from '@mini-code/base-func';
 
 import * as ChatSDK from '@little-chat/sdk/lib';
 

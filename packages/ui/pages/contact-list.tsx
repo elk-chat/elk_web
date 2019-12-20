@@ -1,8 +1,8 @@
 import React from 'react';
-import { Avatar } from 'ukelli-ui/core/avatar';
-import { DropdownWrapper } from 'ukelli-ui/core/selector';
-import { Menus } from 'ukelli-ui/core/menu';
-import { Icon } from 'ukelli-ui/core/icon';
+import { Avatar } from '@deer-ui/core/avatar';
+import { DropdownWrapper } from '@deer-ui/core/dropdown-wrapper';
+import { Menus } from '@deer-ui/core/menu';
+import { Icon } from '@deer-ui/core/icon';
 
 import { UserInfo, ContactState } from '@little-chat/core/types';
 import {

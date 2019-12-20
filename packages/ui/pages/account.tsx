@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Loading } from 'ukelli-ui/core/loading';
+import { Loading } from '@deer-ui/core/loading';
 import { UserInfo, FEContentType } from '@little-chat/core/types';
 import { UpdateProfile, UploadFile } from '@little-chat/sdk';
 import {

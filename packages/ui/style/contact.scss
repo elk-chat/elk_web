@@ -7,7 +7,7 @@
     &:focus,&:hover {
       background-color: #f7f7f7;
     }
-    .uke-avatar {
+    .__avatar {
       padding: 5px 0;
     }
     .name {
@@ -28,7 +28,7 @@
   padding: 10px 20px;
   display: flex;
   align-items: center;
-  .uke-avatar {
+  .__avatar {
     margin-right: 10px;
   }
 }

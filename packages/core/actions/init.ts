@@ -1,6 +1,6 @@
 import {
   EventEmitter
-} from 'basic-helper';
+} from '@mini-code/base-func';
 import {
   put, takeLatest, call
 } from 'redux-saga/effects';

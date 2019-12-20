@@ -1,5 +1,5 @@
 import createStore from 'unistore';
-import { Call, EventEmitter } from 'basic-helper';
+import { Call, EventEmitter } from '@mini-code/base-func';
 
 import { ApplyLogin, ON_CONNECT_CLOSE } from '@little-chat/sdk';
 import initHeartBeat from './heartbeat';

@@ -1,6 +1,6 @@
 import React from 'react';
-import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
-import { Call } from 'basic-helper';
+import { ShowModal, CloseModal } from '@deer-ui/core/modal';
+import { Call } from '@mini-code/base-func';
 import getFileSrc, { getFileSrcFromCache } from '../utils/get-file-src';
 
 const ImageViwer = ({ src, ID }) => (
@@ -8,7 +8,8 @@ const ImageViwer = ({ src, ID }) => (
     if (!window.PinchZoom) return;
     const img = document.querySelector(`#${ID}`);
     const pinch = new PinchZoom.default(img);
-  }} id={ID} />
+  }} id={ID}
+  />
 );
 
 const handlePrevImg = (imgSrc, ID) => (e) => {
@@ -24,7 +25,8 @@ const handlePrevImg = (imgSrc, ID) => (e) => {
           backgroundColor: 'rgba(0,0,0,0.7)',
           // position: 'fixed',
           pointerEvents: 'all'
-        }}>
+        }}
+      >
         <span className="close-btn" onClick={() => CloseModal(ModalID)}>x</span>
         <ImageViwer src={imgSrc} ID={`img_${ID}`}/>
       </div>
@@ -32,8 +34,7 @@ const handlePrevImg = (imgSrc, ID) => (e) => {
   });
 };
 
-export default (props) => {
-  const { FileID, onLoad } = props;
+export default ({ FileID, onLoad, isVideo = false }) => {
   if (!FileID) return null;
   const ID = FileID.toString();
   const srcFromCacha = getFileSrcFromCache(ID);
@@ -47,9 +48,23 @@ export default (props) => {
   }, [FileID]);
   return (
     <div id={ID} className="img-wrapper" onClick={handlePrevImg(imgSrc, ID)}>
-      <img className="_img" alt="" onLoad={(e) => {
-        Call(onLoad, e, imgSrc);
-      }} src={imgSrc} />
+      {
+        isVideo ? (
+          <video controls>
+            <source src={imgSrc}></source>
+          </video>
+        ) : (
+          <img
+            className="_img"
+            alt=""
+            onLoad={(e) => {
+              Call(onLoad, e, imgSrc);
+            }}
+            src={imgSrc}
+          />
+        )
+      }
+
     </div>
   );
 };

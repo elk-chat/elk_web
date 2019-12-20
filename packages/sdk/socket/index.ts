@@ -1,5 +1,5 @@
 import JSBI from 'jsbi';
-import { EventEmitter, EventEmitterClass, Call } from 'basic-helper';
+import { EventEmitter, EventEmitterClass, Call } from '@mini-code/base-func';
 import { decodeData, encodeData, messageResHandler } from '../handler';
 import { RECEIVE_STATE_UPDATE, CONNECT_READY, ON_CONNECT_CLOSE } from '../constant';
 
@@ -203,7 +203,6 @@ class SocketHelper extends EventEmitterClass {
   }
 
   onClose = (e) => {
-    console.log('onClose');
     this.handleException(e);
   }
 

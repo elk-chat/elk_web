@@ -7,7 +7,7 @@ import {
 } from 'react-multiple-router';
 import { LOGIN_SUCCESS } from '@little-chat/core/constant';
 import { connect } from 'react-redux';
-import { Call, EventEmitter } from "basic-helper";
+import { Call, EventEmitter } from "@mini-code/base-func";
 
 import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 import pageRoutersConfig from './config/page-routers';

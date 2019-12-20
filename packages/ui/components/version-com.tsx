@@ -2,10 +2,10 @@
 /* eslint-disable react/no-multi-comp */
 
 import React, { Component } from 'react';
-import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
-import { TipPanel } from 'ukelli-ui/core/tip-panel';
-import { Notify } from 'ukelli-ui/core/notification';
-import { Button } from 'ukelli-ui/core/button';
+import { ShowModal, CloseModal } from '@deer-ui/core/modal';
+import { Alert } from '@deer-ui/core/alert';
+import { Notify } from '@deer-ui/core/notification';
+import { Button } from '@deer-ui/core/button';
 
 interface VersionCheckerProps {
   /** 版本内容 */
@@ -106,7 +106,7 @@ class VersionChecker extends Component<VersionCheckerProps> {
             <p>{updateLog || '日常更新'}</p>
           </div>
           <hr />
-          <TipPanel
+          <Alert
             type="success"
             text="请确保已保存工作内容，页面即将刷新" />
           <hr />

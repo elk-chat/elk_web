@@ -1,4 +1,4 @@
-import { EventEmitter } from 'basic-helper';
+import { EventEmitter } from '@mini-code/base-func';
 import { ErrorInfo } from '../struct';
 import { SESSION_TIMEOUT } from '../constant';
 

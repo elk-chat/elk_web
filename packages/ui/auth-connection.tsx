@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider as UnistoreProvider, connect as connectUnistore } from 'unistore/react';
 import createChatStore from '@little-chat/core/store';
-import { Call, EventEmitter } from "basic-helper";
+import { Call, EventEmitter } from "@mini-code/base-func";
 import { Provider as ReduxProvider } from 'react-redux';
 import {
   CheckConnectState, InitSDK, CloseWS, SESSION_TIMEOUT

@@ -5,7 +5,7 @@
  * icon: 显示的 icon
  */
 import React from 'react';
-import { PureIcon } from 'ukelli-ui/core/icon';
+import { PureIcon } from '@deer-ui/core/icon';
 
 import { RouteEntity } from '../types';
 import {

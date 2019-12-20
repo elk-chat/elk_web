@@ -1,5 +1,5 @@
-import Storage from 'basic-helper/storage';
-import { HasValue } from 'basic-helper';
+import Storage from '@mini-code/base-func/storage';
+import { HasValue } from '@mini-code/base-func';
 import { authStore } from '../actions/auth-action';
 
 interface StorageCacheStruct {

@@ -1,4 +1,4 @@
-// import { HasValue } from 'basic-helper';
+// import { HasValue } from '@mini-code/base-func';
 import array2obj from '@little-chat/utils/array2obj';
 import getLastItem from '@little-chat/utils/get-last-item';
 import {

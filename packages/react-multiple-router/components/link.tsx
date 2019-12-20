@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { getUrlParams } from 'uke-request/url-resolve';
-import { Call, IsUrl } from 'basic-helper';
+import { getUrlParams } from '@mini-code/request/url-resolve';
+import { Call, IsUrl } from '@mini-code/base-func';
 
 import {
   getRouteKey, onNavigate

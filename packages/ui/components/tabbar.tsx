@@ -4,7 +4,7 @@
 
 import React from "react";
 import { Link } from 'react-multiple-router';
-import { Tip } from 'ukelli-ui/core/tip';
+import { Tip } from '@deer-ui/core/tip';
 
 import { RouteEntity } from '../types';
 

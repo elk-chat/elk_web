@@ -1,9 +1,9 @@
 import React from 'react';
-import { FormGenerator } from 'ukelli-ui/core/form-generator';
-import { Loading } from 'ukelli-ui/core/loading';
+import { FormGenerator } from '@deer-ui/core/form-generator';
+import { Loading } from '@deer-ui/core/loading';
 import { SearchUser } from '@little-chat/sdk';
 
-import { Call } from 'basic-helper';
+import { Call } from '@mini-code/base-func';
 import Link from '../components/nav-link';
 import Avatar from '../components/avatar';
 

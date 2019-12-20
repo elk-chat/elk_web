@@ -1,9 +1,9 @@
 import React from 'react';
-import { Icon } from 'ukelli-ui/core/icon';
-import { Avatar } from 'ukelli-ui/core/avatar';
-import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
-import { DropdownWrapper } from 'ukelli-ui/core/selector';
-import { Menus } from 'ukelli-ui/core/menu';
+import { Icon } from '@deer-ui/core/icon';
+import { Avatar } from '@deer-ui/core/avatar';
+import { ShowModal, CloseModal } from '@deer-ui/core/modal';
+import { DropdownWrapper } from '@deer-ui/core/dropdown-wrapper';
+import { Menus } from '@deer-ui/core/menu';
 import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 
 import {

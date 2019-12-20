@@ -1,4 +1,3 @@
-
 syntax = "proto3";
 
 package kproto;
@@ -308,11 +307,12 @@ message UserGetOptionResp {
 
 message DiscoverItem {
   int64 DiscoverID = 1;
-  string IconURL = 2;
-	string EntryURL = 3;
-  string Remark = 4;
-  int32 Sort = 5;      
-	int32 DiscoverType = 6;
+  string Name = 2;
+  string IconURL = 3;
+	string EntryURL = 4;
+  string Remark = 5;
+  int32 Sort = 6;
+	int32 DiscoverType = 7;
 }
 
 message UserGetDiscoverItemsReq {}

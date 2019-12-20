@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 
-import { FormGenerator } from 'ukelli-ui/core/form-generator';
-import { TipPanel } from 'ukelli-ui/core/tip-panel';
-import { Button } from 'ukelli-ui/core/button';
-import { Avatar } from 'ukelli-ui/core/avatar';
-import { Toast } from 'ukelli-ui/core/toast';
-import { Call } from 'basic-helper/call';
-import { tuple } from 'basic-helper/utils/type';
+import { FormGenerator } from '@deer-ui/core/form-generator';
+import { Alert } from '@deer-ui/core/alert';
+import { Button } from '@deer-ui/core/button';
+import { Avatar } from '@deer-ui/core/avatar';
+import { Toast } from '@deer-ui/core/toast';
+import { Call } from '@mini-code/base-func/call';
+import { tuple } from '@mini-code/base-func/utils/type';
 import { loginFormOptions } from './form-options';
 import gradientColorFilter, { gradientColorMapper } from '../components/color';
 
@@ -95,7 +95,7 @@ export default class LoginPanel extends Component<LoginPanelProps> {
           }
           {
             loginResDesc && (
-              <TipPanel text={loginResDesc} type="error" />
+              <Alert text={loginResDesc} type="error" />
             )
           }
           <Toast ref={(e) => { this.toast = e; }} />

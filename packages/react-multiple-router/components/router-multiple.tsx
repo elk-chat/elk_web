@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-import { getUrlParams, UrlParamsRes } from 'uke-request/url-resolve';
-import { RemoveArrayItem, Call } from 'basic-helper';
+import { getUrlParams, UrlParamsRes } from '@mini-code/request/url-resolve';
+import { RemoveArrayItem, Call } from '@mini-code/base-func';
 
 import {
   history, wrapPushUrl, pushToHistory, replaceHistory,

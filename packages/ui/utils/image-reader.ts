@@ -1,8 +1,10 @@
-import { UUID } from 'basic-helper';
-import setDOMById from 'ukelli-ui/core/set-dom';
+import { UUID } from '@mini-code/base-func';
+import setDOMById from '@deer-ui/core/utils/set-dom';
+import { FEContentType } from '@little-chat/core/types';
 
-interface ReturnParams {
+export interface ImageRenderReturnType {
   file?: File | null;
+  contentType?: number;
   fileInfo: {
     width: number;
     height: number;
@@ -11,33 +13,46 @@ interface ReturnParams {
   buffer: string | ArrayBuffer | null;
 }
 
-function ImageReader(file: File): Promise<ReturnParams> {
-  return new Promise((resolve) => {
+function ImageReader(file: File): Promise<ImageRenderReturnType> {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    const img = new Image();
+    let readContainer;
+    const fileType = file.type;
+    const isImg = fileType.indexOf('image') !== -1;
+    const isVideo = fileType.indexOf('video') !== -1;
+    const onLoaded = () => {
+      fileInfo.height = readContainer.height;
+      fileInfo.width = readContainer.width;
+      reader.readAsArrayBuffer(file);
+    };
+    if (isImg) {
+      readContainer = new Image();
+      readContainer.onload = onLoaded;
+      readContainer.src = URL.createObjectURL(file);
+    } else if (isVideo) {
+      readContainer = document.createElement('video');
+      readContainer.preload = 'metadata';
+      readContainer.onloadedmetadata = onLoaded;
+      readContainer.src = URL.createObjectURL(file);
+    }
     const fileInfo = {
       width: 0,
       height: 0,
       name: file.name,
     };
-    img.onload = () => {
-      fileInfo.height = img.height;
-      fileInfo.width = img.width;
-      reader.readAsArrayBuffer(file);
-    };
-    img.src = URL.createObjectURL(file);
     reader.onload = () => {
       const data = reader.result;
       resolve({
         file,
         fileInfo,
+        contentType: isImg ? FEContentType.Image : FEContentType.Video,
         buffer: data
       });
     };
   });
 }
 
-const GetImgInfoFormPaste = blob => new Promise<{
+const GetImgInfoFormPaste = (blob) => new Promise<{
   height: number;
   width: number;
 }>((resolve, reject) => {
@@ -67,22 +82,24 @@ const GetImgInfoFormPaste = blob => new Promise<{
   }
 });
 
-const GetImgToBuffer = blob => new Promise<string | ArrayBuffer | null>((resolve, reject) => {
-  if (!blob) {
-    reject('need blob');
-  } else {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const imageBuffer = reader.result;
-      resolve(imageBuffer);
-    };
-    reader.readAsArrayBuffer(blob);
-  }
-});
+const GetImgToBuffer = (blob) => {
+  return new Promise<string | ArrayBuffer | null>((resolve, reject) => {
+    if (!blob) {
+      reject('need blob');
+    } else {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const imageBuffer = reader.result;
+        resolve(imageBuffer);
+      };
+      reader.readAsArrayBuffer(blob);
+    }
+  });
+};
 
 const GetImgInfo = (
   items: DataTransferItemList
-): Promise<ReturnParams> => new Promise((resolve, reject) => {
+): Promise<ImageRenderReturnType> => new Promise((resolve, reject) => {
   let fileName;
   let isImg = false;
   for (let index = 0; index < items.length; index++) {
@@ -97,14 +114,20 @@ const GetImgInfo = (
       Promise.all([GetImgToBuffer(blob), GetImgInfoFormPaste(blob)])
         // eslint-disable-next-line no-loop-func
         .then(([buffer, imgInfo]) => {
-          resolve({
-            buffer,
-            file: blob,
-            fileInfo: {
-              ...imgInfo,
-              name: fileName || UUID(),
-            }
-          });
+          if (!imgInfo) {
+            reject('get img info error');
+          } else {
+            resolve({
+              buffer,
+              file: blob,
+              contentType: FEContentType.Image,
+              fileInfo: {
+                height: imgInfo.height,
+                width: imgInfo.width,
+                name: fileName || UUID(),
+              }
+            });
+          }
         });
     }
   }

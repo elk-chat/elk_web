@@ -1,6 +1,6 @@
 import React from 'react';
-import { CallFunc, IsFunc } from 'basic-helper';
-import { Tabs, Tab } from 'ukelli-ui/core/tabs';
+import { CallFunc, IsFunc } from '@mini-code/base-func';
+import { Tabs, Tab } from '@deer-ui/core/tabs';
 
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 

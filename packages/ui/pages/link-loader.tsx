@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IsUrl } from 'basic-helper';
+import { IsUrl } from '@mini-code/base-func';
 
 interface LinkLoaderProps {
   url: string;

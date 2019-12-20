@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { CreateChatAndAddMember, AddMemberToChat } from '@little-chat/sdk';
-// import { FormLayout } from 'ukelli-ui/core/form-generator';
-import { Checkbox } from 'ukelli-ui/core/selector';
-import { Button } from 'ukelli-ui/core/button';
-import { Toast } from 'ukelli-ui/core/toast';
-import { Input } from 'ukelli-ui/core/form-control';
+// import { FormLayout } from '@deer-ui/core/form-generator';
+import { Checkbox } from '@deer-ui/core/checkbox';
+import { Button } from '@deer-ui/core/button';
+import { Toast } from '@deer-ui/core/toast';
 
 interface AddChatPanelProps {
   /** 过滤掉的联系人 */

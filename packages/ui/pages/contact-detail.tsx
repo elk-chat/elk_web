@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import {
   UserInfo, ContactEntity, ChatListEntity, ContactState
 } from '@little-chat/core/types';
-import { Button } from 'ukelli-ui/core/button';
-import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
+import { Button } from '@deer-ui/core/button';
+import { ShowModal, CloseModal } from '@deer-ui/core/modal';
 import { AddContact, InitPeerChat, GetFullUser } from '@little-chat/sdk';
 
 import { CONTACT } from '../config/path-mapper';

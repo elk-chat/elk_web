@@ -4,7 +4,7 @@ import {
 import {
   put, takeLatest, call
 } from 'redux-saga/effects';
-import { Call } from 'basic-helper';
+import { Call } from '@mini-code/base-func';
 import array2obj from '@little-chat/utils/array2obj';
 import {
   ContactEntity, ContactActions

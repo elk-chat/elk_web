@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Icon } from 'ukelli-ui/core/icon';
-import { Call } from "basic-helper";
+import { Icon } from '@deer-ui/core/icon';
+import { Call } from "@mini-code/base-func";
 
 interface HeadBarProps {
   /** title */

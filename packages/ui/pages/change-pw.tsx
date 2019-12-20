@@ -1,8 +1,8 @@
 import React from 'react';
-import { FormLayout } from 'ukelli-ui/core/form-generator';
-import { FormOptions } from 'ukelli-ui/core/form-generator/form-generator';
-import { FormLayoutBtnsConfig } from 'ukelli-ui/core/form-generator/form-layout';
-import { Notify } from 'ukelli-ui/core/notification';
+import { FormLayout } from '@deer-ui/core/form-layout';
+import { FormOptions } from '@deer-ui/core/form-generator/form-generator';
+import { FormLayoutBtnsConfig } from '@deer-ui/core/form-layout/form-layout';
+import { Notify } from '@deer-ui/core/notification';
 import { ChangePassword } from '@little-chat/sdk';
 
 interface ChangePWPageProps {

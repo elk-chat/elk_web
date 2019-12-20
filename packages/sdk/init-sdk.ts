@@ -1,5 +1,5 @@
 import JSBI from 'jsbi';
-import { UUID } from 'basic-helper';
+import { UUID } from '@mini-code/base-func';
 import SocketHelper from './socket';
 import failResHandler from './handler/error-res-handler';
 import SDK from './lib/sdk';

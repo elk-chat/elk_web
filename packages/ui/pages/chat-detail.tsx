@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-import { ShowModal, CloseModal } from 'ukelli-ui/core/modal';
-import { Icon } from 'ukelli-ui/core/icon';
+import { ShowModal, CloseModal } from '@deer-ui/core/modal';
+import { Icon } from '@deer-ui/core/icon';
 import { AddMembersToChat, CreateChatAndAddMember } from '@little-chat/sdk';
 import { ChatType } from '@little-chat/core/types';
-import { FormLayout } from 'ukelli-ui/core/form-generator';
 import AddChatPanel from './add-chat';
 import ChatAvatar from '../components/avatar';
 

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Icon } from 'ukelli-ui/core/icon';
+import { Icon } from '@deer-ui/core/icon';
 import { RouterEntity, RouteParams } from 'react-multiple-router';
 
 import NavHeader from "./nav-header";

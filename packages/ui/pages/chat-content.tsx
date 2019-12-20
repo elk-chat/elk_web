@@ -2,8 +2,8 @@ import React from 'react';
 import JSBI from 'jsbi';
 import {
   EventEmitter, DebounceClass, UUID, HasValue
-} from 'basic-helper';
-import { Icon } from 'ukelli-ui/core/icon';
+} from '@mini-code/base-func';
+import { Icon } from '@deer-ui/core/icon';
 import {
   ChatItemEntity, ChatContentState, UserInfo, FEContentType,
   FEMessageType, ChatContentStateInfo, ChatContentItem
@@ -16,15 +16,16 @@ import {
   UploadFile, ReadMsg, CheckMsgReadState, QueryChatMsgsByCondition,
   SyncChatMessage, SendMsg
 } from '@little-chat/sdk';
+import { Notify } from '@deer-ui/core/notification';
 import Link from '../components/nav-link';
 import Editor from '../components/editor';
 import {
   ImageReader,
   GetImgInfo,
+  ImageRenderReturnType,
 } from '../utils/image-reader';
 import mergeChatContent, { msgFilterGroup } from '../utils/merge-chat-content';
 import ChatMsgRender from '../components/chat-msg-render';
-import { Notify } from 'ukelli-ui/core/notification';
 
 interface ChatContentProps {
   selectContact: typeof selectContact;
@@ -94,7 +95,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         className="add-btn action"
         params={{
           ChatID: selectedChat.ChatID.toString()
-        }}>
+        }}
+      >
         <Icon n="ellipsis-h" />
       </Link>
     );
@@ -319,22 +321,17 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
 
   loadFileFromInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target && e.target.files.length !== 0) {
-      ImageReader(e.target.files[0]).then((res) => {
-        this.uploadFile(res);
-      });
+      ImageReader(e.target.files[0])
+        .then((res) => {
+          this.uploadFile(res);
+        });
     }
   }
 
-  uploadFile = async (uploadParams: {
-    fileInfo: {
-      name: string;
-      width: number;
-      height: number;
-    };
-    buffer: Uint8Array;
-    file: File;
-  }) => {
-    const { fileInfo, buffer, file } = uploadParams;
+  uploadFile = async (uploadParams: ImageRenderReturnType) => {
+    const {
+      fileInfo, buffer, file, contentType
+    } = uploadParams;
     const { selectedChat } = this.props;
     const uint8 = new Uint8Array(buffer);
     const msgClientID = GenClientMsgID();
@@ -345,14 +342,14 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     });
     const { File } = await UploadFile({
       ChatID: selectedChat.ChatID,
-      ContentType: FEContentType.Image,
+      ContentType: contentType,
       FileName: fileInfo.name,
       Caption: '',
       Width: fileInfo.width,
       Height: fileInfo.height,
       Data: uint8,
     });
-    if (File) this.onSendMsg(File.FileID, FEContentType.Image, msgClientID);
+    if (File) this.onSendMsg(File.FileID, contentType, msgClientID);
   }
 
   setSendingMsg = (sendingMsg: SendingMsgItem, callback?) => {
@@ -394,6 +391,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
         this.setSendingMsg(sendingData);
         break;
       case FEContentType.Image:
+      case FEContentType.Video:
         sendMsgData.FileID = _msg;
         break;
     }
@@ -438,7 +436,7 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
     return res;
   }
 
-  editorFocus = e => this.delayScrollToBottom()
+  editorFocus = (e) => this.delayScrollToBottom()
 
   editorDidMount = (editorDOM) => {
     this.editorDOM = editorDOM;
@@ -559,7 +557,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
               currChatContentData={currChatContentData}
               selectedChat={selectedChat}
               userInfo={userInfo}
-              onImgLoad={this.handleImgLoad} />
+              onImgLoad={this.handleImgLoad}
+            />
           </div>
         </div>
         <Editor
@@ -570,7 +569,8 @@ export default class ChatContent extends React.PureComponent<ChatContentProps, S
           onClickSendBtn={this.editorClickToSend}
           onSelectedImg={this.loadFileFromInput}
           onKeyPress={this.editorKeyPress}
-          ref={this.editorPanel} />
+          ref={this.editorPanel}
+        />
       </section>
     );
   }

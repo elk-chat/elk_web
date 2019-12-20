@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Avatar } from 'ukelli-ui/core/avatar';
-import { AvatarProps } from 'ukelli-ui/core/avatar/avatar';
+import { Avatar } from '@deer-ui/core/avatar';
+import { AvatarProps } from '@deer-ui/core/avatar/avatar';
 import getFileSrc, { getFileSrcFromCache } from '../utils/get-file-src';
 
 interface ChatAvatarProps extends AvatarProps {

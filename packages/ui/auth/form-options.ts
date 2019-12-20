@@ -1,4 +1,4 @@
-import { FormOptionsItem } from "ukelli-ui/core/form-generator/form-filter";
+import { FormOptionsItem } from "@deer-ui/core/form-generator/form-filter";
 
 const isDev = process.env.NODE_ENV === 'development';
 

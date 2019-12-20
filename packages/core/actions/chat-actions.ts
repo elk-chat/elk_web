@@ -9,7 +9,7 @@
 
 import {
   EventEmitter, Call
-} from 'basic-helper';
+} from '@mini-code/base-func';
 import {
   put, takeLatest, call, takeEvery
 } from 'redux-saga/effects';

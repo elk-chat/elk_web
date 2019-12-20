@@ -1,4 +1,4 @@
-import { Call } from 'basic-helper';
+import { Call } from '@mini-code/base-func';
 
 const THUMBMAXWIDTH = 800;
 

@@ -1,5 +1,5 @@
 import { createBrowserHistory, Location } from "history";
-import { urlParamsToQuery } from 'uke-request/url-resolve';
+import { urlParamsToQuery } from '@mini-code/request/url-resolve';
 
 interface NavigateConfig {
   from?: Location;

@@ -4,8 +4,8 @@ import { FEMessageType, FEContentType } from '@little-chat/core/types';
 import { chatContentFilter } from '@little-chat/utils/chat-data-filter';
 import {
   DateFormat
-} from 'basic-helper';
-import { Icon } from 'ukelli-ui/core/icon';
+} from '@mini-code/base-func';
+import { Icon } from '@deer-ui/core/icon';
 import ChatAvatar from '../avatar';
 import Image from '../image';
 import Link from '../nav-link';
@@ -109,13 +109,25 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
           case FEContentType.Image:
             msgType = 'img';
             message = (
-              <Image FileID={FileID}
-                onLoad={onImgLoad}/>
+              <Image
+                FileID={FileID}
+                onLoad={onImgLoad}
+              />
             );
             break;
           case FEContentType.Text:
             msgType = 'txt';
             message = Message;
+            break;
+          case FEContentType.Video:
+            msgType = 'video';
+            message = (
+              <Image
+                isVideo
+                FileID={FileID}
+                onLoad={onImgLoad}
+              />
+            );
             break;
         }
         const currUser = isMe ? userInfo : UsersRef[SenderName];
@@ -123,7 +135,8 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
           <ChatAvatar
             AvatarFileID={currUser ? currUser.AvatarFileID : ''}
             text={SenderName[0]}
-            size={30} />
+            size={30}
+          />
         );
         const isRead = +String(State) <= +String(readState);
         msgUnit = (
@@ -137,7 +150,8 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
                 <Link Com="ContactDetail" Title={SenderName}
                   params={{
                     UserID: currUser ? currUser.UserID.toString() : ''
-                  }}>
+                  }}
+                >
                   {avatar}
                 </Link>
               )
@@ -190,7 +204,8 @@ const ChatMsgRender: React.SFC<ChatMsgRenderProps> = (props) => {
 
     const itemElem = (
       <div
-        className={bubbleClass} key={String(ClientMessageID || MessageID)}>
+        className={bubbleClass} key={String(ClientMessageID || MessageID)}
+      >
         {timeElem}
         <div className={`msg-item ${MsgTypeClass[MessageType]}`}>
           {msgUnit}

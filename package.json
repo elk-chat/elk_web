@@ -7,8 +7,9 @@
   ],
   "scripts": {
     "start": "npm run set:version; PORT=3445 minictl start",
-    "build": "npm run set:version; NODE_ENV=production minictl build",
+    "build": "npm run set:version; NODE_ENV=production minictl build; npm run copy:version",
     "set:version": "vh gen --outdir ./packages/ui",
+    "copy:version": "cp src/version.json build/",
     "postinstall": "npm run init",
     "init": "npm run set:version; npm run complieProto; npm run genConfig",
     "genConfig": "node ./scripts/gen-config",
@@ -33,7 +34,7 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-redux": "^7.0.3",
-    "version-helper": "^1.2.0-alpha1.2"
+    "version-helper": "^1.2.0-beta1.0"
   },
   "author": "Alex",
   "repository": {

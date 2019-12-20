@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const configName = '.config.js';
-const configStorePath = './client';
+const configStorePath = './src';
 
 const configPath = path.resolve(process.cwd(), configStorePath, configName)
 

@@ -40,6 +40,18 @@ const msgFilter = (ChatEntity) => {
         case FEContentType.Image:
           str = '「图片」';
           break;
+        case FEContentType.Video:
+          str = '「视频」';
+          break;
+        case FEContentType.Audio:
+          str = '「语音」';
+          break;
+        case FEContentType.Geo:
+          str = '「位置」';
+          break;
+        case FEContentType.Other:
+          str = '「其他」';
+          break;
       }
       break;
   }

@@ -47,21 +47,23 @@ export default ({ FileID, onLoad, isVideo = false }) => {
     }
   }, [FileID]);
   return (
-    <div id={ID} className="img-wrapper" onClick={handlePrevImg(imgSrc, ID)}>
+    <div id={ID} className="img-wrapper">
       {
         isVideo ? (
           <video controls>
             <source src={imgSrc}></source>
           </video>
         ) : (
-          <img
-            className="_img"
-            alt=""
-            onLoad={(e) => {
-              Call(onLoad, e, imgSrc);
-            }}
-            src={imgSrc}
-          />
+          <div onClick={handlePrevImg(imgSrc, ID)}>
+            <img
+              className="_img"
+              alt=""
+              onLoad={(e) => {
+                Call(onLoad, e, imgSrc);
+              }}
+              src={imgSrc}
+            />
+          </div>
         )
       }
 

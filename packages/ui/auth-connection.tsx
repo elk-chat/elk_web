@@ -8,9 +8,10 @@ import {
 } from '@little-chat/sdk';
 
 import { authStore, authActions } from '@little-chat/core/actions/auth-action';
+import { VersionChecker } from 'version-helper';
 import AuthSelector from './auth';
 import ChatApp from './chat-app';
-import VersionComponent, { VersionChecker } from './components/version-com';
+// import VersionComponent, { VersionChecker } from './components/version-com';
 import versionInfo from './version.json';
 
 const versionUrl = './version.json';
@@ -101,7 +102,8 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
           <AuthSelector
             applyLogin={applyLogin}
             isLogin={isLogin}
-            {...other}>
+            {...other}
+          >
             {
               () => {
                 if (!chatStore) chatStore = createChatStore({});
@@ -111,7 +113,8 @@ class LoginFilter extends React.PureComponent<LoginFilterProps> {
                       isMobile={isMobile}
                       dispatch={chatStore.dispatch}
                       versionInfo={versionInfo}
-                      {...this.props} />
+                      {...this.props}
+                    />
                   </ReduxProvider>
                 );
               }
@@ -136,12 +139,12 @@ function selector(state) {
 }
 
 
-const LoginFilterWithStore = connectUnistore(selector, authActions)(userStore => (
+const LoginFilterWithStore = connectUnistore(selector, authActions)((userStore) => (
   <LoginFilter {...userStore}/>
 ));
 
 
-export default props => (
+export default (props) => (
   <UnistoreProvider store={authStore}>
     <LoginFilterWithStore {...props} />
   </UnistoreProvider>

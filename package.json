@@ -8,7 +8,7 @@
   "scripts": {
     "start": "npm run set:version; PORT=3445 minictl start",
     "build": "npm run set:version; NODE_ENV=production minictl build",
-    "set:version": "vh gen",
+    "set:version": "vh gen --outdir ./packages/ui",
     "postinstall": "npm run init",
     "init": "npm run set:version; npm run complieProto; npm run genConfig",
     "genConfig": "node ./scripts/gen-config",

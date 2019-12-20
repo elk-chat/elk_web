@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Loading } from '@deer-ui/core/loading';
 import { UserInfo, FEContentType } from '@little-chat/core/types';
 import { UpdateProfile, UploadFile } from '@little-chat/sdk';
+import { VersionDisplayer } from 'version-helper';
 import {
   ImageReader,
 } from '../utils/image-reader';
 import ChatAvatar from '../components/avatar';
-import VersionComponent from '../components/version-com';
+// import VersionComponent from '../components/version-com';
 import Link from '../components/nav-link';
 
 interface AccountProps {
@@ -60,14 +61,14 @@ const Account: React.SFC<AccountProps> = (props) => {
   const [updating, setUpdateState] = useState(false);
   const [nextAvatarID, setAvatarSrc] = useState(AvatarFileID);
 
-
   return (
     <div className="account-page">
       <Loading loading={updating} inrow />
       <div className="contact-info user-info-c">
         <div onClick={() => {
           document.querySelector(`#${AccountChangeAvatarID}`).click();
-        }}>
+        }}
+        >
           <ChatAvatar AvatarFileID={nextAvatarID} UserName={UserName} />
         </div>
         <div className="c">
@@ -80,9 +81,10 @@ const Account: React.SFC<AccountProps> = (props) => {
         </div>
         <span className="flex"></span>
         <div className="action-item b mb10">
-          <VersionComponent versionInfo={versionInfo} />
+          {/* <VersionComponent versionInfo={versionInfo} /> */}
+          <VersionDisplayer versionInfo={versionInfo} />
         </div>
-        <div className="action-item last mb20" onClick={e => logout()}>
+        <div className="action-item last mb20" onClick={(e) => logout()}>
           登出
         </div>
       </div>
@@ -98,7 +100,8 @@ const Account: React.SFC<AccountProps> = (props) => {
             setUpdateState(false);
             setAvatarSrc(nextAvatarID);
           });
-        }} />
+        }}
+      />
     </div>
   );
 };

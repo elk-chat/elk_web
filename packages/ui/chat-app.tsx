@@ -57,7 +57,7 @@ const getTotalUnreadCount = (unreadInfo) => {
   return +res;
 };
 
-const mapStateToProps = state => state;
+const mapStateToProps = (state) => state;
 
 class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
   /** 默认跳转的路由 */
@@ -173,7 +173,8 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
           unreadInfo={unreadInfo}
           activeRoute={isMobile ? activeRoute : activeMainRoute}
           routeConfig={pageRoutersConfig}
-          navRouterMark={NavRouterMark} />
+          navRouterMark={NavRouterMark}
+        />
         <TabBar
           isMobile={isMobile}
           onChange={(path) => {
@@ -186,13 +187,15 @@ class ChatApp<P, S> extends RouterMultiple<ChatAppProps, ChatState> {
           activeMainRoute={activeMainRoute}
           routes={getTabRouteConfig({
             unreadCount: totalUnreadCount
-          })} />
+          })}
+        />
         <Navigator
           {...this.getProps()}
           activeRoute={activeRoute}
           NavRouterMark={NavRouterMark}
           navRoutersConfig={navRoutersConfig}
-          currRouterConfig={routerInfo[NavRouterMark]} />
+          currRouterConfig={routerInfo[NavRouterMark]}
+        />
       </React.Fragment>
     );
   }

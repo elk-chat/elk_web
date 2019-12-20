@@ -47,7 +47,7 @@ const msgFilter = (ChatEntity) => {
 };
 
 export default class ChatList extends React.PureComponent<ChatListProps, {}> {
-  static RightBtns = props => (
+  static RightBtns = (props) => (
     <DropdownWrapper
       position="right"
       outside
@@ -57,6 +57,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
             text: '发起群聊',
             id: '1',
             action: () => {
+              hide();
               const ModalID = ShowModal({
                 width: '90%',
                 marginTop: '40px',
@@ -66,13 +67,15 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
                 needMinBtn: false,
                 needMaxBtn: false,
                 children: (
-                  <AddChatPanel {...props} onSuccess={e => CloseModal(ModalID)} />
+                  <AddChatPanel {...props} onSuccess={(e) => CloseModal(ModalID)} />
                 )
               });
             }
           }
-        ]} />
-      )}>
+        ]}
+        />
+      )}
+    >
       <Icon n="plus" classNames={["p15"]} />
     </DropdownWrapper>
   )
@@ -83,7 +86,7 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
   chatListFilter = (chatList) => {
     const { lastMsgInfo } = this.props;
     const nextLit = [...chatList]
-      .filter(item => item.ChatType !== ChatType.Contact)
+      .filter((item) => item.ChatType !== ChatType.Contact)
       .sort((f, s) => {
         const FChatID = f.ChatID.toString();
         const SChatID = s.ChatID.toString();
@@ -137,14 +140,16 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
                 }}
                 isActive={isActive}
                 className="chat-item layout"
-                key={chatID}>
+                key={chatID}
+              >
                 {
                   isOneToOneChat ? (
                     <ChatAvatar
                       AvatarFileID={Users[0] ? Users[0].AvatarFileID : ''}
                       text={Title[0]}
                       size={46}
-                      tip={unreadCount} />
+                      tip={unreadCount}
+                    />
                   ) : (
                     <Avatar text={Title[0]} size={46} tip={unreadCount} />
                   )
@@ -167,7 +172,8 @@ export default class ChatList extends React.PureComponent<ChatListProps, {}> {
       </div>
     ) : (
       <NavLink
-        Com="SearchContact" Title="搜索联系人" className="link">
+        Com="SearchContact" Title="搜索联系人" className="link"
+      >
         <div className="no-chat-tip p20">
           请添加一个联系人开始聊天
         </div>

@@ -17,10 +17,9 @@ interface ContactProps extends UserInfo {
 }
 
 export default class Contacts extends React.Component<ContactProps, {}> {
-  static RightBtns = props => (
+  static RightBtns = (props) => (
     <DropdownWrapper
       position="right"
-      needAction={false}
       outside
       overlay={({ hide }) => (
         <Menus data={[
@@ -28,6 +27,7 @@ export default class Contacts extends React.Component<ContactProps, {}> {
             text: '添加联系人',
             id: '1',
             action: () => {
+              hide();
               props.onNavigate({
                 type: 'PUSH',
                 route: 'N',
@@ -38,8 +38,10 @@ export default class Contacts extends React.Component<ContactProps, {}> {
               });
             }
           }
-        ]} />
-      )}>
+        ]}
+        />
+      )}
+    >
       <Icon n="plus" classNames={["p20"]} />
     </DropdownWrapper>
   )
@@ -48,7 +50,7 @@ export default class Contacts extends React.Component<ContactProps, {}> {
     const { contactData, userInfo } = this.props;
     // const { UserName } = userInfo;
     let list = contactData.array;
-    list = list.filter(item => item.UserName !== userInfo.UserName);
+    list = list.filter((item) => item.UserName !== userInfo.UserName);
     return list;
   }
 
@@ -78,12 +80,14 @@ export default class Contacts extends React.Component<ContactProps, {}> {
                 }}
                 onClick={() => {
                   this.props.selectContact(item);
-                }}>
+                }}
+              >
                 <div className="c-item">
                   <ChatAvatar
                     AvatarFileID={AvatarFileID}
                     text={UserName[0]}
-                    size={40} />
+                    size={40}
+                  />
                   <span className="name">{UserName}</span>
                 </div>
               </Link>

@@ -12599,10 +12599,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-version-helper@^1.2.0-beta1.1:
-  version "1.2.0-beta1.1"
-  resolved "https://registry.yarnpkg.com/version-helper/-/version-helper-1.2.0-beta1.1.tgz#0348f289a75d0276a38ffe2484b814c9bb79c695"
-  integrity sha512-GQk+RgY/tylDGuRHxZIsqwkVkJHDkxIWf/AamPrT6voHNXENH8RZIW4UwfQmcBpAOed7KwPXo/EJzb1ndZPwFg==
+version-helper@^1.2.0-beta1.2:
+  version "1.2.0-beta1.2"
+  resolved "https://registry.yarnpkg.com/version-helper/-/version-helper-1.2.0-beta1.2.tgz#eecfe2e28fb85700af20a51f8e32a43f30cac8cb"
+  integrity sha512-sScJrNth+bOFJM7leSsMqNoaQVU05O/lppWrR9t6hphtYNFxOzhhy9v0asPXdj4dZfg6bdn1TDhci4qsGKP9EQ==
 
 vm-browserify@^1.0.1:
   version "1.1.2"

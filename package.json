@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "start": "PORT=3445 minictl start",
-    "build": "NODE_ENV=production minictl build; npm run copy:version",
+    "build": "npm run set:version; NODE_ENV=production minictl build; npm run copy:version",
     "set:version": "vh gen --outdir ./packages/ui",
     "copy:version": "cp src/version.json build/",
     "postinstall": "npm run init",

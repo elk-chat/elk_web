@@ -45,13 +45,13 @@ class SocketHelper extends EventEmitterClass {
 
   params!: SocketParams;
 
-  connected: boolean = false;
+  connected = false;
 
-  connecting: boolean = false;
+  connecting = false;
 
-  isClosed: boolean = true;
+  isClosed = true;
 
-  permissions: boolean = false;
+  permissions = false;
 
   reqQueue: {} = {};
 
@@ -90,11 +90,11 @@ class SocketHelper extends EventEmitterClass {
     }
   }
 
-  before = data => data;
+  before = (data) => data;
 
-  after = data => data.Data;
+  after = (data) => data.Data;
 
-  resStatusFilter = data => !data.Data.Code
+  resStatusFilter = (data) => !data.Data.Code
 
   setReqQuquq = (requestID, success, fail) => {
     this.reqQueue[requestID.toString()] = {
@@ -108,7 +108,7 @@ class SocketHelper extends EventEmitterClass {
     this.permissionsQueue = {};
   }
 
-  getReqQueue = requestID => this.reqQueue[requestID.toString()] || {}
+  getReqQueue = (requestID) => this.reqQueue[requestID.toString()] || {}
 
   send = (sendOptions: SendOptions) => {
     const {

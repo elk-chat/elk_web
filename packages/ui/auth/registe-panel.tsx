@@ -37,7 +37,8 @@ export default class RegisterPanel extends Component<RegisterPanelProps, {}> {
     logo: (appName = 'Elk Chat') => (
       <h2 className="title" style={{
         fontFamily: 'cursive'
-      }}>{appName}</h2>
+      }}
+      >{appName}</h2>
     )
   };
 
@@ -101,7 +102,8 @@ export default class RegisterPanel extends Component<RegisterPanelProps, {}> {
       <div className="login-panel fixbg fixed"
         style={{
           // backgroundImage: `url(/img/login_bg.jpg)`
-        }}>
+        }}
+      >
         <Toast ref={(e) => { this.toast = e; }} />
         <div className="login-layout">
           {
@@ -110,9 +112,10 @@ export default class RegisterPanel extends Component<RegisterPanelProps, {}> {
             ) : Call(logo, ClientConfig.appName)
           }
           <FormGenerator
-            showInputTitle={false}
             formOptions={registeFormOptions}
-            ref={this.saveForm}>
+            layout="vertical"
+            ref={this.saveForm}
+          >
             <Button
               onClick={() => {
                 const checkRes = this.formHelper.checkForm();
@@ -124,9 +127,11 @@ export default class RegisterPanel extends Component<RegisterPanelProps, {}> {
               }}
               disabled={!submitable}
               className="res login-btn"
+              size="lg"
               style={{
                 backgroundImage: gradientColorFilter('red')
-              }}>
+              }}
+            >
               {btnTxt}
             </Button>
           </FormGenerator>

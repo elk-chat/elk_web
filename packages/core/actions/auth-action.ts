@@ -71,7 +71,7 @@ function clearPrevLoginData() {
   localStorage.removeItem(USER_INFO_STORAGE);
 }
 
-const authActions = store => ({
+const authActions = (store) => ({
   async autoLogin() {
     if (!runtimeState.userInfo.Token) {
       store.setState({

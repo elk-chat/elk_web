@@ -47,7 +47,7 @@ const formBtnConfig: FormLayoutBtnsConfig = [
       console.log({
         OldPassword,
         NewPassword: NewPassword2
-      })
+      });
       ChangePassword({
         OldPassword,
         NewPassword: NewPassword2
@@ -70,8 +70,12 @@ const formBtnConfig: FormLayoutBtnsConfig = [
 const ChangePWPage: React.SFC<ChangePWPageProps> = (props) => {
   const { } = props;
   return (
-    <div className="change-pw-page">
-      <FormLayout formOptions={formOptions} btnConfig={formBtnConfig} />
+    <div className="change-pw-page p20">
+      <FormLayout
+        formOptions={formOptions}
+        btnConfig={formBtnConfig}
+        layout="vertical"
+      />
     </div>
   );
 };

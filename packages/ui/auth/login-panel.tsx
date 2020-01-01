@@ -40,7 +40,8 @@ export default class LoginPanel extends Component<LoginPanelProps> {
     logo: (appName = 'Elk Chat') => (
       <h2 className="title" style={{
         fontFamily: 'cursive'
-      }}>{appName}</h2>
+      }}
+      >{appName}</h2>
     )
   };
 
@@ -86,7 +87,8 @@ export default class LoginPanel extends Component<LoginPanelProps> {
       <div className="login-panel fixbg fixed"
         style={{
           // backgroundImage: `url(/img/login_bg.jpg)`
-        }}>
+        }}
+      >
         <div className="login-layout">
           {
             ClientConfig.logo && ClientConfig.logo.src ? (
@@ -100,9 +102,10 @@ export default class LoginPanel extends Component<LoginPanelProps> {
           }
           <Toast ref={(e) => { this.toast = e; }} />
           <FormGenerator
-            showInputTitle={false}
+            layout="vertical"
             formOptions={loginFormOptions}
-            ref={this.saveForm}>
+            ref={this.saveForm}
+          >
             <Button
               onClick={() => {
                 const checkRes = this.formHelper.checkForm();
@@ -112,11 +115,13 @@ export default class LoginPanel extends Component<LoginPanelProps> {
                   this.toast.show(`请输入${checkRes.desc}`, 'error');
                 }
               }}
+              size="lg"
               disabled={!submitable}
               className="res login-btn"
               style={{
                 backgroundImage: gradientColorFilter(btnGColor)
-              }}>
+              }}
+            >
               {btnTxt}
             </Button>
           </FormGenerator>

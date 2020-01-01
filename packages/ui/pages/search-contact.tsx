@@ -60,8 +60,9 @@ export default class SearchContact extends React.Component<SearchContactProps> {
       <div className="discover-page action-group">
         <Loading loading={searching} inrow />
         <FormGenerator
-          showInputTitle={false}
-          formOptions={this.formOptions} />
+          formOptions={this.formOptions}
+          layout="vertical"
+        />
         {
           hasRes && (
             <div className="search-res-container">
@@ -82,7 +83,8 @@ export default class SearchContact extends React.Component<SearchContactProps> {
                         onClick={(e) => {
                           Call(onAction, item);
                         }}
-                        key={userID}>
+                        key={userID}
+                      >
                         <Avatar size={50} AvatarFileID={AvatarFileID} text={UserName[0]} />
                         <span className="ms10">
                           {UserName}

@@ -15,7 +15,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-transition-group": "^4.0.1",
-    "@deer-ui/core": "^4.0.0-rc4.8",
+    "@deer-ui/core": "^4.0.0-rc5.1",
     "unistore": "^3.4.1"
   },
   "author": "Alex"
